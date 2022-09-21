@@ -1,0 +1,10 @@
+E:\Code\HKDG\Infrastructure\UEditorNetCore\bin\Debug\netstandard2.1\UEditorNetCore.deps.json
+E:\Code\HKDG\Infrastructure\UEditorNetCore\bin\Debug\netstandard2.1\UEditorNetCore.dll
+E:\Code\HKDG\Infrastructure\UEditorNetCore\bin\Debug\netstandard2.1\UEditorNetCore.pdb
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.csproj.AssemblyReference.cache
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.GeneratedMSBuildEditorConfig.editorconfig
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.AssemblyInfoInputs.cache
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.AssemblyInfo.cs
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.csproj.CoreCompileInputs.cache
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.dll
+E:\Code\HKDG\Infrastructure\UEditorNetCore\obj\Debug\netstandard2.1\UEditorNetCore.pdb
