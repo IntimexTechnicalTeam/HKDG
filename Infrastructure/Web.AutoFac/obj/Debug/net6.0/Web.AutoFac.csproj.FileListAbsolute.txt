@@ -44,11 +44,6 @@ E:\Code\Micro.BDMall\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.dll
 E:\Code\Micro.BDMall\Infrastructure\Web.AutoFac\obj\Debug\net6.0\refint\Web.AutoFac.dll
 E:\Code\Micro.BDMall\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.pdb
 E:\Code\Micro.BDMall\Infrastructure\Web.AutoFac\obj\Debug\net6.0\ref\Web.AutoFac.dll
-E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.csproj.AssemblyReference.cache
-E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.GeneratedMSBuildEditorConfig.editorconfig
-E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.AssemblyInfoInputs.cache
-E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.AssemblyInfo.cs
-E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.csproj.CoreCompileInputs.cache
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\Web.AutoFac.deps.json
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\Web.AutoFac.dll
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\Web.AutoFac.pdb
@@ -84,6 +79,11 @@ E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\Web.MQ.pdb
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\WebCache.pdb
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\zh-CN\HKDG.Resources.resources.dll
 E:\Code\HKDG\Infrastructure\Web.AutoFac\bin\Debug\net6.0\zh-HK\HKDG.Resources.resources.dll
+E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.csproj.AssemblyReference.cache
+E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.GeneratedMSBuildEditorConfig.editorconfig
+E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.AssemblyInfoInputs.cache
+E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.AssemblyInfo.cs
+E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.csproj.CoreCompileInputs.cache
 E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.csproj.CopyComplete
 E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\Web.AutoFac.dll
 E:\Code\HKDG\Infrastructure\Web.AutoFac\obj\Debug\net6.0\refint\Web.AutoFac.dll

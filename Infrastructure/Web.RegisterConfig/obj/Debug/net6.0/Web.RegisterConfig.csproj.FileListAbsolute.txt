@@ -46,11 +46,6 @@ E:\Code\Micro.BDMall\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.Regi
 E:\Code\Micro.BDMall\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\refint\Web.RegisterConfig.dll
 E:\Code\Micro.BDMall\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.pdb
 E:\Code\Micro.BDMall\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\ref\Web.RegisterConfig.dll
-E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.csproj.AssemblyReference.cache
-E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.GeneratedMSBuildEditorConfig.editorconfig
-E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.AssemblyInfoInputs.cache
-E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.AssemblyInfo.cs
-E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.csproj.CoreCompileInputs.cache
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\Web.RegisterConfig.deps.json
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\Web.RegisterConfig.dll
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\Web.RegisterConfig.pdb
@@ -88,6 +83,11 @@ E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\Web.MQ.pdb
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\WebCache.pdb
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\zh-CN\HKDG.Resources.resources.dll
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\bin\Debug\net6.0\zh-HK\HKDG.Resources.resources.dll
+E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.csproj.AssemblyReference.cache
+E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.GeneratedMSBuildEditorConfig.editorconfig
+E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.AssemblyInfoInputs.cache
+E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.AssemblyInfo.cs
+E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.csproj.CoreCompileInputs.cache
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.csproj.CopyComplete
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\Web.RegisterConfig.dll
 E:\Code\HKDG\Infrastructure\Web.RegisterConfig\obj\Debug\net6.0\refint\Web.RegisterConfig.dll
