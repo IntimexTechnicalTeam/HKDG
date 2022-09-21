@@ -59,8 +59,8 @@
 /Infrastructure/Web.Framework/obj
 /Intimex.Common/bin
 /Intimex.Common/obj
-/UEditorNetCore/bin
-/UEditorNetCore/obj
 /.vs
-/Infrastructure/Intimex.Common
-/Infrastructure/UEditorNetCore
+/Infrastructure/Intimex.Common/bin
+/Infrastructure/Intimex.Common/obj
+/Infrastructure/UEditorNetCore/bin
+/Infrastructure/UEditorNetCore/obj
