@@ -48,4 +48,12 @@
 /Infrastructure/Web.RegisterConfig/obj
 /Infrastructure/Web.RegisterConfig/bin
 /Infrastructure/WebCache/obj
-
+/Infrastructure/WebCache/bin
+/Infrastructure/Web.Quartz/bin
+/Infrastructure/Web.Quartz/obj
+/Infrastructure/Web.Swagger/bin
+/Infrastructure/Web.Swagger/obj
+/Infrastructure/Web.MediatR/bin
+/Infrastructure/Web.MediatR/obj
+/Infrastructure/Web.Framework/bin
+/Infrastructure/Web.Framework/obj
