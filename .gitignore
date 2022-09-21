@@ -36,3 +36,16 @@
 /HKDG.MiniApi/obj
 /HKDG.MiniApi/Properties
 /HKDG.WebApi/Properties
+/Infrastructure/Web.Jwt/bin
+/Infrastructure/Web.Jwt/obj
+/Infrastructure/Web.AutoFac/bin
+/Infrastructure/Web.AutoFac/obj
+/Infrastructure/Web.MQ/bin
+/Infrastructure/Web.MQ/obj
+/Infrastructure/Web.MVC/bin
+/Infrastructure/Web.MVC/obj
+/Infrastructure/Web.RegisterConfig/bin
+/Infrastructure/Web.RegisterConfig/obj
+/Infrastructure/Web.RegisterConfig/bin
+/Infrastructure/WebCache/obj
+
