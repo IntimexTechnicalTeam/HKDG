@@ -62,3 +62,5 @@
 /UEditorNetCore/bin
 /UEditorNetCore/obj
 /.vs
+/Infrastructure/Intimex.Common
+/Infrastructure/UEditorNetCore
