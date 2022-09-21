@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.5.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BusinessLayer\HKDG.BLL\HKDG.BLL.csproj" />
+    <ProjectReference Include="..\..\BusinessLayer\HKDG.Repository\HKDG.Repository.csproj" />
+    <ProjectReference Include="..\Web.Framework\Web.Framework.csproj" />
+  </ItemGroup>
+
+</Project>

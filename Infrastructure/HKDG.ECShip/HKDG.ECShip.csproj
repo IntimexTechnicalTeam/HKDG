@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Models\HKDG.Enums\HKDG.Enums.csproj" />
+    <ProjectReference Include="..\HKDG.Runtime\HKDG.Runtime.csproj" />
+    <ProjectReference Include="..\HKDG.Utility\HKDG.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

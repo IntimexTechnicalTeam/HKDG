@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "5iAROCIURa5fIRuvxxNTPFPu9prgoe8r6xcwuVP4VxOrWWAdsu71TaNNA2cdHgFvlJ590RTSZL4KlVqQnYjzew==",
+  "success": true,
+  "projectFilePath": "E:\\Code\\HKDG\\Infrastructure\\Intimex.Common\\Intimex.Common.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\spide\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\spide\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "C:\\Users\\spide\\.nuget\\packages\\system.drawing.common\\5.0.3\\system.drawing.common.5.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

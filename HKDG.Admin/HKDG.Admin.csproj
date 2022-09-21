@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Order\ConfirmOrderDetailList.cshtml" />
+    <Content Remove="Views\Order\DeliveryECShipLabel.cshtml" />
+    <Content Remove="Views\Order\ECShipLabelDetail.cshtml" />
+    <Content Remove="Views\Order\MassProcessFlow.cshtml" />
+    <Content Remove="Views\Order\OldEdit.cshtml" />
+    <Content Remove="Views\Order\OldOrders.cshtml" />
+    <Content Remove="Views\Product\AccessoriesProduct.cshtml" />
+    <Content Remove="Views\Product\ApproveProductDetail.cshtml" />
+    <Content Remove="Views\Product\ApproveProductHistory.cshtml" />
+    <Content Remove="Views\Product\CombinationProduct.cshtml" />
+    <Content Remove="Views\Product\CustomPrcRngEdit.cshtml" />
+    <Content Remove="Views\Product\CustomPriceRange.cshtml" />
+    <Content Remove="Views\Product\EditProdPeriodPrice.cshtml" />
+    <Content Remove="Views\Product\ExportData.cshtml" />
+    <Content Remove="Views\Product\MassUploadDetail.cshtml" />
+    <Content Remove="Views\Product\MassUploadInstoreProduct.cshtml" />
+    <Content Remove="Views\Product\MassUploadProduct.cshtml" />
+    <Content Remove="Views\Product\ProdPeriodPriceIndex.cshtml" />
+    <Content Remove="Views\Product\ProductClickRate.cshtml" />
+    <Content Remove="Views\Product\ProductIndex-backup.cshtml" />
+    <Content Remove="Views\Product\ProductSearchRate.cshtml" />
+    <Content Remove="Views\Product\UpdPriceIndex.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Inventory\Index.cshtml" />
+    <None Include="Views\Inventory\InventoryFlowRpt.cshtml" />
+    <None Include="Views\Inventory\InventoryListDetail.cshtml" />
+    <None Include="Views\Inventory\InventoryTransaction.cshtml" />
+    <None Include="Views\Inventory\SalesReturn.cshtml" />
+    <None Include="Views\Inventory\SupplierEdit.cshtml" />
+    <None Include="Views\Inventory\SupplierSetting.cshtml" />
+    <None Include="Views\Inventory\WarehouseEdit.cshtml" />
+    <None Include="Views\Inventory\WarehouseSetting.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessLayer\HKDG.BLL\HKDG.BLL.csproj" />
+    <ProjectReference Include="..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
+    <ProjectReference Include="..\Infrastructure\UEditorNetCore\UEditorNetCore.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.AutoFac\Web.AutoFac.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.Framework\Web.Framework.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.Jwt\Web.Jwt.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.MediatR\Web.MediatR.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.MQ\Web.MQ.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.Mvc\Web.Mvc.csproj" />
+    <ProjectReference Include="..\Infrastructure\WebCache\WebCache.csproj" />
+    <ProjectReference Include="..\Models\HKDG.Domain\HKDG.Domain.csproj" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties config_4appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>

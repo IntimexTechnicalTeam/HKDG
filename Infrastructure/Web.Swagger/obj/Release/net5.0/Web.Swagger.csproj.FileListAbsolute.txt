@@ -1,0 +1,12 @@
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\bin\Release\net5.0\Web.Swagger.deps.json
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\bin\Release\net5.0\Web.Swagger.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\bin\Release\net5.0\ref\Web.Swagger.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\bin\Release\net5.0\Web.Swagger.pdb
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.csproj.AssemblyReference.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.GeneratedMSBuildEditorConfig.editorconfig
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.AssemblyInfoInputs.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.AssemblyInfo.cs
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.csproj.CoreCompileInputs.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\ref\Web.Swagger.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.Swagger\obj\Release\net5.0\Web.Swagger.pdb

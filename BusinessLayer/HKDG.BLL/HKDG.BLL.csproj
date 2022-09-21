@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NotificationHandler\MemberCreateHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\HKDG.ECShip\HKDG.ECShip.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\HKDG.Runtime\HKDG.Runtime.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\HKDG.Utility\HKDG.Utility.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Web.Jwt\Web.Jwt.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Web.MediatR\Web.MediatR.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Web.MQ\Web.MQ.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\WebCache\WebCache.csproj" />
+    <ProjectReference Include="..\HKDG.Repository\HKDG.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

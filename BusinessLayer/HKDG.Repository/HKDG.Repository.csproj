@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\HKDG.Utility\HKDG.Utility.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Web.Framework\Web.Framework.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Web.Jwt\Web.Jwt.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\WebCache\WebCache.csproj" />
+    <ProjectReference Include="..\..\Models\HKDG.Domain\HKDG.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

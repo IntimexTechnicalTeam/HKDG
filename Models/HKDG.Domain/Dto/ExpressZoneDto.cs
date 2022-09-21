@@ -1,0 +1,26 @@
+﻿namespace HKDG.Domain
+{
+    public class ExpressZoneDto : BaseDto
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// 快递公司ID
+        /// </summary>
+        public Guid ExpressId { get; set; }
+        public string Code { get; set; }
+        public Guid NameTransId { get; set; }
+        public Guid RemarkTransId { get; set; }
+        /// <summary>
+        /// 燃油附加費
+        /// </summary>
+        public decimal FuelSurcharge { get; set; }
+        public string Name { get; set; }
+        public string Remark { get; set; }
+        public string ExpressCompanyName { get; set; }
+
+        public List<CountryDto> Countrys { get; set; }
+        public List<MutiLanguage> Names { get; set; }
+        public List<MutiLanguage> Remarks { get; set; }
+
+    }
+}

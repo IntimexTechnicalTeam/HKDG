@@ -1,0 +1,12 @@
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\bin\Release\net5.0\Web.MediatR.deps.json
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\bin\Release\net5.0\Web.MediatR.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\bin\Release\net5.0\ref\Web.MediatR.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\bin\Release\net5.0\Web.MediatR.pdb
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.csproj.AssemblyReference.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.GeneratedMSBuildEditorConfig.editorconfig
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.AssemblyInfoInputs.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.AssemblyInfo.cs
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.csproj.CoreCompileInputs.cache
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\ref\Web.MediatR.dll
+E:\Code\Micro.BDMall\Infrastructure\Web.MediatR\obj\Release\net5.0\Web.MediatR.pdb
