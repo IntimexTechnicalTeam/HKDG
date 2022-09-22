@@ -10,8 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Models\HKDG.Domain\HKDG.Domain.csproj" />
-    <ProjectReference Include="..\..\Models\HKDG.Enums\HKDG.Enums.csproj" />
+    <ProjectReference Include="..\..\Models\HKDG.Domain\Domain.csproj" />
     <ProjectReference Include="..\Web.Framework\Web.Framework.csproj" />
   </ItemGroup>
 

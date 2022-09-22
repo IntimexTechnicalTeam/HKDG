@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Models\HKDG.Enums\HKDG.Enums.csproj" />
     <ProjectReference Include="..\HKDG.Runtime\HKDG.Runtime.csproj" />
     <ProjectReference Include="..\HKDG.Utility\HKDG.Utility.csproj" />
   </ItemGroup>

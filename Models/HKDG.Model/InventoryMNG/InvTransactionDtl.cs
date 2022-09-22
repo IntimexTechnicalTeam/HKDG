@@ -1,4 +1,6 @@
-﻿namespace HKDG.Model
+﻿using HKDG.Enums;
+
+namespace HKDG.Model
 {
     /// <summary>
     /// 庫存交易詳細項資料123412

@@ -1,6 +1,4 @@
-﻿
-
-namespace HKDG.Model
+﻿namespace HKDG.Model
 {
     /// <summary>
     /// 優惠券規則

@@ -63,7 +63,7 @@
     <ProjectReference Include="..\Infrastructure\Web.MQ\Web.MQ.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.Mvc\Web.Mvc.csproj" />
     <ProjectReference Include="..\Infrastructure\WebCache\WebCache.csproj" />
-    <ProjectReference Include="..\Models\HKDG.Domain\HKDG.Domain.csproj" />
+    <ProjectReference Include="..\Models\HKDG.Domain\Domain.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties config_4appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

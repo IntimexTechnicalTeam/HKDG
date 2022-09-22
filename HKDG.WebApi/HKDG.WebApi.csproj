@@ -27,7 +27,6 @@
     <ProjectReference Include="..\Infrastructure\Web.Mvc\Web.Mvc.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.Swagger\Web.Swagger.csproj" />
     <ProjectReference Include="..\Infrastructure\WebCache\WebCache.csproj" />
-    <ProjectReference Include="..\Models\HKDG.Enums\HKDG.Enums.csproj" />
   </ItemGroup>
 
   <ItemGroup>
