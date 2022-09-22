@@ -13,8 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\BDMall.Runtime\HKDG.Runtime.csproj" />
-    <ProjectReference Include="..\Infrastructure\BDMall.Utility\HKDG.Utility.csproj" />
     <ProjectReference Include="..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.AutoFac\Web.AutoFac.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.Framework\Web.Framework.csproj" />
