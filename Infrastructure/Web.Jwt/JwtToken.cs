@@ -1,4 +1,5 @@
-﻿using HKDG.Domain;
+﻿using Domain.Account;
+using HKDG.Domain;
 using HKDG.Enums;
 using HKDG.Model;
 using HKDG.Runtime;
@@ -75,35 +76,21 @@ namespace Web.Jwt
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        public  string RefreshToken(string token, Language? Lang = null, string CurrencyCode = "")
+        public SystemResult<string> RefreshToken(string token, Language? Lang = null, string CurrencyCode = "")
         {
-            var tmpUser = CreateCurrentUser(token);
-            tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
-            tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
-            var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
-            var ticket = CreateToken(loginInput);
+            //var tmpUser = CreateCurrentUser(token);
+            //tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
+            //tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
+            //var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
+            //var ticket = CreateToken(loginInput);
 
-            //为了兼容 buydong,buydong 只会传入一个 guid 形的token
-            if (Guid.TryParse(token, out var id))
-            {
-                //var user = RedisHelper.Get<UserDto>($"{CacheKey.OnLine}_{token}");
-                //if (user == null) user = AutoMapperExt.MapTo<UserDto>(loginInput);
-                //user.LoginSerialNO = token; user.Id = Guid.Parse(tmpUser.UserId); user.Token = ticket;
+            //如果能访问到Buydong的redis节点就不用call api去处理
+            //call buydong Account/RefreshToken api
+            string url = $"{Setting.BuyDongWebUrl}/api/account/RefreshToken";
 
-                ////更新redis
-                //int expireMinute = Setting.MemberSessionTimeout;
-                //RedisHelper.Set($"{CacheKey.OnLine}_{token}", expireMinute * 60);
-                //RedisHelper.HSet($"{CacheKey.Token}", token, ticket);
-
-                //call buydong Account/RefreshToken api
-                string url = $"{Setting.BuyDongWebUrl}/api/account/RefreshToken";
-
-                var requet = new { token=token, CurrencyCode = CurrencyCode, Lang = tmpUser.Lang };
-                var result = RestClientHelper.HttpGet<SystemResult<string>>(url, requet, AuthorizationType.Bearer);
-                return result.Message;
-            }
-
-            return ticket;
+            var requet = new RefreshToken { token = token, CurrencyCode = CurrencyCode, Lang =Lang.Value };
+            var result = RestClientHelper.HttpPost<SystemResult<string>>(url, requet, AuthorizationType.Bearer);           
+            return result;
         }
 
         /// <summary>

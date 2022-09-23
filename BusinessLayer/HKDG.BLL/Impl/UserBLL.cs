@@ -22,8 +22,8 @@
 
             var newToken = jwtToken.RefreshToken(CurrentUser.Token, Lang, "");
 
-            result.ReturnValue = newToken;
-            result.Succeeded = true;
+            result.ReturnValue = newToken.Message;
+            result.Succeeded = newToken.Succeeded;
             return result;
         }
 

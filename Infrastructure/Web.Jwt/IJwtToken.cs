@@ -43,7 +43,7 @@ namespace Web.Jwt
         /// <param name="Lang"></param>
         /// <param name="CurrencyCode"></param>
         /// <returns></returns>
-        string RefreshToken(string token, Language? Lang = null, string CurrencyCode = "");
+        SystemResult<string> RefreshToken(string token, Language? Lang = null, string CurrencyCode = "");
 
         /// <summary>
         ///  解析token中的payload信息,payload信息来源于tokeninfo类

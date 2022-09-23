@@ -31,12 +31,10 @@
         [AllowAnonymous]
         [HttpGet("RefreshToken")]
         [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> RefreshToken(string Token)
-        { 
-            string ticket = jwtToken.RefreshToken(Token);
-            var result = new SystemResult() { Succeeded = true };
-
-            result.ReturnValue = ticket;
+        public async Task<SystemResult<string>> RefreshToken(string Token,Language Lang= Language.C, string CurrencyCode="HKD")
+        {
+            var result = new SystemResult<string>() { Succeeded = true };
+            result= jwtToken.RefreshToken(Token,Lang,CurrencyCode);            
             return result;
         }
     }

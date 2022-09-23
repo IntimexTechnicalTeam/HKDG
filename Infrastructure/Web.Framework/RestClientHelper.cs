@@ -21,6 +21,13 @@ namespace Web.Framework
             return result;
         }
 
+        public static OutT HttpPost<OutT>(string url, object T, AuthorizationType authorizationType, string token = "", string jsonType = "application/json; charset=utf-8")
+        {
+            var result =  ExecuteClient<OutT>(Method.POST, url, T, authorizationType, token, jsonType);
+            return result;
+        }
+
+
         static async Task<OutT> ExecuteClientAsync<OutT>(Method method, string url, object T, AuthorizationType authorizationType, string token = "", string jsonType = "application/json; charset=utf-8")
         {
             var client = new RestClient(url);

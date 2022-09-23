@@ -61,21 +61,19 @@ namespace Web.Mvc
                 return flag;
             }
 
-            #region 为了兼容 buydong,buydong 只会传入一个 guid 形的token
-            if (Guid.TryParse(token, out var id))
-            {              
-                string url = $"{Setting.BuyDongWebUrl}/api/account/CheckToken";
-                var result = await RestClientHelper.HttpGetAsync<SystemResult<string>>(url, token, AuthorizationType.Bearer);
-                if (!result.Succeeded)
-                {
-                    context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = result.Message });
-                    context.HttpContext.Response.StatusCode = 403;
-                    flag = false;
-                    return flag;
-                }
-                token = result.Message;
-            }
-            #endregion
+            //#region 为了兼容 buydong
+            //    string url = $"{Setting.BuyDongWebUrl}/api/account/CheckToken";
+            //    var result = await RestClientHelper.HttpGetAsync<SystemResult<string>>(url, token, AuthorizationType.Bearer);
+            //    if (!result.Succeeded)
+            //    {
+            //        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = result.Message });
+            //        context.HttpContext.Response.StatusCode = 403;
+            //        flag = false;
+            //        return flag;
+            //    }
+            //token = result.Message;
+            
+            //#endregion
 
             string userId = "";
             //检查token
