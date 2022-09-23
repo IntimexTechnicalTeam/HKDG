@@ -1,5 +1,7 @@
 ﻿using HKDG.Domain;
 using HKDG.Enums;
+using HKDG.Model;
+using HKDG.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -16,12 +18,12 @@ namespace Web.Jwt
 {
     public class JwtToken:IJwtToken
     {
-        IServiceProvider service;
+       public IServiceProvider service;
         IConfiguration configuration;
-         
-        public JwtToken(IServiceProvider _service)
+
+        public JwtToken(IServiceProvider services) 
         {
-            this.service = _service;
+            this.service = services;
             configuration = service.Resolve<IConfiguration>();
         }
 
@@ -51,13 +53,14 @@ namespace Web.Jwt
         public string CreateToken(List<Claim> claimList)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:SecretKey"]));
-            int expireMinute = int.Parse(this.configuration["Jwt:ExpireMinute"]);
+            //int expireMinute = int.Parse(this.configuration["Jwt:ExpireMinute"]);
+            int expireMinute = Setting.MemberSessionTimeout;
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var jwtToken = new JwtSecurityToken(
                     issuer: this.configuration["Jwt:Issuer"],                           //TOKEN发布者
                     audience: this.configuration["Jwt:Audience"],                //Token接受者
-                    expires: DateTime.Now.AddDays(expireMinute),
+                    expires: DateTime.Now.AddSeconds(expireMinute*60),
                     notBefore :DateTime.Now,                                            //nbf缩写
                     signingCredentials: creds,
                     claims: claimList
@@ -72,13 +75,35 @@ namespace Web.Jwt
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        public string RefreshToken(string token, Language? Lang = null, string CurrencyCode = "")
-        {          
+        public  string RefreshToken(string token, Language? Lang = null, string CurrencyCode = "")
+        {
             var tmpUser = CreateCurrentUser(token);
             tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
             tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
             var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
-            return CreateToken(loginInput);
+            var ticket = CreateToken(loginInput);
+
+            //为了兼容 buydong,buydong 只会传入一个 guid 形的token
+            if (Guid.TryParse(token, out var id))
+            {
+                //var user = RedisHelper.Get<UserDto>($"{CacheKey.OnLine}_{token}");
+                //if (user == null) user = AutoMapperExt.MapTo<UserDto>(loginInput);
+                //user.LoginSerialNO = token; user.Id = Guid.Parse(tmpUser.UserId); user.Token = ticket;
+
+                ////更新redis
+                //int expireMinute = Setting.MemberSessionTimeout;
+                //RedisHelper.Set($"{CacheKey.OnLine}_{token}", expireMinute * 60);
+                //RedisHelper.HSet($"{CacheKey.Token}", token, ticket);
+
+                //call buydong Account/RefreshToken api
+                string url = $"{Setting.BuyDongWebUrl}/api/account/RefreshToken";
+
+                var requet = new { token=token, CurrencyCode = CurrencyCode, Lang = tmpUser.Lang };
+                var result = RestClientHelper.HttpGet<SystemResult<string>>(url, requet, AuthorizationType.Bearer);
+                return result.Message;
+            }
+
+            return ticket;
         }
 
         /// <summary>

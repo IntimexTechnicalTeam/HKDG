@@ -10,6 +10,7 @@ namespace Domain
         public Mappers()
         {
             ConfigMap<CurrentUser, TokenInfo>();
+            ConfigMap<CurrentUser,UserDto>();
             ConfigMap<TokenInfo, UserDto>();
             ConfigMap<TokenInfo,MemberDto>();  
             ConfigMap<Member, MemberDto>();

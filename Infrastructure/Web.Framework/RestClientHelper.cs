@@ -15,6 +15,12 @@ namespace Web.Framework
             return result;
         }
 
+        public static OutT HttpGet<OutT>(string url, object T, AuthorizationType authorizationType, string token = "", string jsonType = "application/json; charset=utf-8")
+        {
+            var result =  ExecuteClient<OutT>(Method.GET, url, T, authorizationType, token, jsonType);
+            return result;
+        }
+
         static async Task<OutT> ExecuteClientAsync<OutT>(Method method, string url, object T, AuthorizationType authorizationType, string token = "", string jsonType = "application/json; charset=utf-8")
         {
             var client = new RestClient(url);
@@ -25,6 +31,20 @@ namespace Web.Framework
             if (!string.IsNullOrEmpty(token)) request.AddHeader("Authorization", $"{authorizationType} {token}");
 
             IRestResponse response = await client.ExecuteAsync(request);
+            var result = JsonUtil.JsonToObject<OutT>(response.Content);
+            return result;
+        }
+
+        static OutT ExecuteClient<OutT>(Method method, string url, object T, AuthorizationType authorizationType, string token = "", string jsonType = "application/json; charset=utf-8")
+        {
+            var client = new RestClient(url);
+
+            var request = new RestRequest(method).AddDecompressionMethod(System.Net.DecompressionMethods.GZip);
+
+            if (T != null) request.AddParameter(jsonType, JsonUtil.ToJson(T), ParameterType.RequestBody);
+            if (!string.IsNullOrEmpty(token)) request.AddHeader("Authorization", $"{authorizationType} {token}");
+
+            IRestResponse response =  client.Execute(request);
             var result = JsonUtil.JsonToObject<OutT>(response.Content);
             return result;
         }

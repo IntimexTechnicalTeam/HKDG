@@ -1,4 +1,6 @@
 
+using HKDG.Runtime;
+
 namespace HKDG.WebApi
 {
     public static class Startup
@@ -22,9 +24,9 @@ namespace HKDG.WebApi
             Web.Framework.AutoMapperConfiguration.InitAutoMapper();
             builder.Services.AddSingleton(builder.Configuration);
                      
-            WebCache.ServiceCollectionExtensions.AddCacheServices(builder.Services, builder.Configuration);                        //注入redis组件
+            WebCache.ServiceCollectionExtensions.AddCacheServices(builder.Services, builder.Configuration);                                             //注入redis组件          
             HKDG.Repository.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                      //注入EFCore DataContext
-            Web.MQ.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                                    //注入RabbitMQ  
+            Web.MQ.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                                   //注入RabbitMQ  
             Web.Mvc.ServiceCollectionExtensions.AddHttpContextAccessor(builder.Services);
             Web.Mvc.ServiceCollectionExtensions.AddServiceProvider(builder.Services);
             Web.MediatR.ServiceCollectionExtensions.AddServices(builder.Services, typeof(Program));
@@ -105,6 +107,20 @@ namespace HKDG.WebApi
                     return new OkObjectResult(result);
                 };
             });
+        }
+
+        public static void RegisterSetting()
+        {
+            Setting.MemberSessionTimeout = 20;
+            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
+            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "MemSessionTimeout")?.Value ?? "";
+            if (!string.IsNullOrEmpty(master))
+            {
+                if (int.TryParse(master, out var time))
+                    Setting.MemberSessionTimeout = time;
+            }
+
+            Setting.BuyDongWebUrl = Globals.Configuration["BuyDongWebUrl"];
         }
     }
 }

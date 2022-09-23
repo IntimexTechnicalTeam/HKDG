@@ -28,9 +28,10 @@
         ProdAttr,
 
         Favorite,
-
+        OnLine,
         ProductTrack,
         ProductSku,
+        Token,
     }
 
     public enum CacheField

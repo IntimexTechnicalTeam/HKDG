@@ -76,7 +76,7 @@
             get
             {
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
-                if (token.IsEmpty()) token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
+                if (token.IsEmpty()) token = CurrentContext?.HttpContext?.Request?.Cookies["access_token"]?.ToString() ?? "";
 
                 _currentUser = jwtToken.BuildUser(token, _currentUser);
 

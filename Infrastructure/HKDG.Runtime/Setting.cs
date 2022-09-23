@@ -26,5 +26,12 @@ namespace HKDG.Runtime
         /// 购买上限
         /// </summary>
         public static int PurchaseLimit = 999;
+
+        /// <summary>
+        /// 会员token过期时间（分钟）
+        /// </summary>
+        public static int MemberSessionTimeout = 15;
+
+        public static string BuyDongWebUrl = "";
     }
 }
