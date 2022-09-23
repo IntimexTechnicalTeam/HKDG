@@ -9,24 +9,20 @@
 
         public void Insert(DeliveryAddressDto model)
         {
-
-
-            string sql = @" OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
+            string sql = $@" 
                              insert  DeliveryAddresses(id,FirstName,LastName,Mobile,Phone,Address,Address1,Address2,Address3,
-                                createBy,createDate,updateBy,UpdateDate,IsActive,IsDeleted,Remark,[Default],MemberId,Email,Gender,PostalCode,CountryId,ProvinceId,clientId,city) values( @id,
-                             CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@firstName)),
-                             CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@lastName)),
-                             CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@mobile)),
-                             CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Phone)),
-                              CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address)),
-							  CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address1)),
-							  CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address2)),
-							  CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address3)),
-                            @createBy,getDate(),@updateBy,getDate(),@IsActive,@IsDeleted,@Remark,@Default,
-							@MemberId,@Email,@Gender,@PostalCode,@CountryId,@ProvinceId,@clientId,@City     
-                            );
-                            CLOSE SYMMETRIC KEY  AES256key_Do1Mall;
-                            ";
+                              createBy,createDate,updateBy,UpdateDate,IsActive,IsDeleted,Remark,[Default],MemberId,Email,Gender,PostalCode,CountryId,ProvinceId,clientId,city) values( 
+                             @id
+                             ,@firstName
+                             ,@lastName
+                             ,@mobile
+                             ,@Phone
+                             ,@Address
+							 ,@Address1
+							 ,@Address2 ,@Address3
+                             ,@createBy,getDate(),@updateBy,getDate(),@IsActive,@IsDeleted,@Remark,@Default
+							 ,@MemberId,@Email,@Gender,@PostalCode,@CountryId,@ProvinceId,@clientId,@City     
+                            );";
             List<SqlParameter> paramList = new List<SqlParameter>();
             paramList.Add(new SqlParameter("@id", model.Id));
             paramList.Add(new SqlParameter("@firstName", model.FirstName ?? ""));
@@ -59,21 +55,19 @@
         {
 
 
-            string sql = @" OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
+            string sql = @" 
                              update DeliveryAddresses set 
-                             FirstName=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@firstName)),
-                             LastName=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@lastName)),
-                             Mobile=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@mobile)),
-                             Phone=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Phone)),
-                              Address=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address)),
-							  Address1=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address1)),
-							  Address2=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address2)),
-							  Address3=CONVERT(nvarchar(200),  EncryptByKey(Key_GUID('AES256key_Do1Mall'),@Address3)),
+                             FirstName=@firstName,
+                             LastName=@lastName,
+                             Mobile=@mobile,
+                             Phone=@Phone,
+                             Address=@Address,
+							 Address1=@Address1,
+							 Address2=@Address2,
+							 Address3=@Address3,
                             updateBy=@updateBy,UpdateDate=getDate(),IsActive=@IsActive,IsDeleted=@IsDeleted,Remark=@Remark,[Default]=@Default,
 							MemberId=@MemberId,Email=@Email,Gender=@Gender,PostalCode=@PostalCode,CountryId=@CountryId,ProvinceId=@ProvinceId,City=@City     
-                            where id=@id;
-                            CLOSE SYMMETRIC KEY  AES256key_Do1Mall;
-                            ";
+                            where id=@id;";
             List<SqlParameter> paramList = new List<SqlParameter>();
             paramList.Add(new SqlParameter("@id", model.Id));
             paramList.Add(new SqlParameter("@firstName", model.FirstName ?? ""));
@@ -98,75 +92,31 @@
             paramList.Add(new SqlParameter("@Remark", model.Remark ?? ""));
             paramList.Add(new SqlParameter("@Default", model.Default));
             baseRepository.ExecuteSqlCommand(sql, paramList.ToArray());
-
-
-
         }
 
         public DeliveryAddressDto GetByKey(Guid key)
         {
-
             var m = baseRepository.GetModel<DeliveryAddress>(d => d.Id == key);
-            DecryptField(m);
-
+            //DecryptField(m);
             var dto = AutoMapperExt.MapTo<DeliveryAddressDto>(m);
             return dto;
         }
-        protected void DecryptField(DeliveryAddress m)
-        {
-            if (m != null)
-            {
-                try
-                {
-
-                    string sql = @" OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
-                     select  CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), FirstName))) as  FirstName, 
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), LastName))) as LastName,					   
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Mobile))) as Mobile,
-                        CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Phone))) as Phone,
-                        CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address))) as Address, 
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address1))) as Address1,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address2))) as Address2,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address3))) as Address3,*
-					    from DeliveryAddresses   where id=  @mid ;         
-                        CLOSE SYMMETRIC KEY AES256key_Do1Mall;";
-                    var result = baseRepository.SqlQuery<DeliveryAddress>(sql, new SqlParameter("@mid", m.Id)).FirstOrDefault();
-
-                    m.FirstName = result.FirstName;
-                    m.LastName = result.LastName;
-                    m.Mobile = result.Mobile;
-                    m.Phone = result.Phone;
-                    m.Address = result.Address;
-                    m.Address1 = result.Address1;
-                    m.Address2 = result.Address2;
-                    m.Address3 = result.Address3;
-                }
-                catch (Exception ex)
-                {
-
-                    throw new Exception("执行加密操作失败", ex);
-                }
-
-            }
-        }
-
-
+        
         public List<DeliveryAddressDto> SearchAddress(Guid memberId, bool isActive, bool isDeleted)
         {
             try
             {
-                var sql = $@"OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
-                       select  CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), FirstName))) as  FirstName, 
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), LastName))) as LastName,					   
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Mobile))) as Mobile,
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Phone))) as Phone,
-                        CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address))) as Address, 
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address1))) as Address1,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address2))) as Address2,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), Address3))) as Address3,
+                var sql = $@"
+                       select  FirstName, 
+					    LastName,					   
+					  Mobile,
+					   Phone,
+                        Address, 
+						 Address1,
+						 Address2,
+						 Address3,
 						id,ClientId,IsActive,IsDeleted,CreateDate,CreateBy,UpdateDate,UpdateBy,Remark,[Default],MemberId,City,PostalCode,Gender,Email,ProvinceId,CountryId 
-					    from DeliveryAddresses  where MemberId= @memberId and IsActive=@isActive and IsDeleted=@isDeleted;         
-                        CLOSE SYMMETRIC KEY AES256key_Do1Mall;";
+					    from DeliveryAddresses  where MemberId= @memberId and IsActive=@isActive and IsDeleted=@isDeleted;";
 
                 List<SqlParameter> sqlParameters = new List<SqlParameter>();
                 sqlParameters.Add(new SqlParameter("@memberId", memberId));
@@ -216,20 +166,19 @@
         {
             try
             {
-                var sql = @"OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
-                       select  CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.FirstName))) as  FirstName, 
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.LastName))) as LastName,					   
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Mobile))) as Mobile,
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Phone))) as Phone,
-                        CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address))) as Address, 
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address1))) as Address1,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address2))) as Address2,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address3))) as Address3,
+                var sql = @"
+                       select   FirstName, 
+					   LastName,					   
+					   Mobile,
+					   Phone,
+                          Address, 
+					     Address1,
+					     Address2,
+					     Address3,
 						d.id,d.ClientId,d.IsActive,d.IsDeleted,d.CreateDate,d.CreateBy,d.UpdateDate,d.UpdateBy,d.Remark,d.[Default],d.MemberId,d.City,d.PostalCode,d.Gender,d.Email,d.ProvinceId,d.CountryId 
 					    from DeliveryAddresses d  
                         join Countries c on c.Id=d.CountryId                        
-                        where d.MemberId={0} and d.IsActive={1} and d.IsDeleted={2} and c.[Code]='HKG';
-                        CLOSE SYMMETRIC KEY AES256key_Do1Mall;";
+                        where d.MemberId={0} and d.IsActive={1} and d.IsDeleted={2} and c.[Code]='HKG'";
 
                 var result = baseRepository.SqlQuery<DeliveryAddress>(sql, new object[] { memberId, isActive, isDeleted }).ToList();
 
@@ -261,20 +210,19 @@
         {
             try
             {
-                var sql = @"OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
-                       select  CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.FirstName))) as  FirstName, 
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.LastName))) as LastName,					   
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Mobile))) as Mobile,
-					   CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Phone))) as Phone,
-                        CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address))) as Address, 
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address1))) as Address1,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address2))) as Address2,
-						CONVERT(nvarchar(1000),DecryptByKey(CONVERT(varbinary(1000), d.Address3))) as Address3,
+                var sql = @"
+                       select   FirstName, 
+					   LastName,					   
+					    Mobile,
+					   Phone,
+                        Address, 
+						Address1,
+						Address2,
+						Address3,
 						d.id,d.ClientId,d.IsActive,d.IsDeleted,d.CreateDate,d.CreateBy,d.UpdateDate,d.UpdateBy,d.Remark,d.[Default],d.MemberId,d.City,d.PostalCode,d.Gender,d.Email,d.ProvinceId,d.CountryId 
 					    from DeliveryAddresses d  
                         join Countries c on c.Id=d.CountryId                        
-                        where d.MemberId={0} and d.IsActive={1} and d.IsDeleted={2} and c.[Code]<>'HKG';
-                        CLOSE SYMMETRIC KEY AES256key_Do1Mall;";
+                        where d.MemberId={0} and d.IsActive={1} and d.IsDeleted={2} and c.[Code]<>'HKG';";
 
                 var result = baseRepository.SqlQuery<DeliveryAddress>(sql, new object[] { memberId, isActive, isDeleted }).ToList();
 
@@ -307,12 +255,10 @@
             try
             {
 
-                string sql = @" OPEN SYMMETRIC KEY AES256key_Do1Mall DECRYPTION BY CERTIFICATE [CERTDO1MAll]; 
+                string sql = @"
                              update DeliveryAddresses set 
                             updateBy=@updateBy,UpdateDate=getDate(),[Default]=0     
-                            where MemberId=@id;
-                            CLOSE SYMMETRIC KEY  AES256key_Do1Mall;
-                            ";
+                            where MemberId=@id; ";
                 List<SqlParameter> paramList = new List<SqlParameter>();
                 paramList.Add(new SqlParameter("@id", memberId));
                 paramList.Add(new SqlParameter("@updateBy", CurrentUser.UserId));
