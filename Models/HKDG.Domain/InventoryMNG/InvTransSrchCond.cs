@@ -38,5 +38,7 @@
         /// 倉庫ID
         /// </summary>
         public Guid WhId { get; set; }
+
+        public List<string> ExistsCodes { get; set; } = new List<string>();
     }
 }

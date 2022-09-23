@@ -1227,4 +1227,10 @@ Try “ShopThruPost” online service now.&lt;br/&gt;</value>
   <data name="PreferentialPeriodConfirm" xml:space="preserve">
     <value>Modifying the price during the preferential period will affect the price during the preferential period. Are you sure to modify it?</value>
   </data>
+  <data name="PleaseSelectProduct" xml:space="preserve">
+    <value>PleaseSelectProduct</value>
+  </data>
+  <data name="ReturnQtyOverSaleQty" xml:space="preserve">
+    <value>The return qty is greater than sale qty</value>
+  </data>
 </root>

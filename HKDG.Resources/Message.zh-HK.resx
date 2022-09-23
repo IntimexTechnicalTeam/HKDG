@@ -1230,4 +1230,10 @@
   <data name="PreferentialPeriodConfirm" xml:space="preserve">
     <value>在優惠期內修改價格將影響優惠期內的價格。您確定要修改它嗎？</value>
   </data>
+  <data name="PleaseSelectProduct" xml:space="preserve">
+    <value>請選擇產品</value>
+  </data>
+  <data name="ReturnQtyOverSaleQty" xml:space="preserve">
+    <value>退回數量大于可銷售數量</value>
+  </data>
 </root>

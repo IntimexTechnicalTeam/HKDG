@@ -519,6 +519,7 @@ namespace HKDG.BLL
             #region 检查采购批号
             if (transView.TransType == InvTransType.Purchase)
             {
+                if (string.IsNullOrEmpty(transView.BatchNum)) transView.BatchNum = $"BN{IdGenerator.NewId}";
                 foreach (var item in transView.TransactionItemList)
                 {
                     var batchNumChkCond = new InvTransactionDtlDto()

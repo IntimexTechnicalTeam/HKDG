@@ -241,7 +241,8 @@
                 var merchId = condition.MerchantId;
 
                 condition.ProdCodeList = condition.ProdCodeList.Distinct().ToList();
-
+                //排除已经选择过的
+                if (condition.ExistsCodes.Any()) condition.ProdCodeList = condition.ProdCodeList.Where(x => !condition.ExistsCodes.Contains(x)).ToList();
                 foreach (string prodCodeItem in condition.ProdCodeList)
                 {
                     if (!string.IsNullOrEmpty(prodCodeItem))

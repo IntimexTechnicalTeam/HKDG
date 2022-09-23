@@ -22,8 +22,20 @@
             <div class="form-group col-sm-12">
                 <label for="cboSupplier" class="control-label col-sm-2">@HKDG.Resources.Label.InventoryFlowTpye</label>
                 <div class="col-sm-10">
-                    <label class="checkbox-inline" v-for="item in FlowTypeList">
-                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,item)">{{ item.Text }}
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,1)">@HKDG.Resources.Label.Purchase
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,2)">@HKDG.Resources.Label.Relocation
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,3)">@HKDG.Resources.Label.PurchaseReturn
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,4)">@HKDG.Resources.Label.SalesShipment
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="cbxFlowTypw" v-on:click="selectFlowType($event,5)">@HKDG.Resources.Label.SalesReturn
                     </label>
                 </div>
             </div>
@@ -293,7 +305,49 @@
                             field: 'ProductId',
                             title: 'ProductId',
                             visible: false
-                    },{
+                    },
+                    {
+                        field: 'RefNo',
+                        title: '@HKDG.Resources.Label.ReferenceNumber',
+                        align: 'left',
+                        valign: 'middle',
+                        //sortable: true
+                    },
+                    {
+                        field: 'BatchNo',
+                        title: '@HKDG.Resources.Label.BatchNo',
+                        align: 'left',
+                        valign: 'middle',
+                        //sortable: true
+                    },
+                    {
+                        field: 'WhName',
+                        title: '@HKDG.Resources.Label.WarehouseName',
+                        align: 'left',
+                        valign: 'middle',
+                        sortable: true
+                    }, {
+                        field: 'IOTypeDesc',
+                        title: '@HKDG.Resources.Label.InOutWarehouseType',
+                        align: 'left',
+                        valign: 'middle',
+                        //sortable: true
+                    },
+                    {
+                        field: 'ActionType',
+                        title: '@HKDG.Resources.Label.InventoryFlowTpye',
+                        align: 'left',
+                        valign: 'middle',
+                        sortable: true
+                    },
+                    {
+                        field: 'TransQty',
+                        title: '@HKDG.Resources.Label.InventoryFlowTransQty',
+                        align: 'left',
+                        valign: 'middle',
+                        sortable: true
+                    },
+                    {
                         field: 'ImgPath',
                         title: '@HKDG.Resources.Label.Img',
                         events: {
@@ -322,24 +376,6 @@
                         events: operateEvents,
                         formatter: tbModifyFormatter
                     }, {
-                        field: 'ActionType',
-                        title: '@HKDG.Resources.Label.InventoryFlowTpye',
-                        align: 'left',
-                        valign: 'middle',
-                        sortable: true
-                    }, {
-                        field: 'TransDate',
-                        title: '@HKDG.Resources.Label.InventoryFlowTransDate',
-                        align: 'left',
-                        valign: 'middle',
-                            sortable: true
-                    }, {
-                        field: 'TransQty',
-                        title: '@HKDG.Resources.Label.InventoryFlowTransQty',
-                        align: 'left',
-                        valign: 'middle',
-                        sortable: true
-                    }, {
                         field: 'Attr1Desc',
                         title: '@HKDG.Resources.Label.StockAttributeI',
                         align: 'left',
@@ -356,38 +392,22 @@
                         title: '@HKDG.Resources.Label.StockAttributeIII',
                         align: 'left',
                         valign: 'middle',
-                            sortable: true
-                    }, {
-                        field: 'WhName',
-                        title: '@HKDG.Resources.Label.WarehouseName',
-                        align: 'left',
-                        valign: 'middle',
-                            sortable: true
-                    }, {
-                        field: 'IOTypeDesc',
-                        title: '@HKDG.Resources.Label.InOutWarehouseType',
-                        align: 'left',
-                        valign: 'middle',
-                        //sortable: true
-                    }, {
-                        field: 'RefNo',
-                        title: '@HKDG.Resources.Label.ReferenceNumber',
-                        align: 'left',
-                        valign: 'middle',
-                        //sortable: true
+                        sortable: true
                     }, {
                         field: 'Handler',
                         title: '@HKDG.Resources.Label.Handler',
                         align: 'left',
                         valign: 'middle',
                         //sortable: true
-                    }, {
-                        field: 'BatchNo',
-                        title: '@HKDG.Resources.Label.BatchNo',
+                    },
+                    {
+                        field: 'TransDate',
+                        title: '@HKDG.Resources.Label.InventoryFlowTransDate',
                         align: 'left',
                         valign: 'middle',
-                        //sortable: true
-                    }, {
+                        sortable: true
+                    },
+                    {
                         field: 'Remarks',
                         title: '@HKDG.Resources.Label.Remarks',
                         align: 'left',
@@ -453,7 +473,7 @@
             var objDataTable = inventoryFlowListTableInit();
             objDataTable.Init();
 
-            vm.getInventoryFlowRptCaches();
+            //vm.getInventoryFlowRptCaches();
 
             //鍵盤按下回車後進行搜尋操作
             $("input").keyup(function (e) {

@@ -2325,6 +2325,15 @@ namespace HKDG.Resources {
         }
         
         /// <summary>
+        ///   查找类似 PleaseSelectProduct 的本地化字符串。
+        /// </summary>
+        public static string PleaseSelectProduct {
+            get {
+                return ResourceManager.GetString("PleaseSelectProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Please select the product with valid time period to active! The following is a list of error products[{0}]. 的本地化字符串。
         /// </summary>
         public static string PleaseSelectRightTimeProduct {
@@ -2798,6 +2807,15 @@ namespace HKDG.Resources {
         public static string ResetPwdSucceeded {
             get {
                 return ResourceManager.GetString("ResetPwdSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The return qty is greater than sale qty 的本地化字符串。
+        /// </summary>
+        public static string ReturnQtyOverSaleQty {
+            get {
+                return ResourceManager.GetString("ReturnQtyOverSaleQty", resourceCulture);
             }
         }
         
