@@ -26,7 +26,7 @@
         }
 
         /// <summary>
-        /// 当用户接到401状态码时(token过期)调用这个RefreshToken
+        /// RefreshToken
         /// </summary>
         [AllowAnonymous]
         [HttpGet("RefreshToken")]

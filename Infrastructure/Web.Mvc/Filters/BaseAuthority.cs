@@ -61,7 +61,7 @@ namespace Web.Mvc
                 return flag;
             }
 
-            //#region 为了兼容 buydong
+            //#region 沒用，不在這里check,保證這個方法的公用性
             //    string url = $"{Setting.BuyDongWebUrl}/api/account/CheckToken";
             //    var result = await RestClientHelper.HttpGetAsync<SystemResult<string>>(url, token, AuthorizationType.Bearer);
             //    if (!result.Succeeded)
@@ -72,7 +72,7 @@ namespace Web.Mvc
             //        return flag;
             //    }
             //token = result.Message;
-            
+
             //#endregion
 
             string userId = "";
