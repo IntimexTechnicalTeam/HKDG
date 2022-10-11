@@ -1,0 +1,42 @@
+﻿@{
+
+    //ViewData["Obj"]= new { id = Guid.NewGuid(), text = DateTime.Now.ToString() };
+    ViewData["Obj"] = await RedisHelper.HGetAsync("Member", "4cf34da8-2386-49aa-b9ea-61c654382f1f");
+    var IsMobile = ViewBag.IsMobile;
+}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HKDG.WebSite</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HKDG.WebSite.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        @{
+            if (IsMobile) await Html.RenderPartialAsync("~/Views/Shared/MobileHeader.cshtml");
+            else  await Html.RenderPartialAsync("~/Views/Shared/Header.cshtml"); 
+        }
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+
+        @{
+            if (IsMobile) await Html.RenderPartialAsync("~/Views/Shared/MobileFooter.cshtml");
+            else await Html.RenderPartialAsync("~/Views/Shared/Footer.cshtml");
+        }
+
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
