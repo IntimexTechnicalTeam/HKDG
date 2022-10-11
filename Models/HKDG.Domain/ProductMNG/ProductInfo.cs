@@ -173,5 +173,12 @@
         /// 產品驗證圖標
         /// </summary>
         public List<string> ProductIcons { get; set; }
+
+
+        /// <summary>
+        /// 产品图片
+        /// </summary>
+        public List<ProductAttrImgs> ProdAttrImgs { get; set; } = new List<ProductAttrImgs>();
+
     }
 }

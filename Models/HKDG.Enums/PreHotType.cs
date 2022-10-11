@@ -32,5 +32,22 @@
         Hot_PreProductStatistics = 14,
 
         ProductSku,
+
+        /// <summary>
+        /// 产品Icon
+        /// </summary>
+        ProductIcon = 15,
+
+        /// <summary>
+        /// Kol产品佣金表
+        /// </summary>
+        KolProdCommission = 16,
+
+        /// <summary>
+        /// 商家门店自提
+        /// </summary>
+        StorePickUpAddress = 17,
+
+        AllCodeMaster = 18,
     }
 }

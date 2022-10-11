@@ -6,6 +6,10 @@
         PreHeatFavoriteService preHeatFavoriteService;
         PreHeatProductService preHeatProductService;
         PreHeatMerchantService preHeatMerchantService;
+        ISettingBLL settingBLL;
+        IMemberAccountRepository memberAccountRepo;
+        IMemberRepository memberRepo;
+        ITranslationRepository translationRepo;
 
         public MemberBLL(IServiceProvider services) : base(services)
         {
@@ -13,6 +17,10 @@
             preHeatFavoriteService = (PreHeatFavoriteService)Services.GetService(typeof(PreHeatFavoriteService));
             preHeatProductService = (PreHeatProductService)Services.GetService(typeof(PreHeatProductService));
             preHeatMerchantService = (PreHeatMerchantService)Services.GetService(typeof(PreHeatMerchantService));
+            settingBLL = this.Services.Resolve<ISettingBLL>();
+            memberAccountRepo = services.Resolve<IMemberAccountRepository>();
+            memberRepo = services.Resolve<IMemberRepository>();
+            translationRepo = services.Resolve<ITranslationRepository>();
         }
 
         public PageData<MemberDto> SearchMember(MbrSearchCond cond)
@@ -38,6 +46,11 @@
             #endregion
 
             result.TotalRecord = query.Count();
+            if (cond.SortName.IsEmpty()) cond.SortName = "CreateDate";
+            if (cond.SortOrder.IsEmpty()) cond.SortOrder = "Desc";
+
+            var sortBy = (SortType)Enum.Parse(typeof(SortType), cond.SortOrder.ToUpper());
+            query = query.AsQueryable().SortBy(cond.SortName, sortBy).Skip(cond.Offset).Take(cond.PageSize);
 
             result.Data = query.MapToList<Member, MemberDto>();
 
@@ -444,6 +457,311 @@
             }
 
             return result;
+        }
+
+        public List<MbrSpendingRank> GetMbrSpendingRank()
+        {
+
+
+            List<MbrSpendingRank> data = memberRepo.GetMbrSpendingRank();
+
+            foreach (var item in data)
+            {
+                if (!string.IsNullOrEmpty(item.BuyerGroup))
+                    item.BuyerGroup = translationRepo.GetMutiLanguage(new Guid(item.BuyerGroup)).FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc;
+
+            }
+
+            return data;
+
+        }
+
+        /// <summary>
+        /// 獲取用戶信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<MemberDto> GetMember(Guid id)
+        {
+
+            MemberDto memlist = new MemberDto();
+            try
+            {
+                var result = await baseRepository.GetModelAsync<Member>(x => x.Id == id);
+                if (result != null)
+                {
+                    if (settingBLL != null)
+                    {
+                        var langs = settingBLL.GetSupportLanguages();
+                        if (langs != null)
+                        {
+                            result.LanguageName = langs.FirstOrDefault(p => p.Code == result.Language.ToString()).Text ?? "";
+                        }
+                    }
+
+                    result.MallFun = memberAccountRepo.GetMemberFun(result.Id);
+
+                }
+                memlist = AutoMapperExt.MapToList<Member, MemberDto>(result);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return memlist;
+        }
+
+        public bool IsOptOutPromotion(Guid id)
+        {
+            Member result = new Member();
+            try
+            {
+                var member = baseRepository.GetModelById<Member>(id);
+                return member.OptOutPromotion;
+            }
+            catch (BLException blex)
+            {
+                throw blex;
+            }
+            catch (Exception ex)
+            {
+                //SaveError(GetType().FullName, ClassUtility.GetMethodName(), Resources.Message.CreateAccountFaile, ex.Message);
+                throw ex;
+            }
+
+        }
+
+        /// <summary>
+        /// 修改用戶資料
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateMember(MemberDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException();
+            }
+            try
+            {
+                UnitOfWork.IsUnitSubmit = true;//统一提交
+
+                var dbModel = baseRepository.GetModelById<Member>(model.Id);
+                if (dbModel != null)
+                {
+                    if (StringHtmlContentCheck(model))//檢查HTML 內容
+                    {
+                        throw new BLException(Resources.Message.ExistHTMLLabel);
+                    }
+
+                    dbModel.Code = model.Code;
+                    dbModel.GroupId = model.GroupId;
+                    dbModel.Remark = model.Remark;
+                    dbModel.OptOutPromotion = model.OptOutPromotion;
+
+                    baseRepository.Update(dbModel);
+
+                    UnitOfWork.Submit();
+
+                    //LogManager.SaveInfoAsync(LogModuleEnum.BLL.ToString(), LogSysFuncEnum.MemberAcc.ToString(), "UpdateAccount", "更新賬戶,Account=" + dbModel.Email.ToString(), CurrentUser.Id);
+                    return true;
+                }
+                else
+                {
+                    throw new BLException(Resources.Message.AccountNotExist);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new BLException(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 檢查資料中字符串欄位是否帶有HTML標籤內容
+        /// </summary>
+        /// <param name="mInfo"></param>
+        public bool StringHtmlContentCheck(MemberDto mInfo)
+        {
+            if (mInfo != null)
+            {
+                if (StringUtil.CheckHasHTMLTag(mInfo.Code))
+                {
+                    return true;
+                }
+                if (StringUtil.CheckHasHTMLTag(mInfo.Remark))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 启用用戶
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task ActiveMember(Guid[] ids)
+        {
+            //UnitOfWork.IsUnitSubmit = true;//统一提交
+
+            var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+            foreach (var model in dbModel)
+            {
+
+                model.IsApprove = true;
+                model.UpdateDate = DateTime.Now;
+                model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+                //LogManager.SaveInfoAsync(LogModuleEnum.BLL.ToString(), LogSysFuncEnum.MemberAcc.ToString(), "ActiveAccount", "激活賬戶,Account=" + dbModel.Email.ToString(), CurrentUser.Id);
+            }
+            await baseRepository.UpdateAsync(dbModel);
+            //UnitOfWork.Submit();
+        }
+
+
+        /// <summary>
+        /// 恢復用戶
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task Restore(Guid[] ids)
+        {
+            var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+            foreach (var model in dbModel)
+            {
+
+                model.IsDeleted = false;
+                model.UpdateDate = DateTime.Now;
+                model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+                //LogManager.SaveInfoAsync(LogModuleEnum.BLL.ToString(), LogSysFuncEnum.MemberAcc.ToString(), "ActiveAccount", "激活賬戶,Account=" + dbModel.Email.ToString(), CurrentUser.Id);
+            }
+            await baseRepository.UpdateAsync(dbModel);
+        }
+
+        /// <summary>
+        /// 激活用戶
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task EnableMember(Guid[] ids)
+        {
+            if (ids == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            try
+            {
+                var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+
+
+                foreach (var model in dbModel)
+                {
+                    model.IsActive = true;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+
+                }
+                await baseRepository.UpdateAsync(dbModel);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new BLException(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 中止用戶
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task SuspendMember(Guid[] ids)
+        {
+            if (ids == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            try
+            {
+                var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+
+                foreach (var model in dbModel)
+                {
+                    model.IsActive = false;
+                    model.UpdateDate = DateTime.Now;
+                    model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+
+                }
+                await baseRepository.UpdateAsync(dbModel);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new BLException(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 刪除選中用戶（邏輯刪除）
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task DeleteMember(Guid[] ids)
+        {
+            var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+
+            foreach (var model in dbModel)
+            {
+                model.IsDeleted = true;
+                model.UpdateDate = DateTime.Now;
+                model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+
+            }
+            await baseRepository.UpdateAsync(dbModel);
+        }
+
+        /// <summary>
+        /// 批量修改用戶分組
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="targetGroup"></param>
+        public async Task MoveMember(Guid[] ids, Guid targetGroup)
+        {
+            var dbModel = (await baseRepository.GetListAsync<Member>(x => ids.Contains(x.Id))).ToList();
+
+            foreach (var model in dbModel)
+            {
+                model.GroupId = targetGroup;
+                model.UpdateDate = DateTime.Now;
+                model.UpdateBy = Guid.Parse(CurrentUser.UserId);
+
+            }
+            await baseRepository.UpdateAsync(dbModel);
+        }
+
+        public List<MallFunHistoryView> GetMallFunHistory(FunCond cond)
+        {
+            try
+            {
+                return memberAccountRepo.GetMallFunHistory(cond);
+
+            }
+            catch (Exception ex)
+            {
+                throw new BLException(ex.Message);
+            }
+        }
+
+        public PageData<MemberDto> Search(MbrSearchCond condition)
+        {
+            var a = memberRepo.SearchMember(condition);
+            return a;
         }
     }
 }

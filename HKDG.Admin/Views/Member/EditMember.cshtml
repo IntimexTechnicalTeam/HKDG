@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Modify";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div id="app" v-cloak>
+    <div id="myModal">
+        <fieldset>
+            <legend>@HKDG.Resources.Label.DetailsAndModify</legend>
+            <input type="hidden" id="hidMemberID" v-model="items.MemberId" />
+
+            <table class="table table-striped">
+                @*<tr >
+                        <td class="col-md-2">
+                            <strong class="text-success">@HKDG.Resources.Label.ClientCodeWithSymbol</strong>
+
+                        </td>
+                        <td class="col-md-10">
+                            <input type="text" class="form-control" style="width:300px;" v-model="items.Code" />
+                        </td>
+                    </tr>*@
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.EmailAddressWithSymbol</strong>
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.Email}}</div>
+                    </td>
+                </tr>
+                @*<tr>
+                        <td class="col-md-2">
+                            <strong class="text-success">@HKDG.Resources.Label.PasswordWithSymbol</strong>
+
+                        </td>
+                        <td class="col-md-10">
+                            <div>{{items.Password}}</div>
+                        </td>
+                    </tr>*@
+            </table>
+            <table class="table table-striped">
+                <caption>
+                    <strong>@HKDG.Resources.Label.ForInternalUseOnly</strong>
+                </caption>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.MemberClassification</strong>
+                    </td>
+                    <td class="col-md-10">
+                        <select id="cboBuyerGroup" class="form-control" style="width:300px;"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.MemberCommentWithSymbol</strong>
+                    </td>
+                    <td class="col-md-10">
+                        <input type="text" class="form-control" style="width:600px;" v-model="items.Remark" />
+                    </td>
+                </tr>
+
+            </table>
+            <table class="table table-striped">
+                <caption>
+                    <strong>@HKDG.Resources.Label.MemberInformation</strong>
+                </caption>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.JoiningDateWithSymbol</strong>
+
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.CreateDate}}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.FirstNameWithSymbol</strong>
+
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.FirstName}}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.LastNameWithSymbol</strong>
+
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.LastName}}</div>
+                    </td>
+                </tr>
+                @*<tr>
+                        <td class="col-md-2">
+                            <strong class="text-success">@HKDG.Resources.Label.GenderWithSymbol</strong>
+
+                        </td>
+                        <td class="col-md-10">
+                            <div v-if="items.Gender">@HKDG.Resources.Label.Male</div>
+                            <div v-if="!items.Gender && items.Gender!=null">@HKDG.Resources.Label.Female</div>
+                        </td>
+                    </tr>*@
+                @*<tr>
+                        <td class="col-md-2">
+                            <strong class="text-success">@HKDG.Resources.Label.DateOfBirthWithSymbol</strong>
+
+                        </td>
+                        <td class="col-md-10">
+                            <div>{{items.BirthDate}}</div>
+                        </td>
+                    </tr>*@
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.MobileWithSymbol</strong>
+
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.Mobile}}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.LanguageWithSymbol</strong>
+
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.LanguageName}}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.OptOutForReceivingNewsLetter</strong>
+                    </td>
+                    <td class="col-md-10">
+                        <ul class="list-inline">
+                            <li id="showopt">
+                                <input type="checkbox" id="chkOpt" value="true" v-model="items.OptOutPromotion" />
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">
+                        <strong class="text-success">@HKDG.Resources.Label.MallFun</strong>
+                    </td>
+                    <td class="col-md-10">
+                        <div>{{items.MallFun}}</div>
+                    </td>
+                </tr>
+
+            </table>
+        </fieldset>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-primary" v-on:click="save" style="width:200px;">@HKDG.Resources.Action.Save</button>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .modal-foot {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+    }
+</style>
+
+
+
+@section scripts
+    {
+
+    @*@Scripts.Render("~/bundles/ueditor")*@
+    <script src="~/Scripts/admin/vue-component/multilangbar.js"></script>
+    <link href="~/Scripts/bootstrap-duallistbox-master/css/bootstrap-duallistbox.min.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap-duallistbox-master/js/jquery.bootstrap-duallistbox.min.js"></script>
+    <script type="text/javascript">
+
+       // var params = bDialog.getDialogParams();
+        var id = '@ViewBag.Id';
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                MemID: "",
+                items: {
+                    Id: "",
+                    FirstName: "",
+                    LastName: "",
+                    Email: "",
+                    Password: "",
+                    Mobile: "",
+                    IsActivated: "",
+                    IsSuspend: "",
+                    CreateDate: "",
+                    BirthDate: "",
+                    Language: "",
+                    LanguageName: "",
+                    Code: "",
+                    Fax: "",
+                    Website: "",
+                    Remark: "",
+                    GroupId: null,
+                    Account: "",
+                    OptOutPromotion: "",
+                    MallFun:0
+
+                },
+                OptOutReceivingSelect:[]
+                },
+                methods: {
+                    getMember: function () {
+                        var data = new Object();
+                        data.id = id;
+                        WS.AjaxP("get",
+                            "/adminapi/Member/GetMember",
+                            data,
+                            function(response) {
+                                vm.items = response;
+                                $("#cboBuyerGroup").selectpicker('val', vm.items.GroupId);
+
+                            },
+                            function() {});
+                    },
+                    getOpt: function () {
+                        var data = new Object();
+                        data.id = id;
+                        WS.AjaxP("get",
+                            "/adminapi/Member/GetMemberOpt",
+                            data,
+                            function(response) {
+                                vm.OptOutReceivingSelect.push(response.OptOutReceiving);
+                            },
+                            function() {});
+                    },
+
+
+
+                    //Close: function () {
+                    //    bDialog.closeCurrent();
+                    //},
+
+                    save: function () {
+                        save();
+                    }
+                }
+        });
+        function save() {
+            vm.items.OptOutReceiving = vm.OptOutReceivingSelect;
+            vm.items.GroupId = $("#cboBuyerGroup").val();
+            if (vm.items.GroupId == "" || vm.items.GroupId == null)
+                vm.items.GroupId = WS.GuidEmpty;
+            var data = new Object();
+            WS.AjaxP("post",
+                "/adminapi/Member/SaveMember",
+                vm.items,
+                function(response) {
+                    if (response.Succeeded == true) {
+                        showCloseInfo('@HKDG.Resources.Message.SaveSuccess');
+                        @*clowWin();*@
+                    } else {
+                        showWarn('@HKDG.Resources.Message.SaveFail');
+                    }
+                },
+                function() {});
+
+        }
+
+
+        $(document).ready(function () {
+            //vm.MemID = params.MemID;
+            $("#showopt").find("input[type=checkbox]").bind("click", function () {
+
+                vm.OptOutReceivingSelect.splice(0, vm.OptOutReceivingSelect.length);
+                if ($(this)[0].checked == true) {
+                    vm.OptOutReceivingSelect.push($(this).val());
+                }
+            });
+
+            InitNormalTreeSelect("cboBuyerGroup", "/adminapi/MemberGroup/GetBuyerGroupsSelect", true, '', false);
+
+            vm.getMember();
+
+            vm.getOpt();
+        });
+    </script>
+}

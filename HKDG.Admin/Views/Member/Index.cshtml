@@ -1,0 +1,721 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="panel-group" id="memberapp" v-cloak>
+    <table class="table">
+        <tr>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.EmailAddressWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.EmailAdd" style="width: 300px;" />
+            </td>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.ClientCodeWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.Code" style="width: 300px;" />
+            </td>
+        </tr>
+        <tr>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.FirstNameWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.FirstName" style="width:300px;" />
+            </td>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.LastNameWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.LastName" style="width:300px;" />
+            </td>
+
+        </tr>
+    </table>
+
+    <div id="collapseOne" class="panel-collapse collapse">
+        <table class="table table-condensed">
+            <tr>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.PhoneWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <input type="text" class="form-control" v-model="condition.Mobile" style="width:300px;" />
+                </td>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.MemberGroupWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <select id="cboBuyerGroup" class="form-control" style="width:300px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.MemberDateWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <div class="form-inline">
+                        <input name="DateTimePicker" type="text" class="form-control" id="DateB" style="width: 300px;">
+                        @HKDG.Resources.Label.To
+                        <input name="DateTimePicker" type="text" class="form-control" id="DateE" style="width: 300px;">
+                    </div>
+                </td>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.OutForReceiving
+                </td>
+                <td class="col-xs-5">
+                    <select id="cboOpt" class="form-control" style="width:300px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.StatusAccount
+                </td>
+                <td class="col-xs-11" colspan="3">
+
+                    <ul class="list-inline">
+                        <li>
+                            <label for="chkActive">@HKDG.Resources.Label.Approved</label>
+                            <select id="chkActive" v-model="condition.Approve">
+                                <option>@HKDG.Resources.Message.PleaseSelect</option>
+                                <option value="false">@HKDG.Resources.Label.No</option>
+                                <option value="true">@HKDG.Resources.Label.Yes</option>
+                            </select>
+
+                        </li>
+                    </ul>
+
+                    <ul class="list-inline">
+                        <li>
+                            <label for="chkActive">@HKDG.Resources.Label.Active</label>
+                            <select id="chkActive" v-model="condition.Active">
+                                <option>@HKDG.Resources.Message.PleaseSelect</option>
+                                <option value="false">@HKDG.Resources.Label.No</option>
+                                <option value="true">@HKDG.Resources.Label.Yes</option>
+                            </select>
+                        </li>
+                    </ul>
+
+                    <ul class="list-inline">
+                        <li>
+                            <label for="chkActive">@HKDG.Resources.Label.Delete</label>
+                            <select id="chkActive" v-model="condition.Deleted">
+                                <option>@HKDG.Resources.Message.PleaseSelect</option>
+                                <option value="false">@HKDG.Resources.Label.No</option>
+                                <option value="true">@HKDG.Resources.Label.Yes</option>
+                            </select>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>@HKDG.Resources.Label.LanguageWithSymbol</td>
+                <td>
+                    <ul class="list-inline" id="sLang">
+                        <li v-for="pLang in Langs">
+                            <input type="checkbox" v-bind:id="pLang.Lang.Code" v-model="pLang.Desc" />
+                            <label v-bind:for="pLang.Lang.Code">{{pLang.Lang.Text}}</label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table>
+        <tr>
+            <td class="col-xs-12">
+                <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.Search" onclick="search();" />
+                <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.ExtraCondition" data-toggle="collapse" data-target="#collapseOne" />
+            </td>
+        </tr>
+    </table>
+
+
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="divMemberOptions">
+            <div>
+                <div class="panel-body">
+                    <div id="toolbar" class="btn-group">
+                        <button id="btn_Memedit" type="button" class="btn btn-default" v-on:click="mbrmodify" v-bind:disabled="IsModify">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>@HKDG.Resources.Action.Modify
+                        </button>
+                        <button id="btn_Memactivate" type="button" class="btn btn-default" v-on:click="mbrActivate" v-bind:disabled="IsActived">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>@HKDG.Resources.Action.ActivateAccount
+                        </button>
+                        <button id="btn_Memsuspend" type="button" class="btn btn-default" v-on:click="mbrSuspend" v-bind:disabled="IsEnable">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>@HKDG.Resources.Action.DisableAccount
+                        </button>
+                        <button id="btn_MemEnable" type="button" class="btn btn-default" v-on:click="mbrEnable" v-bind:disabled="IsDisable">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>@HKDG.Resources.Action.EnableAccount
+                        </button>
+                        <button id="btn_Memdelete" type="button" class="btn btn-default" v-on:click="mbrDelete" v-bind:disabled="IsDelete">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>@HKDG.Resources.Action.DeleteAccount
+                        </button>
+                        <button id="btn_MemRestore" type="button" class="btn btn-default" v-on:click="restore" v-bind:disabled="IsModify">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>@HKDG.Resources.Action.Restore
+                        </button>
+                        @*<button id="btn_MemUpload" type="button" class="btn btn-default" v-on:click="MemUpload">
+                                <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>上传区
+                            </button>*@
+                        @*<button id="btn_Memnew" type="button" class="btn btn-default" v-on:click="MemNewsletter">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>加入宣传名单
+                            </button>*@
+                        @*<button id="btn_Memrespon" type="button" class="btn btn-default" v-on:click="MemRespondPassword">
+                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>重寄密码
+                            </button>*@
+                    </div>
+                    <table id="tblMember"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @*<script src="~/Scripts/vue/RelationCombobox.js"></script>*@
+    <script type="text/javascript">
+        var btime = "@ViewBag.BDate";
+        var etime = "@ViewBag.EDate";
+        layui.use(['miniTab'], function () {
+            var layer = layui.layer,
+                miniTab = layui.miniTab;
+        });
+        var vm = new Vue({
+            el: "#memberapp",
+            data: {
+                MemTitle: "",
+                MemID: "",
+                IsModify: true,
+                IsActived: true,
+                IsDisable: true,
+                IsEnable:true,
+                IsDelete: true,
+                condition: {
+                    RegDateFrom: "",
+                    RegDateTo: "",
+                    EmailAdd: "",
+                    Code: "",
+                    FirstName: "",
+                    LastName: "",
+                    Mobile: "",
+                    BuyerGroup: "",
+                    Language: [],
+                    Active: null,
+                    OutForReceiving: "",
+                    Deleted: false,
+                    Approve:true
+                },
+                Langs: [{ Lang: { Code: "", Text: "" }, Desc: "" }]
+            },
+            methods: {
+                memberData: function () {
+                    $("#tblMember").bootstrapTable("refresh", { url: "/adminapi/Member/MemberTableData", pageNumber: 1 });
+                },
+
+                mbrmodify: function () {
+                    var a = $("#tblMember").bootstrapTable('getSelections');
+
+                    var id = a[0].Id;
+
+                    @*parent.setSrcTobTab("ModifyAndDetail_" + id, a[0].LastName + " " + a[0].FirstName + "_" + '@HKDG.Resources.Action.DetailsAndModify', "/Member/MemberDetail/" + id, true);*@
+                    var tabId = self.frameElement.parentElement.id;
+                    miniTab.openNewTabByIframe({
+                        href:"/Member/EditMember/" + id,
+                        title: '@HKDG.Resources.Action.Modify' + "-" + a[0].LastName + " " + a[0].FirstName,
+                        callback: vm.memberData
+                    });
+                },
+
+
+
+
+                mbrActivate: function () {
+                    var a = $("#tblMember").bootstrapTable('getSelections');
+
+
+                    if (a.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.DetermineActivation', function () {
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/ActiveMember",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                    vm.IsModify = true;
+                                    vm.IsActived = true;
+                                    vm.IsDisable = true;
+                                    vm.IsDelete = true;
+                                },
+                                function () { });
+
+                        });
+                    } else {
+                        showWarn('@HKDG.Resources.Message.OneSelect');
+                    }
+                },
+                 restore: function () {
+                    var a = $("#tblMember").bootstrapTable('getSelections');
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/Restore",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                    vm.IsModify = true;
+                                    vm.IsActived = true;
+                                    vm.IsDisable = true;
+                                    vm.IsEnable = true;
+                                    vm.IsDelete = true;
+                                },
+                                function () { });
+
+
+
+                },
+                 mbrEnable: function () {
+                      var a = $("#tblMember").bootstrapTable('getSelections');
+
+
+                    if (a.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.DetermineDisable', function () {
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/EnableMember",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                    vm.IsModify = true;
+                                    vm.IsActived = true;
+                                    vm.IsDisable = true;
+                                    vm.IsEnable = true;
+                                    vm.IsDelete = true;
+                                },
+                                function () { });
+
+                        });
+                    } else {
+                        showWarn('@HKDG.Resources.Message.OneSelect');
+                    }
+                 },
+                mbrSuspend: function () {
+                    var a = $("#tblMember").bootstrapTable('getSelections');
+
+
+                    if (a.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.DetermineDisable', function () {
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/SuspendMember",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                    vm.IsModify = true;
+                                    vm.IsActived = true;
+                                    vm.IsDisable = true;
+                                    vm.IsEnable = true;
+                                    vm.IsDelete = true;
+                                },
+                                function () { });
+
+                        });
+                    } else {
+                        showWarn('@HKDG.Resources.Message.OneSelect');
+                    }
+
+                },
+
+                mbrDelete: function () {
+                    var a = $("#tblMember").bootstrapTable('getSelections');
+                    if (a.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.ConfirmDelete', function () {
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/DeleteMember",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                },
+                                function () { });
+
+                        });
+                    } else {
+                        showWarn('@HKDG.Resources.Message.PleaseSelect');
+                    }
+                },
+
+
+                SetButtonState: function () {
+                    var selected = $("#tblMember").bootstrapTable("getSelections");
+
+                    if (selected.length == 0) {
+                        vm.IsModify = true;
+                        vm.IsActived = true;
+                        vm.IsDisable = true;
+                        vm.IsEnable = true;
+                        vm.IsDelete = true;
+                        return;
+                    }
+
+                    if (selected.length == 1) {
+                        vm.IsModify = false;
+                    }
+                    else {
+                        vm.IsModify = true;
+                    }
+
+                    var allY = false;
+                    var allN = false;
+                    var allApprove = false;
+                    var par = "";
+                    for (var i = 0; i < selected.length; i++) {
+
+                        if (i == 0) {
+                            allY = selected[i].IsActive;
+                            allN = !selected[i].IsActive;
+                            allApprove = selected[i].IsApprove;
+                        }
+                        else {
+                            if (!selected[i].IsActive) {
+                                allY = false;
+                                allN = false;
+                            }
+
+                            if (!selected[i].IsApprove) {
+                                allApprove = false;
+                            }
+                        }
+
+                    }
+
+                    vm.IsEnable = !allY;
+                    vm.IsDisable = !allN;
+                    vm.IsActived = allApprove;
+
+                    if (selected.length >= 1) {
+                        vm.IsDelete = false;
+                    }
+                    else {
+                        vm.IsDelete = true;
+                    }
+                }
+            }
+        });
+
+        var MemberTableInit = function () {
+
+            var oTableInit = new Object();
+            oTableInit.Init = function () {
+
+                $("#tblMember").bootstrapTable({
+                    method: 'post',                      //请求方式（*）
+                    //url: '/adminapi/Attribute/GetSelfDefineAttribute',         //请求后台的URL（*）
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    //queryParamsType:'limit',
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: true,                        //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    sortable: true,                    //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    smartDisplay: false,
+                    showRefresh: true,                  //是否显示刷新按钮
+                    clickToSelect: true,                //是否启用点击选中行
+                    //height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                    uniqueId: "Id",               //每一行的唯一标识，一般为主键列
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                  //是否显示父子表
+                    pagination: true,                   //是否显示分页（*）
+                    dataField: "Data",
+                    totalField: "TotalRecord",
+                    ajaxOptions: {
+                        beforeSend: function (request) {
+                            var access_token = $.cookie("access_token");
+                            request.setRequestHeader("Authorization", "Bearer " + access_token);
+                        }
+                    },
+                    onCheck: function (row) {
+                        vm.SetButtonState();
+                    },
+                    onUncheck: function (row) {
+                        vm.SetButtonState();
+                    },
+                    onCheckAll: function (rows) {
+                        vm.SetButtonState();
+                    },
+                    onUncheckAll: function (rows) {
+                        vm.SetButtonState();
+                    },
+                    columns: [{
+                        checkbox: true
+                    }, {
+                        field: 'Id',
+                        title: 'id',
+                        visible: false
+                    }, {
+                        field: 'LastName',
+                        title: '@HKDG.Resources.Label.MemberName',
+                        events: operateEvents,
+                        formatter: function (val, row, index) {
+                            var lastName = row.LastName;
+                            var firstName = row.FirstName;
+                            return '<a class="Readonly btn btn-link">' + lastName + ' ' + firstName + '</a>';
+                        },
+                        sortable: true,
+                    }, {
+                        field: 'Email',
+                        title: '@HKDG.Resources.Label.Email',
+                        sortable: true,
+                    }, {
+                        field: 'Code',
+                        title: '@HKDG.Resources.Label.Code',
+                        sortable: true,
+                    }, {
+                        field: 'Mobile',
+                        title: '@HKDG.Resources.Label.Mobile',
+                        sortable: true,
+                    }, {
+                        field: 'CreateDate',
+                        title: '@HKDG.Resources.Label.CreateDate',
+                        sortable: true,
+                    }, {
+                        field: 'LanguageName',
+                        title: '@HKDG.Resources.Label.Language',
+                        sortable: true,
+                    }, {
+                        field: 'IsActive',
+                        title: '@HKDG.Resources.Label.IsActive',
+                        formatter: function (value) { return value == true ? '@HKDG.Resources.Label.Yes' : '@HKDG.Resources.Label.No' }
+
+                    }, {
+                        field: 'IsApprove',
+                        title: '@HKDG.Resources.Label.Approved',
+                        formatter: function (value) { return value == true ? '@HKDG.Resources.Label.Yes' : '@HKDG.Resources.Label.No' }
+                        },
+                        {
+                        field: 'IsDeleted',
+                        title: '@HKDG.Resources.Label.IsDeleted',
+                        formatter: function (value) { return value == true ? '@HKDG.Resources.Label.Yes' : '@HKDG.Resources.Label.No' }
+                     }],
+                    formatLoadingMessage: function () {
+                        //return '<%=Resources.Message.Processing%>';
+                        return '';
+                    }
+                });
+            };
+            oTableInit.queryParams = function (params) {
+
+                var page = 1;
+                if (params.offset > 0) {
+                    page = parseInt(params.offset / params.limit) + 1;
+                }
+
+                var langs = new Array();
+                vm.Langs.forEach(function (val, index) {
+                    if (val.Desc == true || val.Desc == "true") {
+                        langs.push(val.Lang.Code);
+                    }
+                });
+
+
+                vm.condition.Language = langs;
+                vm.condition.Page = page;
+                vm.condition.PageSize = params.limit;
+                if (params.sort) {
+                    vm.condition.SortName = params.sort;
+                    vm.condition.SortOrder = params.order;
+                }
+                else
+                {
+                    vm.condition.SortName = "Email";
+                    vm.condition.SortOrder = "ASC";
+                }
+                
+                return vm.condition;
+            }
+
+            return oTableInit;
+        }
+
+        function search() {
+            vm.condition.BuyerGroup = $("#cboBuyerGroup").val();
+            if (vm.condition.BuyerGroup == "-1")
+                vm.condition.BuyerGroup = WS.GuidEmpty;
+            var a = "Yes";
+            var b = "是";
+            var c = $("#cboOpt").val();
+            if (c == a) {
+                c = true;
+            }
+            else if (c == b) {
+                c = true;
+            }
+            else if (c == -1) {
+                c = "";
+            }
+            else {
+                c = false;
+            }
+            vm.condition.OutForReceiving = c;
+            vm.condition.RegDateFrom = $("#DateB").val();
+            vm.condition.RegDateTo = $("#DateE").val();
+
+
+            vm.memberData();
+        }
+
+
+        function show2Modal() {
+            $("#myModal").block({
+                message: $('#myModal2'),
+                css: {
+                    'width': '500px',
+                    'border': '1px',
+                    'border-radius': '6px',
+                    'box-shadow': '0 5px 15px rgba(0,0,0,.5)',
+                    'cursor': 'default'
+                },
+                overlayCSS: { backgroundColor: '#000', opacity: '0', cursor: 'defalut' }
+            });
+        }
+
+        function CheckBoxClick(me) {
+            $(me).find(':checkbox').click();
+        }
+
+        function setRadio(radioObj) {
+            var radioCheck = $(radioObj).val();
+            if ("1" == radioCheck) {
+                $(radioObj).attr("checked", false);
+                $(radioObj).val("0");
+            } else {
+                $(radioObj).val("1");
+            }
+        }
+
+        function InitLanguages() {
+            WS.AjaxP("get", "/adminapi/dict/GetUseLanguage", null, function (response) {
+                vm.Langs = response;
+            }, function () { });
+        }
+
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+
+        $(document).ajaxStop(function () {
+            hideLoading();
+        });
+
+        window.operateEvents = {
+            'click .Readonly': function (e, value, row, index) {
+                var objDatas = $("#tblMember").bootstrapTable("getData");
+                var strId = objDatas[index].Id;
+                var strWSName = objDatas[index].FullName.replace("'", "&acute;");
+                var strEditType = "Readonly";
+                var strTabId = "Modify_" + strId;
+                var tabId = self.frameElement.parentElement.id;
+                miniTab.openNewTabByIframe({
+                    href: "/Member/EditMember/" + strId,
+                    title: '@HKDG.Resources.Action.Modify' + "-" + strWSName,
+                    callback: vm.memberData
+                });
+            }
+        };
+
+        $(document).ready(function () {
+            InitDateTimePicker();
+            InitLanguages();
+            InitNormalTreeSelect("cboBuyerGroup", "/adminapi/MemberGroup/GetBuyerGroupsSelect", true);
+            InitNormalSelect("cboOpt", "/adminapi/Dict/GetWhether", true, null, false);
+            document.getElementById("DateB").value = btime;
+            document.getElementById("DateE").value = etime;
+            var oTable = MemberTableInit();
+            oTable.Init();
+            //InitlanguageChoose();
+
+            setTimeout(search, 1000);
+
+        });
+    </script>
+}

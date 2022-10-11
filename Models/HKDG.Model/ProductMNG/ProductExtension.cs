@@ -85,5 +85,11 @@
         [Column(Order = 17, TypeName = "varchar")]
         [StringLength(50)]
         public string HSCode { get; set; }
+
+        /// <summary>
+        /// 是否显示成人选项
+        /// </summary>
+        [Column(Order = 18)]
+        public bool IsShowAdult { get; set; }
     }
 }

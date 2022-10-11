@@ -269,5 +269,14 @@
         PageData<ExpressCompanyView> GetExpress(ExpressSearchCond cond);
 
         List<CountryZoneView> GetProvinceByCountryZoneForSelect(Guid zoneid, Guid id);
+
+        /// <summary>
+        /// 商家门店自提地址
+        /// </summary>
+        /// <param name="MerchantId"></param>
+        /// <returns></returns>
+        Task<List<KeyValueAddress>> GetStorePickUpAddress(Guid MerchantId);
+
+        SystemResult GetExpressChargeListByCode(ExpressCondition exCond);
     }
 }

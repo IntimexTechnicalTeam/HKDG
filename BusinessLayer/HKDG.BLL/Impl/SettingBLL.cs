@@ -300,5 +300,10 @@ namespace HKDG.BLL
             }
             return 14;
         }
+
+        public double GetSalePriceTaxRate()
+        {
+            return 0;
+        }
     }
 }

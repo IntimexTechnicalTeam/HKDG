@@ -4,6 +4,16 @@ namespace HKDG.Domain
 {
     public class MemberDto
     {
+
+        public MemberDto()
+        {
+            CreateDate = DateTime.Now;
+            CreateBy = Guid.Empty;
+            UpdateDate = DateTime.Now;
+            UpdateBy = Guid.Empty;
+            IsActive = true;
+            IsDeleted = false;
+        }
         public Guid Id { get; set; }
 
         /// <summary>
@@ -61,8 +71,8 @@ namespace HKDG.Domain
         /// <summary>
         /// 会员编码
         /// </summary>
-      
-        public Guid GroupId { get; set; }
+
+        public Guid GroupId { get; set; } = Guid.Empty;
 
 
         public string CurrencyCode { get; set; }
@@ -105,6 +115,19 @@ namespace HKDG.Domain
        
         public int? ThirdPartyType { get; set; }
 
-    
+        public bool IsActive { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+
+        public DateTime CreateDate { get; set; }
+
+
+        public DateTime? UpdateDate { get; set; }
+
+        public Guid CreateBy { get; set; }
+
+
+        public Guid? UpdateBy { get; set; }
     }
 }

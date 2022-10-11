@@ -76,5 +76,11 @@
 
         [Column(Order = 25)]
         public Guid KolId { get; set; }
+
+        /// <summary>
+        /// 是否选中
+        /// </summary>
+        [Column(Order = 26)]
+        public bool IsSelected { get; set; }
     }
 }

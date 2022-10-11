@@ -18,10 +18,12 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     public class SalesReportController : BaseApiController
     {
         ISalesReportBLL salesReportBLL;
+        IMemberBLL memberBLL;
 
         public SalesReportController(IComponentContext services) : base(services)
         {
             salesReportBLL = Services.Resolve<ISalesReportBLL>();
+            memberBLL = Services.Resolve<IMemberBLL>();
         }
 
         /// <summary>
@@ -85,6 +87,13 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
         {
             var data = salesReportBLL.GetWaitingApproveProdLst(getQty);
             return data;
+        }
+
+        [HttpGet]
+        public RegSummary GetMbrSummary()
+        {
+            var mbrSummary = memberBLL.GetRegSummary();
+            return mbrSummary;
         }
     }
 }

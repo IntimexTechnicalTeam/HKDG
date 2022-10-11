@@ -1,0 +1,234 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+
+<div class="panel-group" id="app">
+
+    <table class="table table-condensed">
+        <tr>
+            <td class="col-md-2">
+                <form class="form-inline">
+                    @HKDG.Resources.Label.MembersBelongBuyerGroup
+                    <select id="memBuyerGroup" class="form-control" style="width:300px;" onchange="Search();"@*onclick=""*@></select>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <tr>
+        <td>@HKDG.Resources.Label.LanguageWithSymbol</td>
+        <td>
+            <ul class="list-inline" id="sLang">
+                <li v-for="pLang in Langs">
+                    <input type="checkbox" v-bind:id="pLang.Lang.Code" v-model="pLang.Desc" />
+                    <label v-bind:for="pLang.Lang.Code">{{pLang.Lang.Text}}</label>
+                </li>
+            </ul>
+        </td>
+    </tr>
+    
+
+    <table id="tblMemberList"></table>
+
+    <table class="table table-condensed">
+        <tr>
+            <td class="col-md-2">
+                <form class="form-inline">
+                    <input type="button" class="btn btn-primary" value="@HKDG.Resources.Action.Move" v-on:click="move" />
+                    @HKDG.Resources.Label.TheSelectedMember
+                    <select id="cboBuyerGroup" class="form-control" style="width:300px;"></select>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                MemTitle: "",
+                MemID: "",
+                someDynamicCondition: "",
+                condition: {
+                    // DateRange: "",
+                    GroupID: "",
+                    EmailAdd: "",
+                    ClientCode: "",
+                    FirstName: "",
+                    LastName: "",
+                    Mobile: "",
+                    Language: [],
+                    BuyerGroup: "",
+                    OutForReceiving: "",
+                },
+                Langs: [{ Lang: { Code: "", Text: "" }, Desc: "" }]
+            },
+            methods: {
+                memberData: function () {
+                    $("#tblMemberList").bootstrapTable("refresh", { url: "/adminapi/Member/MemberTableData" });
+                },
+
+                move: function () {
+                    var a = $("#tblMemberList").bootstrapTable('getSelections');
+
+
+                    if (a.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.ConfirmMoveMember', function () {
+
+                            var listindex = "";
+
+                            for (var i = 0; i < a.length; i++) {
+                                if (listindex == "") {
+                                    listindex = a[i].Id;
+                                }
+                                else {
+                                    listindex += "," + a[i].Id;
+                                }
+
+                            }
+
+                            var data = new Object();
+                            data.ids = listindex;
+                            data.groupId = $("#cboBuyerGroup").val();
+
+                            WS.AjaxP("get",
+                                "/adminapi/Member/MoveMember",
+                                data,
+                                function (response) {
+                                    vm.memberData();
+                                },
+                                function () { });
+
+                        });
+                    } else {
+                        showWarn('@HKDG.Resources.Message.OneSelect');
+                    }
+                }
+            }
+        });
+
+        var MemberListTableInit = function () {
+
+            var oTableInit = new Object();
+            oTableInit.Init = function () {
+
+                $("#tblMemberList").bootstrapTable({
+                    method: 'post',                      //请求方式（*）
+                    //url: '/adminapi/Attribute/GetSelfDefineAttribute',         //请求后台的URL（*）
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    //queryParamsType:'limit',
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: true,                        //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    sortable: true,                    //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    smartDisplay: false,
+                    showRefresh: true,                  //是否显示刷新按钮
+                    clickToSelect: true,                //是否启用点击选中行
+                    // height: 400,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                    uniqueId: "Id",               //每一行的唯一标识，一般为主键列
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                  //是否显示父子表
+                    pagination: true,                   //是否显示分页（*）
+                    dataField: "Data",
+                    totalField: "TotalRecord",
+                    ajaxOptions: {
+                        beforeSend: function (request) {
+                            var access_token = $.cookie("access_token");
+                            request.setRequestHeader("Authorization", "Bearer " + access_token);
+                        }
+                    },
+
+                    columns: [{
+                        checkbox: true
+                    }, {
+                        field: 'Id',
+                        title: 'id',
+                        visible: false
+                    }, {
+                        field: 'LastName',
+                        title: '@HKDG.Resources.Label.MemberName',
+                        formatter: function (val, row, index) {
+                            return row.LastName + ' ' + row.FirstName;
+                        }
+                    }, {
+                        field: 'Email',
+                        title: '@HKDG.Resources.Label.Email'
+                    }, {
+                        field: 'Mobile',
+                        title: '@HKDG.Resources.Label.Mobile'
+                    }, {
+                        field: 'CreateDate',
+                        title: '@HKDG.Resources.Label.CreateDate'
+                    }, {
+                        field: 'IsActive',
+                        title: '@HKDG.Resources.Label.IsActive',
+                        formatter: function (value) { return value == true ? '@HKDG.Resources.Label.Yes' : '@HKDG.Resources.Label.No' }
+                    }],
+                    formatLoadingMessage: function () {
+                        return '';
+                    }
+                });
+            };
+            oTableInit.queryParams = function (params) {
+                var langs = new Array();
+                vm.Langs.forEach(function (val, index) {
+                    if (val.Desc == true || val.Desc == "true") {
+                        langs.push(val.Lang.Code);
+                    }
+                });
+                vm.condition.Language = langs;
+                return vm.condition;
+            }
+
+            return oTableInit;
+        }
+
+        function Search() {
+
+            vm.condition.BuyerGroup = $("#memBuyerGroup").val();
+            vm.memberData();
+        }
+        function show2Modal() {
+            $("#myModal").block({
+                message: $('#myModal2'),
+                css: {
+                    'width': '500px',
+                    'border': '1px',
+                    'border-radius': '6px',
+                    'box-shadow': '0 5px 15px rgba(0,0,0,.5)',
+                    'cursor': 'default'
+                },
+                overlayCSS: { backgroundColor: '#000', opacity: '0', cursor: 'defalut' }
+            });
+        }
+
+        function CheckBoxClick(me) {
+            $(me).find(':checkbox').click();
+        }
+
+        function InitLanguages() {
+            WS.AjaxP("get", "/adminapi/dict/GetUseLanguage", null, function (response) {
+                vm.Langs = response;
+            }, function () { });
+        }
+
+
+        $(document).ready(function () {
+            InitLanguages();
+            InitNormalTreeSelect("memBuyerGroup", "/adminapi/MemberGroup/GetBuyerGroupsSelect", true, '');
+            InitNormalTreeSelect("cboBuyerGroup", "/adminapi/MemberGroup/GetBuyerGroupsSelect", true, '');
+            var oTable = MemberListTableInit();
+            oTable.Init();
+            vm.memberData();
+        });
+</script>
+}

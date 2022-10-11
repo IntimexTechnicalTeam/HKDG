@@ -45,5 +45,11 @@
 
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
+
+        /// <summary>
+        /// IsSelected
+        /// </summary>
+        [Column(Order = 9)]
+        public bool IsSelected { get; set; } = false;
     }
 }

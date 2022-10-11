@@ -2,6 +2,7 @@
 {
     public enum PromotionRuleType
     {
+        None,
         /// <summary>
         /// 買X送Y件
         /// </summary>

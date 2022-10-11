@@ -8,5 +8,7 @@
         /// <param name="item"></param>
         /// <returns></returns>
         ShoppingCartItemDetailDto GetItemDetail(ShoppingCartItem item);
+
+        Task<KeyValue> GenMallCartProductAttr(Guid AttrId, Guid AttrValueId);
     }
 }

@@ -64,5 +64,7 @@
 
         public SimpleCurrency Currency { get; set; }
         public SimpleCurrency Currency2 { get; set; }
+
+        public int SafetyStock { get; set; } = 0;
     }
 }

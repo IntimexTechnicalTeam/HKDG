@@ -29,5 +29,10 @@
         public string StationCode { get; set; }
 
         public List<ProductWeightInfo> ProductWeightInfo { get; set; }
+        public string CCode { get; set; }
+        public string TCode { get; set; }
+
+        //多個商家Id
+        public List<Guid> MerchantIds { get; set; } = new List<Guid>();
     }
 }

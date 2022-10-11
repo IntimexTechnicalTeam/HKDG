@@ -1052,6 +1052,8 @@
                 view.IsFavorite = favoriteData?.ProductList?.Any(x => x == Code) ?? false;
             }
 
+            view.ProdAttrImgs = await GetProductAdditionalImagesV2(view.Id, product.DefaultImageId, product.Code);
+
             return view;
         }
 
@@ -2910,6 +2912,13 @@
                 }
 
             }
+
+            var query = baseRepository.GetList<ProductSku>(x => x.ProductCode == code).ToList();
+            if (query.Any())
+            {
+                string key = $"{CacheKey.ProductSku}";
+                RedisHelper.HSet(key, code, query);
+            }
         }
 
         private void DeleteProductSku(List<ProductAttrValue> deleteList, ProductEditModel product)
@@ -2929,6 +2938,15 @@
                     deleteSkus.AddRange(productSKUs);
                 }
                 baseRepository.Update(deleteSkus);
+            }
+
+            string key = $"{CacheKey.ProductSku}";
+            RedisHelper.HDel(key, product.Code);
+            var query = baseRepository.GetList<ProductSku>(x => x.ProductCode == product.Code).ToList();
+            if (query.Any())
+            {
+
+                RedisHelper.HSet(key, product.Code, query);
             }
         }
 
@@ -3001,5 +3019,140 @@
                 }
             }
         }
+
+        /// <summary>
+        /// 获取产品属性图片
+        /// </summary>
+        /// <param name="prodID"></param>
+        /// <param name="DefaultImageId"></param>
+        /// <param name="ProductCode"></param>
+        /// <returns></returns>
+        public async Task<List<ProductAttrImgs>> GetProductAdditionalImagesV2(Guid prodID, Guid DefaultImageId, string ProductCode)
+        {
+            List<ProductAttrImgs> result = new List<ProductAttrImgs>();
+            try
+            {
+
+
+                var cacheKey = $"{CacheKey.ProductSku}";
+                var ProductSkuLists = await RedisHelper.HGetAsync<List<ProductSku>>(cacheKey, ProductCode);
+                if (!ProductSkuLists?.Any() ?? true)
+                {
+                    ProductSkuLists = (await baseRepository.GetListAsync<ProductSku>(d => d.IsActive && !d.IsDeleted && d.ProductCode == ProductCode)).ToList();
+
+                    if (ProductSkuLists.Any())
+                        await RedisHelper.HSetAsync(cacheKey, ProductCode, ProductSkuLists);
+                }
+
+                var productImgs = await baseRepository.GetListAsync<ProductImage>(x => x.ProductId == prodID && x.IsActive && !x.IsDeleted);
+
+                var fileServer = string.Empty;
+                //库存属性图片
+                var skuImgs = productImgs.Where(x => x.Type == ImageType.SkuImage).ToList();
+                foreach (var Img in skuImgs)
+                {
+                    var attrImg = new ProductAttrImgs();
+                    attrImg.AttrValue1 = Img.AttrValue1;
+                    attrImg.AttrValue2 = Img.AttrValue2;
+                    attrImg.AttrValue3 = Img.AttrValue3;
+                    attrImg.Id = Img.Id;
+                    attrImg.Type = Img.Type;
+                    attrImg.Side = Img.Side;
+                    attrImg.ProductId = Img.ProductId;
+                    attrImg.ProductCode = ProductCode;
+                    var productImageList = Img.ImageItems?.OrderBy(d => d.Type).ToList() ?? new List<ProductImageList>();
+                    var activeImages = Img.ImageItems?.Where(p => p.Path != null && p.Path != "").OrderBy(d => d.Type).ToList() ?? new List<ProductImageList>();
+                    var maxIndex = activeImages.Count - 1;
+                    attrImg.ImageItems = new List<string>();
+                    if (productImageList.Any() && productImageList.Count >= 8)
+                    {
+                        if (!string.IsNullOrEmpty(productImageList[0].Path))
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[0].Path);
+                        }
+                        else
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[maxIndex].Path);
+                        }
+
+                        if (!string.IsNullOrEmpty(productImageList[3].Path))
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[3].Path);
+                        }
+                        else
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[maxIndex].Path);
+                        }
+
+                        if (!string.IsNullOrEmpty(productImageList[7].Path))
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[7].Path);
+                        }
+                        else
+                        {
+                            attrImg.ImageItems.Add(fileServer + productImageList[maxIndex].Path);
+                        }
+                    }
+                    else
+                    {
+                        attrImg.ImageItems.Add("");
+                        attrImg.ImageItems.Add("");
+                        attrImg.ImageItems.Add("");
+                    }
+
+                    //判断是否默认图片
+                    if (DefaultImageId == Img.Id)
+                        attrImg.IsDefault = true;
+
+                    //判断prodskus是否有相关库存属性
+                    var skus = ProductSkuLists.FirstOrDefault(x => x.ProductCode == attrImg.ProductCode && x.AttrValue1 == attrImg.AttrValue1 && x.AttrValue2 == attrImg.AttrValue2 && x.AttrValue3 == attrImg.AttrValue3);
+                    if (skus != null)
+                    {
+                        attrImg.IsInventory = RedisHelper.ZScore($"{CacheKey.SalesQty}", skus.Id) == null ? false : true;
+                    }
+
+
+                    //if (saleOutList.Exists(e => skus.Contains(e)))
+                    //{
+                    //    attrImg.IsInventory = true;
+                    //}
+                    result.Add(attrImg);
+                }
+                //附加图片
+                var additionImgs = productImgs.Where(x => x.Type == ImageType.AdditionImage).ToList();
+                foreach (var Img in additionImgs)
+                {
+                    var attrImg = new ProductAttrImgs();
+                    attrImg.AttrValue1 = Img.AttrValue1;
+                    attrImg.AttrValue2 = Img.AttrValue2;
+                    attrImg.AttrValue3 = Img.AttrValue3;
+                    attrImg.Id = Img.Id;
+                    attrImg.Type = Img.Type;
+                    attrImg.Side = Img.Side;
+                    attrImg.ProductId = Img.ProductId;
+                    attrImg.ProductCode = ProductCode;
+
+                    attrImg.ImageItems = new List<string>();
+
+                    var addiImageItems = Img.ImageItems.OrderBy(d => d.Type).ToList();
+
+                    foreach (var item2 in addiImageItems)
+                    {
+                        attrImg.ImageItems.Add(fileServer + item2.Path);
+                    }
+                    result.Add(attrImg);
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new BLException("\r\n 出现异常类型：" + ex.GetType().FullName + "\r\n 异常源：" + ex.Source + "\r\n 异常位置=" + ex.TargetSite + " \r\n 异常信息=" + ex.Message + " \r\n 异常堆栈：" + ex.StackTrace);
+                //throw ex;
+            }
+            return result;
+        }
+
     }
 }

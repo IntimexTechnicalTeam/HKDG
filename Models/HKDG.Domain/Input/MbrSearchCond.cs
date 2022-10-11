@@ -33,7 +33,7 @@
         /// 會員組別
         /// </summary>
         [DataMember]
-        public Guid BuyerGroup { get; set; }
+        public Guid BuyerGroup { get; set; } = Guid.Empty;
         /// <summary>
         /// 語言
         /// </summary>
@@ -77,7 +77,8 @@
         [DataMember]
         public bool? OutForReceiving { get; set; }
 
-        //public MemberSearchType Type { get; set; }
+        [DataMember]
+        public MemberSearchType Type { get; set; }
         // public List<string> SelectedLanguageChoose { get; set; }
     }
 }

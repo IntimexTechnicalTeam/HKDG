@@ -240,5 +240,7 @@
         public DbSet<OrderMassProcessStatus> OrderMassProcessStatus { get; set; }
 
         public DbSet<ProductTrack> ProductTracks { get; set; }
+
+        public DbSet<StorePickUpAddress> StorePickUpAddresses { get; set; }
     }
 }

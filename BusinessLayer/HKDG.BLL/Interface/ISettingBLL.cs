@@ -21,7 +21,7 @@
         ///// 獲取銷售價格的稅率
         ///// </summary>
         ///// <returns></returns>
-        //double GetSalePriceTaxRate();
+        double GetSalePriceTaxRate();
 
         ///// <summary>
         ///// 獲取默認的語言

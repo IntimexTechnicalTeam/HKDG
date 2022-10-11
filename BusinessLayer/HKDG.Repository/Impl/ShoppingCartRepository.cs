@@ -40,5 +40,21 @@
             return data?.FirstOrDefault() ?? null;
         }
 
+        public async Task<KeyValue> GenMallCartProductAttr(Guid AttrId, Guid AttrValueId)
+        {
+            string sql = $@"select 
+                    (select Value from Translations where TransId =(select DescTransId from ProductAttributes where Id =@AttrId) and Lang=@Lang) as Id,
+                    (select Value from Translations where TransId =(select DescTransId from ProductAttributeValues where Id=@AttrValueId) and Lang=@Lang) as Text";
+
+            var param = new List<SqlParameter>();
+            param.Add(new SqlParameter { ParameterName = "@AttrId", Value = AttrId });
+            param.Add(new SqlParameter { ParameterName = "@AttrValueId", Value = AttrValueId });
+            param.Add(new SqlParameter { ParameterName = "@Lang", Value = CurrentUser.Lang });
+
+            var data = baseRepository.SqlQuery<KeyValue>(sql, param.ToArray());
+
+            return data?.FirstOrDefault() ?? null;
+        }
+
     }
 }

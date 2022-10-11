@@ -76,6 +76,7 @@ namespace Domain
             ConfigMap<SalesReturnOrderDetail, SalesReturnOrderDetailDto>();
 
             ConfigMap<MerchantInfoView, HotMerchant>();
+            ConfigMap<MemberGroupDto, MemberGroup>();
         }
         void ConfigMap<TSource, TDestination>()
         {

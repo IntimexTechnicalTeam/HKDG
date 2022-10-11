@@ -2152,5 +2152,84 @@ namespace HKDG.BLL
 
             return selectedCountryProvince;
         }
+
+        public SystemResult GetExpressChargeListByCode(ExpressCondition exCond)
+        {
+            SystemResult result = new SystemResult();
+            List<ExpressChargeInfo> list = new List<ExpressChargeInfo>();
+            if (exCond.CCode == "Other")
+            {
+
+                result= GetExpressCharge(exCond);
+            }
+            return result;
+        }
+
+        public async Task<List<KeyValueAddress>> GetStorePickUpAddress(Guid MerchantId)
+        {
+            //获取自提地址列表
+            var addressKey = $"{PreHotType.StorePickUpAddress}_{CurrentUser.Lang}"; ;
+            var addressList = await RedisHelper.HGetAllAsync<StorePickUpAddress>(addressKey);
+            if (!addressList.Any() || !addressList.Values.Any())
+            {
+                var view = baseRepository.GetList<StorePickUpAddress>().Where(x => x.IsActive && !x.IsDeleted);
+                if (view != null && view.Any())
+                {
+                    //重新刷新缓存
+                    await SetStorePickUpAddressDataToHashCache(view);
+                    addressList = view.ToDictionary(x => x.Id.ToString());
+                }
+            }
+
+            var list = addressList.Values.AsQueryable().Where(x => x.MerchantId == MerchantId && x.Lang == CurrentUser.Lang && x.IsActive && !x.IsDeleted);
+            if (list == null || !list.Any()) return new List<KeyValueAddress>();
+            var result = list.OrderBy(o => o.CreateDate).Select(item => new KeyValueAddress { Id = item.Id.ToString(), Text = item.Name, Address = item.Address }).ToList();
+            return result;
+        }
+
+
+        public async Task<SystemResult> SetStorePickUpAddressDataToHashCache(IQueryable<StorePickUpAddress> list)
+        {
+            var result = new SystemResult();
+            string key = $"{PreHotType.StorePickUpAddress}_{Language.C}";
+
+            var hotList = list.Where(x => x.Lang == Language.C).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.S}";
+
+            hotList = list.Where(x => x.Lang == Language.S).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.E}";
+
+            hotList = list.Where(x => x.Lang == Language.E).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+
+
+            return result;
+        }
     }
 }

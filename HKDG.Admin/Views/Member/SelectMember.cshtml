@@ -1,0 +1,434 @@
+﻿
+@{
+    ViewBag.Title = "Select";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="col-md-12" id="memberapp" v-cloak>
+    <table class="table">
+        <caption>@HKDG.Resources.Label.MemberSearch</caption>
+        <tr>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.FirstNameWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.FirstName" style="width:300px;" />
+            </td>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.LastNameWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.LastName" style="width:300px;" />
+            </td>
+        </tr>
+        <tr>
+            <td class="col-xs-1">
+                @HKDG.Resources.Label.EmailAddressWithSymbol
+            </td>
+            <td class="col-xs-5">
+                <input type="text" class="form-control" v-model="condition.EmailAdd" style="width:300px;" />
+            </td>
+            <td colspan="2">
+                <input id="chkIsAcceptPromote" type="checkbox" v-model="condition.OutForReceiving"/>
+                <label for="chkIsAcceptPromote">@HKDG.Resources.Label.OutForReceiving</label>
+            </td>
+        </tr>
+    </table>
+
+    <div id="collapseOne" class="panel-collapse collapse">
+        <table class="table table-condensed">
+            <tr>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.PhoneWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <form class="form-inline">
+                        <input type="text" class="form-control" v-model="condition.Phone" style="width:300px;" />
+                    </form>
+                </td>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.MemberGroupWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <select id="cboBuyerGroup" class="form-control" style="width:300px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.ClientCodeWithSymbol
+                </td>
+                <td class="col-xs-5">
+                    <form class="form-inline">
+                        <input type="text" class="form-control" v-model="condition.Code" style="width:300px;" />
+                    </form>
+                </td>
+                <td class="col-xs-1">
+                    @HKDG.Resources.Label.CompanyNameWithSymbol
+                </td>
+                <td class="col-xs-5"></td>
+            </tr>
+            <tr>
+                <td>@HKDG.Resources.Label.LanguageWithSymbol</td>
+                <td colspan="3">
+                    <ul class="list-inline" id="sLang">
+                        <li v-for="pLang in Langs">
+                            <input type="checkbox" v-bind:id="pLang.Lang.Code" v-model="pLang.Desc" v-bind:disabled="LanguageDisabled" />
+                            <label v-bind:for="pLang.Lang.Code">{{pLang.Lang.Text}}</label>
+                        </li>
+                    </ul>
+                </td>
+                
+            </tr>
+        </table>
+    </div>
+    <div class="text-right">
+        <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.Search" onclick="search();" />
+        <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.ExtraCondition" data-toggle="collapse" data-target="#collapseOne" />
+    </div>
+
+
+    <br />
+
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="divMemberOptions">
+            <div>
+                <div class="panel-body">
+                    <div id="toolbar" class="btn-group">
+                        <button id="btn_Promote" type="button" class="btn btn-default" v-on:click="selectToPromote" v-bind:disabled="IsSelect">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>@HKDG.Resources.Action.Add
+                        </button>
+                    </div>
+                    <table id="tblMember"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @*<script src="~/Scripts/admin/vue-component/productCatalog.js"></script>*@
+    <script type="text/javascript">
+        var params = bDialog.getDialogParams();
+        var selectEmails = "";//已經選中的Emails
+        var arrSelectEmails = [];
+        var selectLanguages = new Array();//查詢的語言
+        var isAccpetPromoteEmail = "";//是否接收推廣郵件
+        var type = '@ViewBag.Type';
+
+        var vm = new Vue({
+            el: "#memberapp",
+            data: {
+                MemTitle: "",
+                MemID: "",
+                IsSelect: true,
+                condition: {
+                    // DateRange: "",
+                    EmailAdd: "",
+                    Code: "",
+                    FirstName: "",
+                    LastName: "",
+                    Mobile: "",
+                    CompanyName: "",
+                    BuyerGroup: "",
+                    Language: [],
+                    Type: type,
+                    Deleted: false,
+
+                },
+                Langs: [{ Lang: { Code: "", Text: "" }, Desc: "" }],
+                LanguageDisabled: false,
+                AccpetPromoteDisabled: false,
+                mailList:[],
+            },
+            methods: {
+                memberData: function () {
+                    $("#tblMember").bootstrapTable("refresh", { url: "/adminapi/Member/MemberTableData", pageNumber: 1 });
+                    //$('#tblMember').bootstrapTable('refreshOptions', { pageNumber: 1 });
+
+                },
+                setButtonState: function () {
+                    var selected = $("#tblMember").bootstrapTable("getSelections");
+
+                    if (selected.length > 0) {
+                        vm.IsSelect = false;
+                    }
+                    else {
+                        vm.IsSelect = true;
+                    }
+                },
+                selectToPromote: function () {
+                    //var datas = $("#tblMember").bootstrapTable("getData");
+                    //var members = params.Members;
+
+                    dialogClose();
+
+                },
+                addMail: function (row)
+                {
+                    if ($.inArray(row, vm.mailList) < 0)
+                    {
+                        vm.mailList.push(row);
+                        arrSelectEmails.push(row.Email);
+                    }
+                    console.log(vm.mailList);
+                },
+                removeMail: function (row)
+                {
+                    var index = $.inArray(row, vm.mailList);
+                    var eIndex = $.inArray(row.Email, arrSelectEmails);
+                    vm.mailList.splice(index, 1);
+                    arrSelectEmails.splice(eIndex, 1);
+                    console.log(vm.mailList);
+                }
+
+            }
+        });
+
+
+        function dialogClose() {
+            var selectedMember = new Array();
+            var selected = vm.mailList;//  $("#tblMember").bootstrapTable("getSelections");
+
+            selected.forEach(function (val) {
+                var member = { ID: val.Id, Name: val.FullName, Email: val.Email, Mobile: val.Mobile, CountryCode: val.CountryCode, CountryName: val.CountryName };
+
+                if (selectedMember)
+                {
+                    var isExists = false;
+                    selectedMember.forEach(function (val) {
+                        if (val.Email == member.Email)
+                        {
+                            isExists = true;
+                        }
+
+                    });
+                    if (isExists == false)
+                    {
+                        selectedMember.push(member);
+                    }
+                }
+
+            });
+            bDialog.closeCurrent(selectedMember);
+
+
+        }
+
+        var MemberTableInit = function () {
+
+            var oTableInit = new Object();
+            oTableInit.Init = function () {
+
+                $("#tblMember").bootstrapTable({
+                    method: 'post',                      //请求方式（*）
+                    //url: '/adminapi/Attribute/GetSelfDefineAttribute',         //请求后台的URL（*）
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    //queryParamsType:'limit',
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: true,                        //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    sortable: false,                    //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    smartDisplay: false,
+                    showRefresh: true,                  //是否显示刷新按钮
+                    clickToSelect: true,                //是否启用点击选中行
+                    //height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                    uniqueId: "Id",               //每一行的唯一标识，一般为主键列
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                  //是否显示父子表
+                    pagination: true,                   //是否显示分页（*）
+                    dataField: "Data",
+                    totalField: "TotalRecord",
+                    ajaxOptions: {
+                        beforeSend: function (request) {
+                            var access_token = $.cookie("access_token");
+                            request.setRequestHeader("Authorization", "Bearer " + access_token);
+                        }
+                    },
+                    onCheck: function (row) {
+                        vm.setButtonState();
+                        vm.addMail(row);
+
+                    },
+                    onUncheck: function (row) {
+                        vm.setButtonState();
+                        vm.removeMail(row);
+                    },
+                    onCheckAll: function (rows) {
+                        vm.setButtonState();
+                        rows.forEach(function (val) {
+                            vm.addMail(val);
+                        });
+                    },
+                    onUncheckAll: function (rows) {
+                        vm.setButtonState();
+                        rows.forEach(function (val) {
+                            vm.removeMail(val);
+                        });
+                    },
+                    onLoadSuccess: function () {
+                        CheckSelectedEmails();
+                    },
+                    columns: [{
+                        checkbox: true
+                    }, {
+                        field: 'Id',
+                        title: 'id',
+                        visible: false
+                    }, {
+                        field: 'FullName',
+                        title: '@HKDG.Resources.Label.MemberName',
+                        ////formatter: function (val, row, index) {
+                        //    return row.LastName + ' ' + row.FirstName;
+                        //}
+                    },
+                     {
+                         field: 'Email',
+                         title: '@HKDG.Resources.Label.Email',
+                     }, {
+                         field: 'Mobile',
+                         title: '@HKDG.Resources.Label.Mobile',
+                     }, {
+                         field: 'CreateDate',
+                         title: '@HKDG.Resources.Label.CreateDate',
+                     }, {
+                         field: 'LanguageName',
+                         title: '@HKDG.Resources.Label.Language',
+                         //formatter: function (value) { return value == "E" ? "English" : "S" ? "Simple Chinese" : "T" ? "Traditional Chinese" : "P" ? "Polish" : value }
+
+                     }, {
+                         field: 'IsActive',
+                         title: '@HKDG.Resources.Label.IsActive',
+                     }],
+                    formatLoadingMessage: function () {
+                        //return '<%=Resources.Message.Processing%>';
+                        return '';
+                    }
+                });
+            };
+            oTableInit.queryParams = function (params) {
+                var langs = new Array();
+
+                var page = 1;
+                if (params.offset > 0) {
+                    page = parseInt(params.offset / params.limit) + 1;
+                }
+
+                vm.Langs.forEach(function (val, index) {
+                    if (val.Desc == true || val.Desc == "true") {
+                        langs.push(val.Lang.Code);
+                    }
+                });
+
+                vm.condition.Page = page;
+                vm.condition.PageSize = params.limit;
+                vm.condition.Language = langs;
+                return vm.condition;
+            }
+            return oTableInit;
+        }
+
+        //如果從郵件推廣頁面打開member Search則會根據傳過來的收件人、語言來初始化、過濾數據
+        function CheckSelectedEmails() {
+            if (vm.mailList) {
+                var datas = $("#tblMember").bootstrapTable("getData");
+                //var langs = params.Langs;
+                //var arrEmails = selectEmails.split(',');
+                for (var i = 0; i < datas.length; i++) {
+                    var member = datas[i];
+                    //if ($.inArray(member.Language, langs) == -1 || $.trim(member.IsActivated) == "N") {
+                    //    $("#tblMember").bootstrapTable("removeByUniqueId", member.MemberId);
+                    //    continue;
+                    //}
+
+
+                    //if (selectEmails.indexOf($.trim(member.Email)) >= 0 && $.trim(member.Email) != "") {
+                    //    $("#tblMember").bootstrapTable("check", i);
+                    //}
+                    if ($.inArray(member.Email, arrSelectEmails)>=0 && $.trim(member.Email) != "") {
+                        $("#tblMember").bootstrapTable("check", i);
+                    }
+
+
+                }
+            }
+            //}
+        }
+
+        function search() {
+            vm.condition.BuyerGroup = $("#cboBuyerGroup").val();
+            vm.memberData();
+        }
+        function InitLanguages() {
+            WS.AjaxP("get", "/adminapi/dict/GetUseLanguage", null, function (response) {
+                vm.Langs = response;
+                if (selectLanguages) {
+                    if (selectLanguages.length > 0) {
+                        vm.Langs.forEach(function (val) {
+                            if ($.inArray(val.Lang.Code, selectLanguages) != -1) {
+                                val.Desc = "true";
+                            }
+                        });
+                    }
+                }
+
+
+            }, function () { });
+        }
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+
+        $(document).ajaxStop(function () {
+            hideLoading();
+        });
+
+        function InitControl() {
+
+            selectEmails = params.Members;
+            selectLanguages = params.Langs;
+            arrSelectEmails = [];
+            if (selectEmails != null) {
+                arrSelectEmails = selectEmails.split(',');
+            }
+            
+            isAccpetPromoteEmail = params.IsAccpetPromote;//是否接收推廣郵件
+
+            if (selectLanguages) {
+                if (selectLanguages.length == 0) {
+                    vm.LanguageDisabled = false;
+                }
+                else {
+                    vm.LanguageDisabled = true;
+                }
+            }
+
+            if (isAccpetPromoteEmail) {
+                if (isAccpetPromoteEmail == 1) {
+                    vm.AccpetPromoteDisabled = true;
+                } else {
+                    vm.AccpetPromoteDisabled = false;
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            //InitDateTimePicker();
+            InitControl();
+            InitLanguages();
+            InitNormalTreeSelect("cboBuyerGroup", "/adminapi/MemberGroup/GetBuyerGroupsSelect", true);
+
+            var oTable = MemberTableInit();
+            oTable.Init();
+
+        });
+    </script>
+}
+
+
+
+
