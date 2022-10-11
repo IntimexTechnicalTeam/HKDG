@@ -129,5 +129,29 @@ namespace HKDG.Domain
 
 
         public Guid? UpdateBy { get; set; }
+
+
+        public string LanguageName
+        {
+            get
+            {
+                var name = "";
+                switch (Language)
+                {
+                    case Language.E:
+                        name = Value.LangEnglish;
+                        break;
+                    case Language.C:
+                        name = Value.LangTraditionalChinese;
+                        break;
+                    case Language.S:
+                        name = Value.LangSimplifiedChinese;
+                        break;
+                }
+                return name;
+
+            }
+            set { }
+        }
     }
 }

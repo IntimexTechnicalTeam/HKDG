@@ -490,19 +490,20 @@
                 var result = await baseRepository.GetModelAsync<Member>(x => x.Id == id);
                 if (result != null)
                 {
+                    memlist = AutoMapperExt.MapToList<Member, MemberDto>(result);
                     if (settingBLL != null)
                     {
                         var langs = settingBLL.GetSupportLanguages();
                         if (langs != null)
                         {
-                            result.LanguageName = langs.FirstOrDefault(p => p.Code == result.Language.ToString()).Text ?? "";
+                            memlist.LanguageName = langs.FirstOrDefault(p => p.Code == result.Language.ToString()).Text ?? "";
                         }
                     }
 
                     result.MallFun = memberAccountRepo.GetMemberFun(result.Id);
 
                 }
-                memlist = AutoMapperExt.MapToList<Member, MemberDto>(result);
+               
 
             }
             catch (Exception ex)
