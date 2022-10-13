@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using HKDG.BLL;
 using Domain;
-using HKDG.Enums;
+using Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

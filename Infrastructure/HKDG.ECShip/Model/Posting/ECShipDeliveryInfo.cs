@@ -1,4 +1,4 @@
-﻿using HKDG.Enums;
+﻿using Enums;
 
 namespace HKDG.ECShip.Model.Posting
 {

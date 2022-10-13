@@ -1,6 +1,6 @@
 ﻿using Domain;
 using Domain.Account;
-using HKDG.Enums;
+using Enums;
 using Intimex.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

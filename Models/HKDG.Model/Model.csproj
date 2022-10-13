@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\HKDG.Resources\HKDG.Resources.csproj" />
-    <ProjectReference Include="..\HKDG.Enums\Enums.csproj" />
+    <ProjectReference Include="..\Enums\Enums.csproj" />
   </ItemGroup>
 
 </Project>

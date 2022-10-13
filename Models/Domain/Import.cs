@@ -1,6 +1,6 @@
 ﻿global using AutoMapper;
 global using Domain;
-global using HKDG.Enums;
+global using Enums;
 global using HKDG.Model;
 global using Intimex.Common;
 global using System;

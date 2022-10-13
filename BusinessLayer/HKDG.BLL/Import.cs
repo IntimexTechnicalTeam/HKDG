@@ -1,5 +1,5 @@
 ﻿global using Domain;
-global using HKDG.Enums;
+global using Enums;
 global using HKDG.Model;
 global using HKDG.Resources;
 global using Intimex.Common;

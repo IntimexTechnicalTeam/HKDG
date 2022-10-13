@@ -22,8 +22,8 @@
 /Infrastructure/HKDG.Utility/bin/Debug/net6.0
 /Models/Domain/bin/Debug
 /Models/Domain/obj
-/Models/HKDG.Enums/bin/Debug/net6.0
-/Models/HKDG.Enums/obj
+/Models/Enums/bin/Debug/net6.0
+/Models/Enums/obj
 /Models/HKDG.Model/bin/Debug/net6.0
 /Models/HKDG.Model/obj
 /MonitorService/HandleCalculateQtyService/bin

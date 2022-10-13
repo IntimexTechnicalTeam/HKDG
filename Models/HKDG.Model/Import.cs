@@ -1,4 +1,4 @@
-﻿global using HKDG.Enums;
+﻿global using Enums;
 global using HKDG.Models;
 global using System;
 global using System.Collections.Generic;

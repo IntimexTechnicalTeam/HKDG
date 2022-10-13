@@ -1,6 +1,6 @@
 ﻿
 using Domain;
-using HKDG.Enums;
+using Enums;
 using HKDG.Model;
 using System;
 using System.Collections.Generic;
