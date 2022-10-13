@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Infrastructure\HKDG.Utility\HKDG.Utility.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Intimex.Utility\Intimex.Utility.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Web.Framework\Web.Framework.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Web.Jwt\Web.Jwt.csproj" />
     <ProjectReference Include="..\..\Infrastructure\WebCache\WebCache.csproj" />

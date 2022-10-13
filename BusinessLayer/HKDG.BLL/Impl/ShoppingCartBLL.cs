@@ -416,7 +416,7 @@
                     return result;
                 }
             }
-            if (item.Qty > Runtime.Setting.PurchaseLimit) //最大購買量
+            if (item.Qty > Setting.PurchaseLimit) //最大購買量
             {
                 result.Succeeded = false;
                 var error = new SystemError()

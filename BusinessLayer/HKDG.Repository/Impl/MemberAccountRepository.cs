@@ -1,4 +1,6 @@
-﻿namespace HKDG.Repository
+﻿using Intimex.Runtime;
+
+namespace HKDG.Repository
 {
     public class MemberAccountRepository : PublicBaseRepository, IMemberAccountRepository
     {
@@ -71,7 +73,7 @@
 
             foreach (var item in data)
             {
-                item.CreateDateString = DateUtil.DateTimeToString(item.CreateDate, Runtime.Setting.DefaultDateTimeFormat);
+                item.CreateDateString = DateUtil.DateTimeToString(item.CreateDate, Setting.DefaultDateTimeFormat);
             }
             return data;
 

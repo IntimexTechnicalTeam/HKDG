@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Models\HKDG.Domain\Domain.csproj" />
-    <ProjectReference Include="..\HKDG.Runtime\HKDG.Runtime.csproj" />
+    <ProjectReference Include="..\Intimex.Runtime\Intimex.Runtime.csproj" />
     <ProjectReference Include="..\Web.Framework\Web.Framework.csproj" />
     <ProjectReference Include="..\Web.MQ\Web.MQ.csproj" />
   </ItemGroup>

@@ -21,4 +21,4 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using Web.Framework;
 global using Web.Jwt;
-global using HKDG.Utility;
+global using Intimex.Utility;

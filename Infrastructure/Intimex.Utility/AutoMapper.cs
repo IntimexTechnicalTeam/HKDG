@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HKDG.Utility
+namespace Intimex.Utility
 {
     /// <summary>
     /// 自動映射實體類

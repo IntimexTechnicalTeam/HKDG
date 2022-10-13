@@ -1,6 +1,6 @@
 ﻿using HKDG.Domain;
 using HKDG.Enums;
-using HKDG.Runtime;
+using Intimex.Runtime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;

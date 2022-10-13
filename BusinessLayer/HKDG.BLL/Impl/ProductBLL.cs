@@ -1804,7 +1804,7 @@
             if (product != null)
             {
                 string overFlowFmt = Resources.Message.DataLengthOverFlow;
-                int wordQtyLimited = Runtime.Setting.UnlimitedContentWordQty;
+                int wordQtyLimited = Setting.UnlimitedContentWordQty;
 
                 if (product.ProductDetail?.Count > 0)
                 {

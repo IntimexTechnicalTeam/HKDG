@@ -27,3 +27,4 @@ global using HKDG.BLL;
 global using HKDG.Domain;
 global using HKDG.Enums;
 global using System.Collections.Generic;
+global using Intimex.Runtime;

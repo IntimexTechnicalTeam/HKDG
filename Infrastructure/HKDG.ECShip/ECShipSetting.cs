@@ -1,5 +1,5 @@
 ﻿using HKDG.ECShip.Model;
-using HKDG.Utility;
+using Intimex.Utility;
 using System;
 using System.IO;
 using System.Linq;

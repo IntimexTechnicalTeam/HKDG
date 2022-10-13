@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace HKDG.Utility
+namespace Intimex.Utility
 {
     public  class LangUtil
     {

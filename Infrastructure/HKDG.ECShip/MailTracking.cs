@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Xml;
 using WS.ECShip.Model;
 using WS.ECShip.Model.MailTracking;
-using HKDG.Utility;
-using HKDG.Runtime;
+using Intimex.Utility;
+using Intimex.Runtime;
 
 namespace WS.ECShip
 {
@@ -200,7 +200,7 @@ namespace WS.ECShip
                     detail.Message = node[messageIndex]?.FirstChild?.Value ?? "";
                     detail.MessageLocation = node[locationIndex]?.FirstChild?.Value ?? "";
 
-                    detail.MessageTime = string.IsNullOrEmpty(node[13]?.FirstChild?.Value) ? "" : DateUtil.DateTimeToString(DateUtil.ConvertoDateTime(node[13]?.FirstChild?.Value ?? "", "dd-MM-yyyy HH:mm"), HKDG.Runtime.Setting.DefaultDateTimeFormat2);
+                    detail.MessageTime = string.IsNullOrEmpty(node[13]?.FirstChild?.Value) ? "" : DateUtil.DateTimeToString(DateUtil.ConvertoDateTime(node[13]?.FirstChild?.Value ?? "", "dd-MM-yyyy HH:mm"), Setting.DefaultDateTimeFormat2);
                     detail.Seq = seq;
                     Details.Add(detail);
                     seq++;

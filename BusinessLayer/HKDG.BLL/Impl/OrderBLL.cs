@@ -1495,7 +1495,7 @@ namespace HKDG.BLL
             delivery.IsShowECShipStatus = ecshipStatus == null ? false : true;
             delivery.ECShipMessage = ecshipStatus?.Message ?? "";
         
-            delivery.UpdateDate = DateUtil.DateTimeToString(dbDelivery.UpdateDate, Runtime.Setting.DefaultDateTimeFormat);
+            delivery.UpdateDate = DateUtil.DateTimeToString(dbDelivery.UpdateDate, Setting.DefaultDateTimeFormat);
             delivery.GoodsType = ShoppingCartItemType.BUYDONG;
 
             return delivery;

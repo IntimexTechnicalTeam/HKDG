@@ -459,7 +459,7 @@ namespace HKDG.BLL
 
                 WhName = flow.WhName,
                 IOTypeDesc = flow.IOTypeDesc,
-                TransDate = flow.TransDate != DateTime.MinValue ? flow.TransDate.ToString(Runtime.Setting.ShortDateFormat) : String.Empty,
+                TransDate = flow.TransDate != DateTime.MinValue ? flow.TransDate.ToString(Setting.ShortDateFormat) : String.Empty,
                 ImgPath = GetImage(flow.ProductId),
 
             }).ToList();

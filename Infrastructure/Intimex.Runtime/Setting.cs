@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HKDG.Runtime
+namespace Intimex.Runtime
 {
     public class Setting
     {

@@ -1,6 +1,6 @@
 ﻿using HKDG.ECShip.Model;
 using HKDG.ECShip.Model.Posting;
-using HKDG.Utility;
+using Intimex.Utility;
 using System;
 using System.Xml;
 using WS.ECShip.Model.Posting;

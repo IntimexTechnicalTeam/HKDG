@@ -2,7 +2,7 @@
 using HKDG.ECShip.Model;
 using HKDG.ECShip.Model.Posting;
 using HKDG.ECShip.Model.SoazPosting;
-using HKDG.Utility;
+using Intimex.Utility;
 using System;
 using System.Xml;
 

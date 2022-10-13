@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HKDG.Runtime\HKDG.Runtime.csproj" />
-    <ProjectReference Include="..\HKDG.Utility\HKDG.Utility.csproj" />
+    <ProjectReference Include="..\Intimex.Runtime\Intimex.Runtime.csproj" />
+    <ProjectReference Include="..\Intimex.Utility\Intimex.Utility.csproj" />
   </ItemGroup>
 
 </Project>

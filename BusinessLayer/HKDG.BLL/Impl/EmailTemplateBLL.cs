@@ -51,7 +51,7 @@
             if (model != null)
             {
                 string overFlowFmt = Resources.Message.DataLengthOverFlow;
-                int wordQtyLimited = Runtime.Setting.UnlimitedContentWordQty;
+                int wordQtyLimited = Setting.UnlimitedContentWordQty;
 
                 if (model.EmailContent?.Length > 0)
                 {

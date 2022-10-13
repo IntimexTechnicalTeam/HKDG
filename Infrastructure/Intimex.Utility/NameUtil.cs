@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace HKDG.Utility
+namespace Intimex.Utility
 {
     public class NameUtil
     {

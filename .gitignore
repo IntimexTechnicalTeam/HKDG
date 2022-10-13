@@ -68,4 +68,7 @@
 /HKDG.WebSite/obj
 /HKDG.RazorWeb/bin
 /HKDG.RazorWeb/obj
-
+/Infrastructure/Intimex.Runtime/bin/Debug/net6.0
+/Infrastructure/Intimex.Runtime/obj
+/Infrastructure/Intimex.Utility/obj
+/Infrastructure/Intimex.Utility/bin/Debug/net6.0

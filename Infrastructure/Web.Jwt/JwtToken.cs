@@ -1,8 +1,7 @@
 ﻿using Domain.Account;
 using HKDG.Domain;
 using HKDG.Enums;
-using HKDG.Model;
-using HKDG.Runtime;
+using Intimex.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Web.Framework;
 
 namespace Web.Jwt

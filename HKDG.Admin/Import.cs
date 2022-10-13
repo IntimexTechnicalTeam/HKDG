@@ -27,3 +27,5 @@ global using Web.AutoFac;
 global using Web.Framework;
 global using Web.Mvc;
 global using System.Reflection;
+global using Intimex.Common;
+global using  Intimex.Utility;

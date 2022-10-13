@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace HKDG.Utility
+namespace Intimex.Utility
 {
     public  class HashUtil
     {

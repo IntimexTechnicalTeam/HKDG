@@ -1,17 +1,4 @@
-﻿using Autofac;
-using HKDG.Domain;
-using HKDG.Enums;
-using HKDG.Utility;
-using Intimex.Common;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Web.Framework;
-using Web.Mvc;
+﻿
 
 namespace HKDG.Admin.Areas.AdminApi.Controllers
 {
