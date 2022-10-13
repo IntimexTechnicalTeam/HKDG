@@ -14,7 +14,7 @@
     <ProjectReference Include="..\..\HKDG.Resources\HKDG.Resources.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Intimex.Common\Intimex.Common.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Web.Framework\Web.Framework.csproj" />
-    <ProjectReference Include="..\HKDG.Model\Model.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 
 </Project>

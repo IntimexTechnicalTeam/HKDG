@@ -1,8 +1,4 @@
-﻿using HKDG.Model;
-using HKDG.Resources;
-using System;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     public class OrderBLL : BaseBLL, IOrderBLL
     {

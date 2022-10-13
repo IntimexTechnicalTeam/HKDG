@@ -1,6 +1,6 @@
 ﻿global using Domain;
 global using Enums;
-global using HKDG.Model;
+global using Model;
 global using HKDG.Resources;
 global using Intimex.Common;
 global using MediatR;

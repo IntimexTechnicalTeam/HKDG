@@ -1,6 +1,6 @@
 ﻿global using Domain;
 global using Enums;
-global using HKDG.Model;
+global using Model;
 global using Intimex.Common;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.Data.SqlClient;

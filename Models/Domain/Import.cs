@@ -1,7 +1,7 @@
 ﻿global using AutoMapper;
 global using Domain;
 global using Enums;
-global using HKDG.Model;
+global using Model;
 global using Intimex.Common;
 global using System;
 global using System.Collections.Generic;

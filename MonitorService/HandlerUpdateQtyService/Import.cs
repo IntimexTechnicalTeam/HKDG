@@ -4,7 +4,7 @@ global using Web.Framework;
 global using Web.RegisterConfig;
 global using HKDG.BLL;
 global using Enums;
-global using HKDG.Model;
+global using Model;
 global using HKDG.Repository;
 global using Microsoft.Extensions.DependencyInjection;
 global using Web.MQ;

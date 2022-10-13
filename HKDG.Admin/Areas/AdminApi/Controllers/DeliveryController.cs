@@ -1,6 +1,4 @@
-﻿using HKDG.Model;
-
-namespace HKDG.Admin.Areas.AdminAPI.Controllers
+﻿namespace HKDG.Admin.Areas.AdminAPI.Controllers
 {
 
     [Area("AdminApi")]

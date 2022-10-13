@@ -1,6 +1,4 @@
-﻿using HKDG.Model;
-
-namespace HKDG.Admin.Areas.AdminApi.Controllers
+﻿namespace HKDG.Admin.Areas.AdminApi.Controllers
 {
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]

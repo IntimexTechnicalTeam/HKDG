@@ -4,6 +4,7 @@ global using HKDG.Admin;
 global using HKDG.BLL;
 global using Domain;
 global using Enums;
+global using Model;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;

@@ -24,8 +24,8 @@
 /Models/Domain/obj
 /Models/Enums/bin/Debug/net6.0
 /Models/Enums/obj
-/Models/HKDG.Model/bin/Debug/net6.0
-/Models/HKDG.Model/obj
+/Models/Model/bin/Debug/net6.0
+/Models/Model/obj
 /MonitorService/HandleCalculateQtyService/bin
 /MonitorService/HandleCalculateQtyService/obj
 /MonitorService/HandleCalculateQtyService/Properties/PublishProfiles

@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Models\Domain\Domain.csproj" />
-    <ProjectReference Include="..\..\Models\HKDG.Model\Model.csproj" />
+    <ProjectReference Include="..\..\Models\Model\Model.csproj" />
   </ItemGroup>
 
 </Project>
