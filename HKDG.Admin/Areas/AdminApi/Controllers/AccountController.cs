@@ -1,15 +1,4 @@
-﻿using Autofac;
-using HKDG.BLL;
-using HKDG.Domain;
-using HKDG.Enums;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using Web.Framework;
-using Web.Mvc;
-
+﻿
 namespace HKDG.Admin.Areas.AdminApi.Controllers
 {
     [Area("AdminApi")]

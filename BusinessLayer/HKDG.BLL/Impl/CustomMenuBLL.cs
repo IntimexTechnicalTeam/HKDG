@@ -1,4 +1,4 @@
-﻿using Menu = HKDG.Domain.Menu;
+﻿using Menu = Domain.Menu;
 
 namespace HKDG.BLL
 {

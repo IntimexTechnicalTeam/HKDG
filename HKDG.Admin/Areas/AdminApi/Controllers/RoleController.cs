@@ -1,15 +1,4 @@
-﻿using Autofac;
-using HKDG.BLL;
-using HKDG.Domain;
-using HKDG.Enums;
-using HKDG.Repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Web.Framework;
-using Web.Mvc;
+﻿using HKDG.Repository;
 
 namespace HKDG.Admin.Areas.AdminApi.Controllers
 {

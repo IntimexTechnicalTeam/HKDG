@@ -1,4 +1,4 @@
-﻿using HKDG.Domain;
+﻿using Domain;
 using HKDG.Enums;
 using HKDG.Model;
 using System;

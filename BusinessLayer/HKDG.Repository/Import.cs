@@ -1,4 +1,4 @@
-﻿global using HKDG.Domain;
+﻿global using Domain;
 global using HKDG.Enums;
 global using HKDG.Model;
 global using Intimex.Common;

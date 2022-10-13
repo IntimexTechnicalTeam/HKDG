@@ -24,7 +24,7 @@ global using System;
 global using System.Threading.Tasks;
 global using Web.Jwt;
 global using HKDG.BLL;
-global using HKDG.Domain;
+global using Domain;
 global using HKDG.Enums;
 global using System.Collections.Generic;
 global using Intimex.Runtime;

@@ -8,6 +8,6 @@ global using HKDG.Model;
 global using HKDG.Repository;
 global using Microsoft.Extensions.DependencyInjection;
 global using Web.MQ;
-global using HKDG.Domain;
+global using Domain;
 global using System.Linq;
 

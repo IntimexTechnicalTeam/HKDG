@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using MemberInfo = HKDG.Domain.MemberInfo;
+using MemberInfo = Domain.MemberInfo;
 
 namespace HKDG.BLL
 {

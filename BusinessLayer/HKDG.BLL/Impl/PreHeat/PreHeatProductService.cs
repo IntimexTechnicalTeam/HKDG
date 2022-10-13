@@ -1,16 +1,4 @@
-﻿
-using HKDG.Domain;
-using HKDG.Enums;
-using HKDG.Model;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-
-using System.Threading.Tasks;
-using Web.Framework;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     /// <summary>
     /// 产品预热

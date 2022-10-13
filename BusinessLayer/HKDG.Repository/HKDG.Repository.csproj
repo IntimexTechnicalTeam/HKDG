@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\Infrastructure\Web.Framework\Web.Framework.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Web.Jwt\Web.Jwt.csproj" />
     <ProjectReference Include="..\..\Infrastructure\WebCache\WebCache.csproj" />
-    <ProjectReference Include="..\..\Models\HKDG.Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\Models\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

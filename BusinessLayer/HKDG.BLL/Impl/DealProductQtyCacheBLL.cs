@@ -1,6 +1,4 @@
-﻿using HKDG.Domain;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     /// <summary>
     /// 处理缓存中的ProductQty

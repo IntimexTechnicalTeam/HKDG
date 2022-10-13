@@ -1,7 +1,7 @@
 ﻿global using Autofac;
 global using Autofac.Extensions.DependencyInjection;
 global using HKDG.BLL;
-global using HKDG.Domain;
+global using Domain;
 global using HKDG.Enums;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,5 @@
-﻿using Domain.Account;
-using HKDG.Domain;
+﻿using Domain;
+using Domain.Account;
 using HKDG.Enums;
 using Intimex.Runtime;
 using Microsoft.Extensions.Configuration;

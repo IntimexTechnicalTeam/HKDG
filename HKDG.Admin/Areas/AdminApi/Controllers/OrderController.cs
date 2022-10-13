@@ -1,17 +1,4 @@
-﻿using Autofac;
-using HKDG.BLL;
-using HKDG.Domain;
-using HKDG.Enums;
-using Intimex.Common;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Web.Framework;
-using Web.Mvc;
-
-namespace HKDG.Admin.Areas.AdminApi.Controllers
+﻿namespace HKDG.Admin.Areas.AdminApi.Controllers
 {
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]

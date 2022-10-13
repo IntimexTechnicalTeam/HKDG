@@ -1,4 +1,6 @@
-﻿namespace HKDG.Repository
+﻿using Domain;
+
+namespace HKDG.Repository
 {
     public class CustomMenuRepository : PublicBaseRepository, ICustomMenuRepository
     {

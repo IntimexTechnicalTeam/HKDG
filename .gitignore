@@ -20,8 +20,8 @@
 /Infrastructure/HKDG.Runtime/obj
 /Infrastructure/HKDG.Utility/obj
 /Infrastructure/HKDG.Utility/bin/Debug/net6.0
-/Models/HKDG.Domain/bin/Debug
-/Models/HKDG.Domain/obj
+/Models/Domain/bin/Debug
+/Models/Domain/obj
 /Models/HKDG.Enums/bin/Debug/net6.0
 /Models/HKDG.Enums/obj
 /Models/HKDG.Model/bin/Debug/net6.0
@@ -72,3 +72,4 @@
 /Infrastructure/Intimex.Runtime/obj
 /Infrastructure/Intimex.Utility/obj
 /Infrastructure/Intimex.Utility/bin/Debug/net6.0
+

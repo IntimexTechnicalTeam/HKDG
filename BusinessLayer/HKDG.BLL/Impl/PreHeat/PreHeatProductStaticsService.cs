@@ -1,15 +1,4 @@
-﻿
-using HKDG.Domain;
-using HKDG.Enums;
-using HKDG.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Web.Framework;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     public class PreHeatProductStaticsService : AbstractPreHeatService
     {

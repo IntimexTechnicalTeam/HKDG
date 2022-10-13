@@ -1,9 +1,4 @@
-﻿using HKDG.BLL;
-using HKDG.Domain;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Threading.Tasks;
-using Web.Framework;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HKDG.WebApi
 {

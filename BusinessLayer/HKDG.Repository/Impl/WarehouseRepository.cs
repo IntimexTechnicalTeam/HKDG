@@ -1,6 +1,4 @@
-﻿using HKDG.Domain;
-
-namespace HKDG.Repository
+﻿namespace HKDG.Repository
 {
     public class WarehouseRepository : PublicBaseRepository, IWarehouseRepository
     {
