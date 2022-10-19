@@ -3,8 +3,12 @@
 namespace HKDG.Admin.Controllers
 {
     
-    public class AccountController : Controller
+    public class AccountController : BaseMvcController
     {
+        public AccountController(IComponentContext service) : base(service)
+        {
+        }
+
         [LanguageResource]
         [HttpGet]
         public ActionResult User()
@@ -20,7 +24,7 @@ namespace HKDG.Admin.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(string id)
         {
             ViewBag.CopyRight = "2341234";
             ViewBag.ID = Guid.NewGuid().ToString();

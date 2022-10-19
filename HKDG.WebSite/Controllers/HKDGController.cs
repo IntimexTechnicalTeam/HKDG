@@ -6,16 +6,23 @@ using System.Diagnostics;
 namespace HKDG.WebSite.Controllers
 {
     [AllowAnonymous]
-    public class DefaultController : BaseMvcController
-    {   
-        public DefaultController(IComponentContext service) : base(service)
+    public class HKDGController : BaseMvcController
+    {
+        IIspProviderBLL ispProviderBLL;
+
+        public HKDGController(IComponentContext service) : base(service)
         {
-            
+            ispProviderBLL = Services.Resolve<IIspProviderBLL>();
         }
 
-       
-        public IActionResult Index()
-        {          
+        public async Task<IActionResult> Index(string IspType)
+        {
+            if (IspType.IsEmpty()) IspType = "HKDG";
+            var flag = await ispProviderBLL.CheckIspType(IspType);
+            if (!flag) throw new BLException($"wrong IspType: {IspType}");
+
+            ViewBag.IspType = IspType;
+            await base.InitMenusAsync(IspType);
             return GetActionResult("Index");
         }
 

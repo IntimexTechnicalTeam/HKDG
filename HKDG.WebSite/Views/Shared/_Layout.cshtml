@@ -1,8 +1,7 @@
 ﻿@{
 
-    //ViewData["Obj"]= new { id = Guid.NewGuid(), text = DateTime.Now.ToString() };
-    ViewData["Obj"] = await RedisHelper.HGetAsync("Member", "4cf34da8-2386-49aa-b9ea-61c654382f1f");
     var IsMobile = ViewBag.IsMobile;
+    var IspType = ViewBag.IspType;                  //运营类型    
 }
 <html lang="en">
 <head>
@@ -17,8 +16,9 @@
     <header>
         @{
             if (IsMobile) await Html.RenderPartialAsync("~/Views/Shared/MobileHeader.cshtml");
-            else  await Html.RenderPartialAsync("~/Views/Shared/Header.cshtml"); 
+            else  await Html.RenderPartialAsync("~/Views/Shared/Header.cshtml");
         }
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">

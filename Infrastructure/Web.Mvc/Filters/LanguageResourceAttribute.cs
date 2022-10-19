@@ -33,10 +33,16 @@ namespace Web.Mvc
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             var token = context.HttpContext.Request.Cookies["access_token"];
             string langCode = "C";
-            if (!string.IsNullOrEmpty(token))
+            if (!token.IsEmpty())
             {
                 var payload = jwtToken.DecodeJwt(token);
                 langCode = payload["Lang"];
+            }
+            else
+            {
+                //暂时先这样，按理要call  buydong sso api
+                var tmpToken = jwtToken.CreateDefautToken();
+                context.HttpContext.Response.Cookies.Append("access_token", tmpToken);
             }
 
             //string langCode = ((ViewResult)context.Result).ViewData["Lang"]?.ToString() ?? "C";

@@ -19,6 +19,6 @@
 
         public bool IsLogin { get; set; } = false;
 
-       
+        public string IspType { get; set; } = "HKDG";
     }
 }

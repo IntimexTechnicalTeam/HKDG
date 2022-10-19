@@ -18,7 +18,7 @@ namespace HKDG.WebSite
                     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
                     // 如字段为null值，该字段不会返回到前端
                     // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                })
+                })               
                 .AddRazorRuntimeCompilation();              //可以在编译调试模式下编辑view
             //builder.Services.AddScoped(typeof(UserAuthorizeAttribute));         //注入Filter
 
@@ -34,8 +34,8 @@ namespace HKDG.WebSite
             builder.Services.AddSingleton(builder.Configuration);
 
             WebCache.ServiceCollectionExtensions.AddCacheServices(builder.Services, builder.Configuration);                        //注入redis组件
-            //HKDG.Repository.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                      //注入EFCore DataContext
-            //Web.MQ.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                                    //注入RabbitMQ  
+            Repository.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                      //注入EFCore DataContext
+            Web.MQ.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                                    //注入RabbitMQ  
 
             Web.Mvc.ServiceCollectionExtensions.AddHttpContextAccessor(builder.Services);
             Web.Mvc.ServiceCollectionExtensions.AddServiceProvider(builder.Services);
@@ -86,7 +86,7 @@ namespace HKDG.WebSite
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "/{controller=Default}/{action=Index}/{id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
+                    pattern: "/{controller=HKDG}/{action=Index}/{id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
 
                 //endpoints.MapAreaControllerRoute(
                 //         name: "areas",

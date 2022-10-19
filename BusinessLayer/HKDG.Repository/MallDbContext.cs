@@ -242,5 +242,7 @@
         public DbSet<ProductTrack> ProductTracks { get; set; }
 
         public DbSet<StorePickUpAddress> StorePickUpAddresses { get; set; }
+
+        public DbSet<IspProvider> IspProviders { get; set; }
     }
 }
