@@ -82,13 +82,23 @@ namespace Web.Jwt
             //var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
             //var ticket = CreateToken(loginInput);
 
-            //如果能访问到Buydong的redis节点就不用call api去处理
+            //就算可以访问redis,但还是通过摆档的主Token中心去刷新token,毕竟此站的token实体是简化过的
             //call buydong Account/RefreshToken api
-            string url = $"{Setting.BuyDongWebUrl}/api/account/RefreshToken";
+            string url = $"{configuration["BuyDongWeb"]}/api/account/RefreshToken";
 
             var requet = new RefreshToken { token = token, CurrencyCode = CurrencyCode, Lang =Lang.Value };
             var result = RestClientHelper.HttpPost<SystemResult<string>>(url, requet, AuthorizationType.Bearer);           
             return result;
+        }
+
+        public string RefreshToken<T>(string token, Language? Lang = null, string CurrencyCode = "")
+        {
+            var tmpUser = CreateCurrentUser(token);
+            tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
+            tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
+            var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
+            var ticket = CreateToken(loginInput);
+            return ticket;
         }
 
         /// <summary>
@@ -134,7 +144,7 @@ namespace Web.Jwt
                     }
                     else if (item.PropertyType.IsEnum)
                     {
-                        if (item.PropertyType.Name == "Language")
+                        if (item.PropertyType.Name == "Language" || item.PropertyType.Name == "Lang")
                             item.SetValue(currentUser, payload[item.Name].ToEnum<Language>());
                         else if (item.PropertyType.Name == "LoginType")
                             item.SetValue(currentUser, payload[item.Name].ToEnum<LoginType>());
@@ -176,6 +186,7 @@ namespace Web.Jwt
                 _currentUser.Roles = cacheUser?.Roles;
                 _currentUser.MerchantId = cacheUser?.MerchantId ?? Guid.Empty;
             }
+            _currentUser.Token = token;
             return _currentUser;
         }
 

@@ -69,11 +69,11 @@
 
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<ProductClickRateSummry> ProductClickRateSummrys { get; set; }
+        public DbSet<ProductClickRateSummry> ProductClickRateSummries { get; set; }
 
         public DbSet<CodeMaster> CodeMasters { get; set; }
 
-        public DbSet<ProductSalesSummry> ProductSalesSummrys { get; set; }
+        public DbSet<ProductSalesSummry> ProductSalesSummries { get; set; }
 
         public DbSet<ProductSku> ProductSkus { get; set; }
 
@@ -100,7 +100,7 @@
 
         public DbSet<CustomUrl> CustomUrls { get; set; }
 
-        public DbSet<MerchantECShipInfo> MerchantECShipInfos { get; set; }
+        public DbSet<MerchantECShipInfo> MerchantECShipInfoes { get; set; }
 
         public DbSet<ExpressCompany> ExpressCompanies { get; set; }
 

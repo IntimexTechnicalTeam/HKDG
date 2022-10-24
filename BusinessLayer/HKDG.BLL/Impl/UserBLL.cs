@@ -14,16 +14,16 @@
         {
             var result = new SystemResult() { Succeeded = false };
 
-            var user = await baseRepository.GetModelByIdAsync<User>(currentUser.UserId);
+            var user = await baseRepository.GetModelByIdAsync<User>(Guid.Parse(currentUser.UserId));
             user.Language = Lang;
 
             if (currentUser.IsLogin)
                 await baseRepository.UpdateAsync(user);
 
-            var newToken = jwtToken.RefreshToken(CurrentUser.Token, Lang, "");
+            var newToken = jwtToken.RefreshToken<string>(CurrentUser.Token, Lang, "");
 
-            result.ReturnValue = newToken.Message;
-            result.Succeeded = newToken.Succeeded;
+            result.ReturnValue = newToken;
+            result.Succeeded = true;
             return result;
         }
 

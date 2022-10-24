@@ -1,3 +1,5 @@
+using Intimex.Runtime;
+
 namespace HKDG.Admin
 {
     public  class Startup
@@ -21,11 +23,11 @@ namespace HKDG.Admin
                     // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 })
                 .AddRazorRuntimeCompilation();              //可以在编译调试模式下编辑view
-            builder.Services.AddScoped(typeof(AdminApiAuthorizeAttribute));         //注入Filter
+            builder.Services.AddScoped(typeof(AdminApiAuthorizeAttribute));         //注入Filter          
 
             builder.Services.AddMvc(options =>
             {
-                //options.Filters.Add(typeof(UserAuthorizeAttribute));            //全局鉴权
+                //options.Filters.Add(typeof(UserAuthorizeAttribute));            //全局鉴权              
                 options.EnableEndpointRouting = false;
             });
 
@@ -89,7 +91,7 @@ namespace HKDG.Admin
                 endpoints.MapControllerRoute(
                     name: "default",
                     //pattern: "{controller=Home}/{action=Index}/{id?}");
-                    pattern: "{controller=Account}/{action=Login}/{id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
+                    pattern: "{controller=Account}/{action=Login}/{IspType?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
 
                 endpoints.MapAreaControllerRoute(
                          name: "areas",
@@ -136,6 +138,18 @@ namespace HKDG.Admin
                     return new OkObjectResult(result);
                 };
             });
+        }
+
+        public static void RegisterSetting()
+        {
+            Setting.UserSessionTimeout = 20;
+            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
+            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "UserSessionTimeout")?.Value ?? "";
+            if (!string.IsNullOrEmpty(master))
+            {
+                if (int.TryParse(master, out var time))
+                    Setting.UserSessionTimeout = time;
+            }
         }
     }
 }

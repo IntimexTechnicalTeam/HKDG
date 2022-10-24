@@ -1,4 +1,5 @@
-﻿using Intimex.Common;
+﻿using Domain;
+using Intimex.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -36,20 +37,17 @@ namespace Web.Mvc
             if (!token.IsEmpty())
             {
                 var payload = jwtToken.DecodeJwt(token);
-                langCode = payload["Lang"];
-            }
-            else
-            {
-                //暂时先这样，按理要call  buydong sso api
-                var tmpToken = jwtToken.CreateDefautToken();
-                context.HttpContext.Response.Cookies.Append("access_token", tmpToken);
+                langCode = payload["Lang"] ?? "C";
             }
 
-            //string langCode = ((ViewResult)context.Result).ViewData["Lang"]?.ToString() ?? "C";
-            ((ViewResult)context.Result).ViewData["Lang"]=langCode; 
-            string cultureName = CultureHelper.GetSupportCulture(langCode);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
-            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            if (context.Result is ViewResult)
+            {
+                //string langCode = ((ViewResult)context.Result).ViewData["Lang"]?.ToString() ?? "C";
+                ((ViewResult)context.Result).ViewData["Lang"] = langCode;
+                string cultureName = CultureHelper.GetSupportCulture(langCode);
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
+                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            }
         }
     }
 }

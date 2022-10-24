@@ -31,6 +31,19 @@ namespace Intimex.Utility
             return url;
         }
 
+        public static string GetCss(bool IsMobile)
+        {
+            var url = $"~/css/site.css";
+            if (IsMobile) url = "~/css/mobilesite.css";
+            return url;
+        }
+
+        public static string GetCss(string path)
+        {
+            string html = $"<link rel=\"stylesheet\" href={path} asp-append-version=\"true\" />";
+            return html;
+        }
+
         /// <summary>
         /// 生成物理路径
         /// </summary>

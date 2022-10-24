@@ -72,11 +72,11 @@
         [Column(Order = 21)]
         public bool IsApprove { get; set; }
 
-        /// <summary>
-        /// 是否transin标识
-        /// </summary>
-        [Column(Order = 24)]
-        public bool IsTransin { get; set; }
+        ///// <summary>
+        ///// 是否transin标识
+        ///// </summary>
+        //[Column(Order = 24)]
+        //public bool IsTransin { get; set; }
 
 
         [NotMapped]

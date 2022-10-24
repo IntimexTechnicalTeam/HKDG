@@ -29,7 +29,7 @@
 /MonitorService/HandleCalculateQtyService/bin
 /MonitorService/HandleCalculateQtyService/obj
 /MonitorService/HandleCalculateQtyService/Properties/PublishProfiles
-/MonitorService/HandlerUpdateQtyService/bin/Debug/net6.0
+/MonitorService/HandlerUpdateQtyService/bin
 /MonitorService/HandlerUpdateQtyService/obj
 /MonitorService/HandlerUpdateQtyService/Properties/PublishProfiles
 /HKDG.MiniApi/bin
@@ -74,6 +74,6 @@
 /Infrastructure/Intimex.Utility/bin
 /HKDG.Resources/bin
 /HKDG.Resources/obj
-
-
+/HKDG/bin
+/HKDG.WebApi/bin
 

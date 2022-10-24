@@ -21,5 +21,7 @@ namespace Domain
         public string Email { get; set; } = "";
 
         public string VerifyCode { get; set; } = "123456";
+
+        public string IspType { get; set; }
     }
 }

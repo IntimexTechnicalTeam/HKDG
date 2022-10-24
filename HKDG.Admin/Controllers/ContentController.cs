@@ -1,5 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
+    [LanguageResource]
     public class ContentController : Controller
     {       
         public ContentResult LanguageScript()

@@ -2,20 +2,15 @@
 
 namespace HKDG.Admin.Controllers
 {
-    
-    public class AccountController : BaseMvcController
+   
+    public class AccountController : Controller
     {
-        public AccountController(IComponentContext service) : base(service)
-        {
-        }
-
         [LanguageResource]
         [HttpGet]
         public ActionResult User()
         {
             return View();
         }
-
         [LanguageResource]
         [HttpGet]
         public ActionResult Role()
@@ -24,10 +19,10 @@ namespace HKDG.Admin.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string id)
+        public async Task<IActionResult> Login(string IspType)
         {
             ViewBag.CopyRight = "2341234";
-            ViewBag.ID = Guid.NewGuid().ToString();
+            ViewBag.IspType = IspType ?? "DG";
             return View();
         }
 

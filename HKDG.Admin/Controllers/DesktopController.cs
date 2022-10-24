@@ -1,5 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
+    [LanguageResource]
     public class DesktopController : BaseMvcController
     {
         public DesktopController(IComponentContext service) : base(service)

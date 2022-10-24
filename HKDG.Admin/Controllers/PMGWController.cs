@@ -1,5 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
+    [LanguageResource]
     public class PMGWController : BaseMvcController
     {
         public PMGWController(IComponentContext service) : base(service)

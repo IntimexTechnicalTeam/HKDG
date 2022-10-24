@@ -1198,8 +1198,8 @@
             InsertOrderDiscountRecord(orderView.Discounts, order.Id);
 
             var dbOrder = AutoMapperExt.MapTo<Order>(order);
-            var timeOut = codeMasterBLL.GetCodeMasterByKey(CodeMasterModule.Setting.ToString(), CodeMasterFunction.Order.ToString(), "OrderPayTimeout")?.Value ?? "30";
-            dbOrder.ExpireDate = dbOrder.CreateDate.AddMinutes(timeOut.ToInt());            //支付超时时间
+            //var timeOut = codeMasterBLL.GetCodeMasterByKey(CodeMasterModule.Setting.ToString(), CodeMasterFunction.Order.ToString(), "OrderPayTimeout")?.Value ?? "30";
+            //dbOrder.ExpireDate = dbOrder.CreateDate.AddMinutes(timeOut.ToInt());            //支付超时时间
             baseRepository.Insert(dbOrder);
             baseRepository.Insert(order.OrderDetails);
             AddInventoryReserved(order, out var skuIdList);

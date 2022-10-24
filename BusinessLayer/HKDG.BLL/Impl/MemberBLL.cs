@@ -394,12 +394,12 @@
                 UserData = new MemberUser
                 {
                     Fun = member?.Fun ?? 0,
-                    MaxLimitDayFun = member?.MaxLimitDayFun ?? 0,
-                    MaxLimitMonthFun = member?.MaxLimitMonthFun ?? 0,
-                    MaxLimitYearFun = member?.MaxLimitYearFun ?? 0,
-                    TotalDayFun = member?.TotalDayFun ?? 0,
-                    TotalMonthFun = member?.TotalMonthFun ?? 0,
-                    TotalYearFun = member?.TotalYearFun ?? 0,
+                    //MaxLimitDayFun = member?.MaxLimitDayFun ?? 0,
+                    //MaxLimitMonthFun = member?.MaxLimitMonthFun ?? 0,
+                    //MaxLimitYearFun = member?.MaxLimitYearFun ?? 0,
+                    //TotalDayFun = member?.TotalDayFun ?? 0,
+                    //TotalMonthFun = member?.TotalMonthFun ?? 0,
+                    //TotalYearFun = member?.TotalYearFun ?? 0,
                 }
             };
 

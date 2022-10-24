@@ -4,7 +4,8 @@
     /// <summary>
     /// 產品Controller
     /// </summary>
-   // [ActionAuthorize(Module = ModuleConst.ProductModule)]
+    // [ActionAuthorize(Module = ModuleConst.ProductModule)]
+    [LanguageResource]
     public class CodeMasterController : BaseMvcController
     {
         public CodeMasterController(IComponentContext service) : base(service)

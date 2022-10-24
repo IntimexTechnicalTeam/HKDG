@@ -45,6 +45,8 @@ namespace Web.Jwt
         /// <returns></returns>
         SystemResult<string> RefreshToken(string token, Language? Lang = null, string CurrencyCode = "");
 
+        string RefreshToken<T>(string token, Language? Lang = null, string CurrencyCode = "");
+
         /// <summary>
         ///  解析token中的payload信息,payload信息来源于tokeninfo类
         /// </summary>

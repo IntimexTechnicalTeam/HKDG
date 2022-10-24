@@ -6,7 +6,7 @@
         public string Name { get; set; }
 
         [Column(Order = 4)]
-        public string IspType { get; set; } = "HKDG";    //香港设计馆
+        public string IspType { get; set; } = "BD";    
 
         [Column(Order = 5)]
         public string AdminUrl { get; set; } = string.Empty;

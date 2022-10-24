@@ -32,6 +32,8 @@ namespace Intimex.Runtime
         /// </summary>
         public static int MemberSessionTimeout = 15;
 
+        public static int UserSessionTimeout = 15;
+
         public static string BuyDongWebUrl = "";
     }
 }

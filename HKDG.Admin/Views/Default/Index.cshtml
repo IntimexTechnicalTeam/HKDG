@@ -141,9 +141,9 @@
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     <li class="divider"></li>
-                                    @*<li><a onclick="changeLang('E')">@HKDG.Resources.Label.English</a></li>
+                                    <li><a onclick="changeLang('E')">@HKDG.Resources.Label.English</a></li>
                                     <li><a onclick="changeLang('C')">@HKDG.Resources.Label.ChineseTW</a></li>
-                                    <li><a onclick="changeLang('S')">@HKDG.Resources.Label.ChineseSimplified</a></li>*@
+                                    <li><a onclick="changeLang('S')">@HKDG.Resources.Label.ChineseSimplified</a></li>
                                     <li><a href="/account/logoff">Logout</a> </li>
                                 </ul>
                             </div>
@@ -207,7 +207,7 @@
             miniAdmin = layui.miniAdmin,
             miniTongji = layui.miniTongji;
 
-        var lang = '@ViewBag.Language';
+        var lang = '@ViewBag.Lang';
         var options = {
             iniUrl: "/Scripts/layui/api/init_" + lang+ ".json", // 初始化接口
             clearUrl: "/Scripts/layui/api/clear.json", // 缓存清理接口
@@ -235,7 +235,7 @@
         function changeLang(lang) {
             //  $.cookie("Language", lang);
             WS.Get(
-                "/Account/ChangeLang",
+                "/AdminApi/Account/ChangeLang",
                 { Lang: lang },
                 function (result) {
                     setCookie("Language", lang, "/");

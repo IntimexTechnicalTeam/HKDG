@@ -3,7 +3,8 @@
     /// <summary>
     /// 庫存清單Controller
     /// </summary>
-   // [ActionAuthorize(Module = ModuleConst.IventoryModule)]
+    // [ActionAuthorize(Module = ModuleConst.IventoryModule)]
+    [LanguageResource]
     public class InventoryController : BaseMvcController
     {
         public InventoryController(IComponentContext service) : base(service)

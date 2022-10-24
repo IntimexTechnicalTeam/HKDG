@@ -48,8 +48,8 @@
         public async Task<UserDto> CheckAdminLogin(LoginInput input)
         {
             var result = new SystemResult();
-            string pwd = ToolUtil.Md5Encrypt(input.Password);
-
+            //string pwd = ToolUtil.Md5Encrypt(input.Password);
+            string pwd = HashUtil.HashPwd(input.Password);
             var accounts = baseRepository.GetModel<User>(d => d.IsActive && !d.IsDeleted && (d.Account == input.Account || d.Email == input.Account) && d.Password == pwd);
             if (accounts == null)
                 throw new ServiceException("错误的账号或密码");

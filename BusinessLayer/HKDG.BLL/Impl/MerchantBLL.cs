@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using Model;
+
+namespace HKDG.BLL
 {
     public class MerchantBLL : BaseBLL, IMerchantBLL
     {
@@ -285,7 +287,7 @@
                 result = UpdateMerchant(merchVw);
             }
 
-            await mchHeatService.CreatePreHeat(merchVw.Id);
+            await mchHeatService.CreatePreHeat(merchVw.Id);            
             return result;
         }
 
@@ -619,7 +621,8 @@
                 var dbproductImage = baseRepository.GetModelById<ProductImage>(product.DefaultImage);
                 if (dbproductImage != null)
                 {
-                    var imageItems = dbproductImage.ImageItems.OrderBy(o => o.Type).ToList();
+                    //var imageItems = dbproductImage.ImageItems.OrderBy(o => o.Type).ToList();
+                    var imageItems = baseRepository.GetList<ProductImageList>(x => x.ImageID == dbproductImage.Id).OrderBy(o => o.Type).ToList();
                     if (imageItems != null)
                     {
                         var fileServer = string.Empty;
@@ -1143,7 +1146,7 @@
 
             #region 处理主表
 
-            merchOld.FaxNum = recUpdate.FaxNum;
+            merchOld.FaxNum = recUpdate.FaxNum ?? "" ;
             merchOld.ContactEmail = recUpdate.ContactEmail;
             merchOld.OrderEmail = recUpdate.OrderEmail;
 
@@ -1235,6 +1238,7 @@
             tran.Commit();
 
             result.Succeeded = true;
+            result.ReturnValue = merchOld.Id;
             return result;
         }
 

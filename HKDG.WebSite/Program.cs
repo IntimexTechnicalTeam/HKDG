@@ -1,6 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("Config/appsettings.json", optional: true, reloadOnChange: true).AddEnvironmentVariables();
+
+builder.Configuration.AddJsonFile("Config/Resource_E.json", optional: true, reloadOnChange: true).AddEnvironmentVariables();
+builder.Configuration.AddJsonFile("Config/Resource_C.json", optional: true, reloadOnChange: true).AddEnvironmentVariables();
+builder.Configuration.AddJsonFile("Config/Resource_S.json", optional: true, reloadOnChange: true).AddEnvironmentVariables();
+
 builder.Logging.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 NLog.LogManager.LoadConfiguration("Config/nlog.config");
 

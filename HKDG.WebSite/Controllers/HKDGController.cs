@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace HKDG.WebSite.Controllers
 {
-    [AllowAnonymous]
     public class HKDGController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;
@@ -15,14 +14,16 @@ namespace HKDG.WebSite.Controllers
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
         }
 
+        //[AllowAnonymous]
+       
         public async Task<IActionResult> Index(string IspType)
         {
-            if (IspType.IsEmpty()) IspType = "HKDG";
+            if (IspType.IsEmpty()) IspType = "DG";
             var flag = await ispProviderBLL.CheckIspType(IspType);
             if (!flag) throw new BLException($"wrong IspType: {IspType}");
 
             ViewBag.IspType = IspType;
-            await base.InitMenusAsync(IspType);
+            await InitViewPage(IspType);
             return GetActionResult("Index");
         }
 

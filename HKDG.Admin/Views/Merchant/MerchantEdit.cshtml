@@ -418,12 +418,12 @@
 
                     WS.AjaxP("post", "/adminapi/Merchant/SaveMerchInfoOnly", vm.items, function (response) {
                         if (response.Succeeded == true) {
-                            //if (vm.editType == "Add") {
+                            if (vm.editType == "Add") {
                             //若當前編輯模式是新增，則更新當前緩存中的記錄ID
                             vm.MerchantID = response.ReturnValue;
                             vm.items.Id = response.ReturnValue;
                             vm.getMerchantItem();
-                        //}
+                        }
                             setModifyState();
                             showCloseInfo('@HKDG.Resources.Message.SaveSuccess', true);
                             @*clowWin();*@

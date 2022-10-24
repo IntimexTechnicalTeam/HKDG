@@ -4,7 +4,7 @@
     /// <summary>
     /// 產品Controller
     /// </summary>
-   // [ActionAuthorize(Module = ModuleConst.ProductModule)]
+    [LanguageResource]
     public class SystemController : BaseMvcController
     {
         public SystemController(IComponentContext service) : base(service)

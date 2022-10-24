@@ -32,7 +32,7 @@
         /// <summary>
         /// 傳真號碼
         /// </summary>
-        public string FaxNum { get; set; }
+        public string FaxNum { get; set; } = string.Empty;
         /// <summary>
         /// 聯繫地址
         /// </summary>

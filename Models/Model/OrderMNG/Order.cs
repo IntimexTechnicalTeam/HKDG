@@ -133,7 +133,7 @@
         /// <summary>
         /// 过期时间
         /// </summary>
-        public DateTime ExpireDate { get; set; }
+        //public DateTime ExpireDate { get; set; }
     }
 
 

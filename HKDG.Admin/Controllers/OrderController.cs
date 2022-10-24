@@ -1,6 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
-    //  [ActionAuthorize(Module = ModuleConst.OrderModule)]
+    [LanguageResource]
     public class OrderController : BaseMvcController
     {
         public OrderController(IComponentContext service) : base(service)

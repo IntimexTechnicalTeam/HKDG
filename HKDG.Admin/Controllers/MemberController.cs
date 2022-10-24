@@ -1,5 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
+    [LanguageResource]
     public class MemberController : BaseMvcController
     {
         public MemberController(IComponentContext service) : base(service)

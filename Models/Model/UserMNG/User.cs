@@ -21,7 +21,7 @@
         /// <summary>
         /// 设定的版面语言
         /// </summary> 
-        [Column(Order = 5)]
+        [Column("UILanguage", Order = 5)]
         [DefaultValue(Language.E)]
         public Language Language { get; set; }
 

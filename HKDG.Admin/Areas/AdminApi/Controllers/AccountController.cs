@@ -29,7 +29,8 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
 
                 var tokenInfo = AutoMapperExt.MapTo<TokenInfo>(userInfo);
                 tokenInfo.UserId = userInfo.Id.ToString();
-                tokenInfo.IsLogin = true;              
+                tokenInfo.IsLogin = true;
+                tokenInfo.IspType = input.IspType ?? "DG";
                 userInfo.Token = jwtToken.CreateToken(tokenInfo);
 
                 //把登录信息：token,权限，菜单，角色放进redis中
@@ -38,7 +39,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
 
                 result.Succeeded = true;
                 result.ReturnValue = userInfo.Token;
-                HttpContext.Response.Cookies.Append("access_token", userInfo.Token);
+                HttpContext.Response.Cookies.Append("access_token", userInfo.Token);              
             }
 
             return result;
@@ -53,7 +54,9 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
         public async Task<SystemResult> ChangeLang(Language Lang)
         {
             var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = await userBLL.ChangeLang(CurrentUser, Lang);
+            result = await userBLL.ChangeLang(CurrentUser, Lang);
+            CurrentContext.HttpContext.Response.Cookies.Delete("access_token");
+            CurrentContext.HttpContext.Response.Cookies.Append("access_token", result.ReturnValue.ToString());
             return result;
         }
 

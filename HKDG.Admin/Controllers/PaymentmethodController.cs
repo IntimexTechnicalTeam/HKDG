@@ -4,7 +4,7 @@
     /// <summary>
     /// 產品Controller
     /// </summary>
-   // [ActionAuthorize(Module = ModuleConst.ProductModule)]
+    [LanguageResource]
     public class PaymentmethodController : BaseMvcController
     {
         public PaymentmethodController(IComponentContext service) : base(service)

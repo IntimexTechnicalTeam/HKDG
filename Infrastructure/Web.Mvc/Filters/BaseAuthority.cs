@@ -57,20 +57,6 @@ namespace Web.Mvc
                 return flag;
             }
 
-            //#region 沒用，不在這里check,保證這個方法的公用性
-            //    string url = $"{Setting.BuyDongWebUrl}/api/account/CheckToken";
-            //    var result = await RestClientHelper.HttpGetAsync<SystemResult<string>>(url, token, AuthorizationType.Bearer);
-            //    if (!result.Succeeded)
-            //    {
-            //        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = result.Message });
-            //        context.HttpContext.Response.StatusCode = 403;
-            //        flag = false;
-            //        return flag;
-            //    }
-            //token = result.Message;
-
-            //#endregion
-
             string userId = "";
             //检查token
             TokenType tokenType = jwtToken.ValidatePlus(token, a => a["iss"] == Configuration["Jwt:Issuer"] && a["aud"] == Configuration["Jwt:Audience"], action => { userId = action["UserId"]; });         
@@ -100,13 +86,13 @@ namespace Web.Mvc
             //检查用户是否登录
             ///if (IsLogin)
             {
-                if (!bool.Parse(payload["IsLogin"]))
+                /*if (!bool.Parse(payload["IsLogin"]))
                 {
                     context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "请登录" });
                     context.HttpContext.Response.StatusCode = 401;
                     flag = false;
                     return flag;
-                }
+                }*/
             }
 
             return flag;

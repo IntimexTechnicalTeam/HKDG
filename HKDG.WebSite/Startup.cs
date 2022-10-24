@@ -1,3 +1,6 @@
+using Autofac.Core;
+using Microsoft.AspNetCore.Mvc.Razor;
+using NETCoreViewLocationExpander.ViewLocationExtend;
 using System.Xml.Linq;
 
 namespace HKDG.WebSite
@@ -21,6 +24,19 @@ namespace HKDG.WebSite
                 })               
                 .AddRazorRuntimeCompilation();              //可以在编译调试模式下编辑view
             //builder.Services.AddScoped(typeof(UserAuthorizeAttribute));         //注入Filter
+
+            builder.Services.Configure<MvcViewOptions>(configureOptions =>
+            {
+                var viewEngines = configureOptions.ViewEngines; //视图引擎
+                //可在此处扩展视图引擎
+            });
+
+            builder.Services.Configure<RazorViewEngineOptions>(configureOptions =>
+            {
+                configureOptions.ViewLocationExpanders.Add(new TemplateViewLocationExpander(() => {
+                    return RegisterViewFactory.Views;                   
+                } )); //视图默认路径扩展
+            });
 
             builder.Services.AddMvc(options =>
             {
@@ -85,14 +101,8 @@ namespace HKDG.WebSite
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "/{controller=HKDG}/{action=Index}/{id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
-
-                //endpoints.MapAreaControllerRoute(
-                //         name: "areas",
-                //         areaName: "AdminApi",
-                //         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}/{para2?}");      //让Api Controller支持无参或一个参数以上
-
+                    name: "Default",
+                    pattern: "/{controller=HKDG}/{action=Index}/{IspType?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
             });
         }
         /// <summary>
