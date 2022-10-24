@@ -2,14 +2,14 @@
 
 namespace HKDG.WebSite.Controllers
 {
-    [AllowAnonymous]
+   
     public class ProductController : BaseMvcController
     {
         public ProductController(IComponentContext service) : base(service)
         {
         }
 
-       
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return GetActionResult("Index");

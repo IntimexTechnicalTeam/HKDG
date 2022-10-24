@@ -30,6 +30,12 @@ namespace HKDG.WebApi
             Web.Mvc.ServiceCollectionExtensions.AddServiceProvider(builder.Services);
             Web.MediatR.ServiceCollectionExtensions.AddServices(builder.Services, typeof(Program));
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "myCors",
+                builde =>{ builde.WithOrigins("*", "*", "*").AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();});
+            });
+
             //注入支付宝的配置
             //Web.AliPay.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);
         }
@@ -55,8 +61,9 @@ namespace HKDG.WebApi
             app.ConfigureSwagger();
             app.UseMiddleware<GlobalErrorHandlingMiddleware>();         //全局异常处理
             //app.UseMiddleware<JwtAuthenticationMiddleware>();
+            app.UseCors("myCors");               //必须在UseAuthorization 之前
 
-            app.UseHttpsRedirection();           ////HTTPS重定向
+            app.UseHttpsRedirection();          ////HTTPS重定向
             app.UseRouting();
             app.UseAuthorization();              //这个必须在UseRouting 和 UseEndpoints 之间
             app.UseEndpoints(endpoints =>

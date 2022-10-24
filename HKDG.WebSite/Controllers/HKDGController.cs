@@ -1,5 +1,6 @@
 ﻿using Autofac.Core;
 using HKDG.WebSite.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
