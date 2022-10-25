@@ -1,0 +1,793 @@
+@charset 'utf-8';
+
+@font-face {
+  font-family: 'PingFangSC';
+  src: url('/css/font/PingFangSC.otf');
+}
+
+@font-face {
+  font-family: 'Micross';
+  src: url('/css/font/Micross.ttf');
+}
+
+@font-face {
+  font-family: 'HanyiSentyPailouArch';
+  src: url('/css/font/HanyiSentyPailouArch.ttf');
+}
+
+body {
+  font-family: "PingFangSC","Micross";
+  overflow-y: auto;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 1rem;
+  transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ------ Public Css ------ */
+.mid-box {
+  width: 94%;
+  margin: 0 auto;
+}
+
+#container {
+  overflow: hidden;
+}
+
+.img-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-box img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance:none;
+  outline: none;
+  border: none;
+}
+
+/* 對話框 */
+.bd-dialog {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 99;
+  display: none;
+}
+
+.dlg-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .3);
+  z-index: 1;
+}
+
+.dlg-content-box {
+  width: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #ebeef5;
+  padding: 1rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  z-index: 2;
+}
+
+.dlg-footer {
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+.dlg-footer button {
+  font-size: 1.25rem;
+  color: #758b7d;
+  font-weight: bold;
+  font-family: 'HanyiSentyPailouArch';
+  background: #fff;
+  border: 2px solid;
+  border-radius: 5px;
+  letter-spacing: 2px;
+}
+
+/* ------ Header ------ */
+#header {
+  background: #fff;
+  box-shadow: 0 0 3px #bebebe;
+}
+
+/*系統公告*/
+.announcement_box {
+  position: relative;
+  background-color: #15907e;
+}
+
+.announcement_box .close-btn {
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  top: 0;
+  right: 1rem;
+  line-height: 3rem;
+  z-index: 2;
+}
+
+#announcement {
+  height: 3rem;
+}
+
+#announcement a {
+  display:block;
+  line-height:2;
+  height: 3rem;
+  overflow:hidden;
+  text-align: center;
+}
+
+#announcement a span {
+  font-size: 1.1rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid;
+  line-height: 2.5;
+}
+
+.header-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.menu-nav {
+  margin-right: 1rem;
+}
+
+.menu-nav img {
+  max-width: 2.2rem;
+}
+
+.logo img {
+  max-width: 5rem;
+}
+
+/*搜索框*/
+.mix-search-box {
+  width: 100%;
+  margin: 0 1rem;
+}
+
+.mix-search-box .search-input-box {
+  width: 100%;
+  height: 3rem;
+  border: 2px solid #c1c0c0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mix-search-box .search-input-box input[type="text"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem;
+  padding: 0 3rem 0 0.8rem;
+  box-sizing: border-box;
+}
+
+.mix-search-box .search-input-box .search-type {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  outline: 0;
+  background: url(/Images/arrow-down-green.png) no-repeat center right 4px;
+  height: 2rem;
+  font-size: 1rem;
+  color: #15907e;
+  border-right: 1px solid;
+  padding: 0 1.5rem 0 0.5rem;
+  box-sizing: border-box;
+  text-align-last: center;
+  flex-shrink: 0;
+}
+
+.mix-search-box .search-input-box .search-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 3rem;
+  height: 100%;
+  background: url(/imgs/icons/search.png) no-repeat center center;
+  background-size: 50%;
+  cursor: pointer;
+}
+
+.handle-group {
+  flex-shrink: 0;
+}
+
+.handle-group > a:not(:last-child) {
+  display: inline-block;
+  margin-right: 0.8rem;
+}
+
+.handle-group > a img {
+  max-height: 1.6rem; 
+}
+
+/* ------ Index Page ------ */
+.banner .cover > img {
+  width: 100%;
+}
+
+.bannerSwiper {
+  width: 80%;
+  margin: 0 auto;
+  height: 13rem;
+  overflow: visible;
+}
+
+.bannerSwiper .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.bannerSwiper .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerSwiper [class^="swiper-button"]::after {
+  font-size: 1rem;
+  color: #171717;
+  font-weight: bold;
+  padding: 0.5rem;
+  background: rgb(255 255 255 / 50%);
+}
+
+.bannerSwiper .swiper-button-next {
+  width: auto;
+  right: -0.8rem;
+}
+
+.bannerSwiper .swiper-button-prev {
+  width: auto;
+  left: -0.8rem;
+}
+
+.bannerSwiper .swiper-pagination-bullet-active {
+  background: #6d6e71;
+}
+
+.pmt-one {
+  margin-bottom: 2rem;
+}
+
+.util-title {
+  font-size: 1.7rem;
+  color: #2b6442;
+  margin: 1rem 0;
+  font-family: 'HanyiSentyPailouArch';
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.util-title .more-btn {
+  font-size: 1.1rem;
+  color: #606060;
+  font-weight: bold;
+  font-family: 'PingFangSC';
+}
+
+/* Product Item */
+.pro-item {
+    box-sizing: border-box;
+    position: relative;
+}
+
+.pro-item .pro-name {
+    font-size: 1.1rem;
+    color: #000;
+    font-weight: bold;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    height: 3.4rem;
+    margin: 0.5rem 0;
+}
+
+.pro-item .pro-name > span {
+    font-size: 1rem;
+    color: #fff;
+    display: inline-block;
+    background-color: #999;
+    padding: 0.2rem 0.5rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.pro-item .pro-name > span.new {
+    background-color: #276643;
+}
+
+.pro-item .pro-name > span.hot {
+    background-color: #d83e04;
+}
+
+.pro-item .pro-name > span.discount {
+    background: #EAC100;
+}
+
+.pro-item .pro-store {
+    margin: 0.5rem 0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.pro-item .pro-store > img {
+    height: 1.2rem;
+    vertical-align: middle;
+    margin-right: 0.3rem;
+}
+
+.pro-item .pro-store > span {
+    font-size: 1rem;
+    color: #276643;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.pro-item .pro-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.pro-item .pro-price .now-price {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.pro-item .pro-price .old-price {
+    font-size: 1rem;
+    color: #999999;
+    font-weight: bold;
+    text-decoration: line-through;
+}
+
+.pro-item .fav-btn {
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    background: url(/imgs/icons/heart.png) no-repeat center center;
+    background-size: contain;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    bottom: 0.5rem;
+}
+
+.pmtSwiper {
+  overflow: visible;
+}
+
+.pmtSwiper.scrollbar {
+  padding-bottom: 2rem;
+}
+
+.pmtSwiper .swiper-horizontal>.swiper-scrollbar, 
+.pmtSwiper .swiper-scrollbar.swiper-scrollbar-horizontal {
+  width: 100vw;
+  left: -3%;
+  height: 8px;
+}
+
+.pmtSwiper .swiper-scrollbar {
+  background: rgb(196 196 196 / 10%);
+}
+
+.pmtSwiper .swiper-scrollbar-drag {
+  background: #276643;
+}
+
+.pmtSwiper.swiper-grid-column {
+  height: 50rem;
+  padding-bottom: 0;
+}
+
+.swiper-grid-column .swiper-slide {
+  height: calc((100% - 30px) / 2);
+
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.pmt-one.category .pmtSwiper {
+  height: 10rem;
+}
+
+.pmt-one.category .pmtSwiper .swiper-slide > a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #5f6060;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  color: #2b6442;
+  font-family: 'HanyiSentyPailouArch';
+  text-align: center;
+  writing-mode: vertical-lr;
+  overflow: hidden;
+  padding-top: 1rem;
+  position: relative;
+}
+
+.pmt-one.category .pmtSwiper .swiper-slide > a::before {
+  content: '.';
+  position: absolute;
+  top: 0.3rem;
+  left: 0;
+  font-size: 2rem;
+  width: 100%;
+}
+
+.pmt-one.brand .pmtSwiper .swiper-slide > a p {
+  color: #276643;
+  font-size: 1rem;
+  line-height: 1;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.pmt-one.grid .pro-list {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.pmt-one.grid .pro-list .pro-item {
+  width: 48%;
+  margin-bottom: 1rem;
+}
+
+.pmt-one.grid .more-btn {
+  width: 100%;
+  background: #fff;
+  border: 2px solid #758b7d;
+  border-radius: 5px;
+  font-size: 1.3rem;
+  color: #758b7d;
+  height: 3.2rem;
+  line-height: 3.2rem;
+  font-family: 'HanyiSentyPailouArch';
+  margin: 1rem 0;
+}
+
+/* ------ Footer ------ */
+#footer {
+  background: #e9e8e8;
+}
+
+#footer .footer-nav {
+  padding: 2rem 0;
+}
+
+#footer .footer-nav > li:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+#footer .footer-nav > li > a {
+  display: inline-block;
+  font-size: 1.3rem;
+  color: #2b6442;
+  font-family: 'HanyiSentyPailouArch';
+  margin-bottom: 0.3rem;
+}
+
+#footer .footer-nav > li > ul li a {
+  font-size: 1rem;
+  color: #9f9f9f;
+}
+
+.subscribe-box {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #707070;
+}
+
+.subscribe-box > p {
+  font-size: 1.2rem;
+  color: #707070;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subscribe-box .subscribe-input {
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subscribe-box .subscribe-input input[type="text"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  border: 1px solid #707070;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.subscribe-box .subscribe-input button {
+  background: #707070;
+  font-size: 1.1rem;
+  color: #fff;
+  border-radius: 5px;
+  padding: 0.2rem 1rem;
+  flex-shrink: 0;
+  margin-left: 2rem;
+}
+
+.support-pay {
+  padding: 2rem 0 1rem;
+  text-align: center;
+}
+
+.support-pay > img {
+  height: 3.5rem;
+}
+
+.site-tips {
+  font-size: 1rem;
+  color: #707070;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.trace {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.trace > a {
+  display: block;
+  width: 2.5rem;
+  margin: 0 1rem;
+}
+
+.trace > a > img {
+  max-width: 100%;
+}
+
+.copyright {
+  text-align: center;
+}
+
+.copyright > p {
+  font-size: 1rem;
+  color: #606060;
+}
+
+.copyright > img {
+  height: 3.5rem;
+  margin: 1.5rem 0;
+}
+
+/* ------ Menu Bar ------ */
+.menu-bar {
+  margin: 1.5rem 0;
+  padding: 0 1rem;
+  background: #dde2de;
+  border-radius: 8px;
+}
+
+.nav-list li {
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 0.8rem 0;
+  position: relative;
+}
+
+.nav-list li::after {
+  content: '›';
+  position: absolute;
+  font-size: 1.8rem;
+  height: 100%;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav-list li:not(:last-child) {
+  border-bottom: 1px solid #abacab;
+}
+
+.menu-bar .top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.menu-bar .top-bar > div > span {
+  font-size: 1.2rem;
+  color: #2b6442;
+  font-weight: bold;
+  border-bottom: 1px solid;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+.menu-bar .top-bar .back-btn {
+  margin-left: 1rem;
+  position: relative;
+}
+
+.menu-bar .top-bar .back-btn::before {
+  content: '‹';
+  position: absolute;
+  font-size: 1.5rem;
+  color: #2b6442;
+  font-weight: bold;
+  height: 100%;
+  right: calc(100% + 0.5rem);
+  top: 0;
+  display: flex;
+  align-items: center;
+}
+
+.menu-bar .top-bar .join-in > img {
+  height: 1.3rem;
+  vertical-align: middle;
+}
+
+.lang-switch {
+  float: right;
+  margin-bottom: 1rem;
+}
+
+.lang-switch > img {
+  height: 1.1rem;
+  vertical-align: middle;
+  margin-right: 0.3rem;
+}
+
+.lang-switch > span {
+  font-size: 1.1rem;
+  color: #2b6442;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.set-one {
+  margin-bottom: 1rem;
+}
+
+.set-one > p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.set-one > ul li {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.set-one > ul li.active {
+  color: #be3841;
+}
+
+.currency-tips {
+  padding: 0.5rem 0;
+  text-align: center;
+  border-top: 1px solid #bab7b7;
+}
+
+.bd-dialog.lang-currency .dlg-footer button {
+  width: 6rem;
+}
+/*...*/

@@ -2,6 +2,7 @@ createApp({
 	data() {
 	  return {
 	  	nowYear: new Date().getFullYear(),
+	  	email: '', // 用戶郵箱
 	  	// 網站追蹤列表
         traceList: [{
             logo: '/imgs/icons/fb.png',
@@ -16,6 +17,9 @@ createApp({
 	  }
 	},
 	methods: {
+		subscribe: function() {	// 訂閱最新消息
+			console.log('訂閱最新消息');
+		}
 	},
 	created() {
 	},
