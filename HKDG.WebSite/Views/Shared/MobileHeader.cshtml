@@ -1,4 +1,54 @@
-﻿<div>
-	这是这是mobile-header
+﻿<div id="header">
+	<!-- 系統公告 -->
+    <div class="announcement_box" v-if="sysAnnounce.length">
+        <div id="announcement" class="swiper mid-box">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="item in sysAnnounce">
+                <a href="javascript:;">
+                    <span>{{item.Content}}</span>
+                </a>
+            </div>
+          </div>
+        </div>
 
+        <span class="close-btn" @@click="closeAnnounce">×</span>
+    </div>
+
+    <div class="header-box mid-box">
+    	<a href="javascript:;" class="menu-nav">
+            <img src="~/imgs/icons/menu-nav.png">
+        </a>
+        <a href="javascript:;" class="logo" @@click="goHome()">
+            <img src="~/imgs/logo.png" alt="logo" />
+        </a>
+
+        <div class="mix-search-box" >
+            <div class="search-input-box">
+                @*<select class="search-type" v-model="searchType">
+                    <option value="0">產品</option>
+                    <option value="1">商家</option>
+                </select>*@
+
+                <input type="text" id="key" name="key" v-model="searchKey" v-on:keyup.13="goSearch">
+
+                <span class="search-btn" v-on:click="goSearch"></span>
+            </div>
+        </div>
+
+        <div class="handle-group">
+        	<a href="javascript:;">
+        		<img src="~/imgs/icons/user.png">
+        	</a>
+        	<a href="javascript:;">
+        		<img src="~/imgs/icons/notice.png">
+        	</a>
+        	<a href="javascript:;">
+        		<img src="~/imgs/icons/cart.png">
+        	</a>
+        </div>
+    </div>
 </div>
+
+<script>
+	var plat_flag = 'M';
+</script>
