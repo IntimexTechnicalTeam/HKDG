@@ -1,9 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-
-   
+ViewData["Title"] = "Home Page";
 }
+<div id="container" class="index-page">
+    <div class="banner">
+        <div class="cover">
+            <img src="https://img0.baidu.com/it/u=4013887901,2394335227&fm=253&fmt=auto&app=120&f=JPEG?w=1366&h=768">
+        </div>
+        <div class="swiper bannerSwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" v-for="item in banner">
+                    <img v-bind:src="item.src">
+                </div>
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
 
-<div class="text-center">
-    这是Mobile-body
+    <div class="mid-box">
+    	<pmt-swiper declass="recommend" :options="reOption" :promotion="promotionList[0]"></pmt-swiper>
+
+    	<div class="pmt-one category">
+	    	<div class="util-title">
+	            商品分類
+	        </div>
+
+	        <div class="swiper pmtSwiper">
+	            <div class="swiper-wrapper">
+	                <div class="swiper-slide" v-for="(item,index) in proList">
+	                    <a href="javascript:;">服裝穿搭</a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+    	<pmt-swiper declass="furniture" :options="ftOption" :promotion="promotionList[0]"></pmt-swiper>
+
+    	<div class="pmt-one brand">
+	    	<div class="util-title">
+	            品牌推薦
+	        </div>
+
+	        <div class="swiper pmtSwiper">
+	            <div class="swiper-wrapper">
+	                <div class="swiper-slide" v-for="(item,index) in proList">
+	                    <a href="javascript:;">
+	                    	<div class="img-box">
+	                    		<img src="https://img2.baidu.com/it/u=122191841,2456494415&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500">
+	                    	</div>
+	                    	
+	                    	<p>Traveler’s Art Journal</p>
+	                    </a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+	    <pmt-layout :limit="6" :promotion="promotionList[0]"></pmt-layout>
+
+	    <pmt-layout :limit="6" :promotion="promotionList[0]"></pmt-layout>
+
+	    <pmt-swiper declass="furniture" :options="ftOption" :promotion="promotionList[0]"></pmt-swiper>
+    </div>
 </div>
+@section scripts{
+	<!-- <script src="~/js/components/proItem.js" asp-append-version="true"></script> -->
+	<script src="~/js/components/pmtSwiper.js" asp-append-version="true"></script>
+	<script src="~/js/components/pmtLayout.js" asp-append-version="true"></script>
+	<script src="~/js/page/index.js" asp-append-version="true"></script>
+}

@@ -1,4 +1,44 @@
-﻿<div>
-	这是mobile-footer
+﻿<div id="footer">
+	<div class="mid-box">
+		<ul class="footer-nav">
+			<li>
+				<a href="javascript:;">商戶加盟</a>
 
+				<ul>
+					<li><a href="javascript:;">我想在擺檔開店！</a></li>
+					<li><a href="javascript:;">商戶問與答</a></li>
+				</ul>
+			</li>
+		</ul>
+
+		<div class="subscribe-box">
+			<p>歡迎訂閱最新消息</p>
+
+			<div class="subscribe-input">
+				<input type="text" id="email" name="email" v-model="email" @@keyup.13="subscribe">
+				<button>訂閱</button>
+			</div>
+		</div>
+
+		<div class="support-pay">
+			<img src="/imgs/payment.png">
+		</div>
+
+		<p class="site-tips">
+			使用cookies来确保我们在我们的网站上给阁下最好的体验。<br>
+			如果阁下继续，我们假定你同意接收所有摆档网站上的所有cookies。<br>
+			根據香港法律，不得在業務過程中，向未成年人售賣或供應令人醺醉的酒類。
+		</p>
+
+		<div class="trace">
+			<a v-bind:href="item.link" target="_blank" v-for="item in traceList">
+                <img v-bind:src="item.logo">
+            </a>
+		</div>
+
+		<div class="copyright">
+            <p>© {{nowYear}} 擺檔 BuyDong | Transin Holding Limited 版權所有</p>
+            <img src="/imgs/logo-grey.png" alt="Buydong" />
+        </div>
+	</div>
 </div>
