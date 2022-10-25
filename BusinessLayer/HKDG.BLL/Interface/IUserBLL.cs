@@ -24,5 +24,7 @@
         SystemResult ResetPassword(Guid id);
 
         SystemResult Update(UserDto model);
+
+        SystemResult UpdatePassword(PasswordView passwordView);
     }
 }

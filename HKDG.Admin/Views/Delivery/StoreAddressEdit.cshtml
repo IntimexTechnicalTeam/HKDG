@@ -1,0 +1,225 @@
+﻿
+@{
+    ViewBag.Title = "StoreAddressEdit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div id="app" class="col-md-12" v-cloak>
+    <form id="commentForm">
+        <table class="table">
+            <tr>
+                <td class="col-md-2">
+                    <span style="color:red;">*</span>@HKDG.Resources.Label.MerchantName
+                </td>
+                <td class="col-md-10 form-inline">
+
+                    <input type="text" class="form-control" id="txtexName" v-model="MerchantName" v-bind:disabled="true" style="width:300px;">
+                    <span v-if="IsMerchant==false">
+                        <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.Select" v-on:click="selectMerchant" />
+                    </span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-2"></td>
+                <td class="col-md-10">
+
+                    <multilang-bar v-bind:data="StoreAddressView.AddressList" ref="langbar" v-bind:selectlanguage="selectLanguage"></multilang-bar>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-2  text-danger">*@HKDG.Resources.Label.Name</td>
+                <td class="col-md-10">
+
+
+                    <div v-for="nItem in StoreAddressView.NameList">
+                        <input name="Name" type="text" class="form-control"  v-bind:id="'name_' + nItem.Lang.Code" v-if="nItem.Lang.Code==languageType" v-model="nItem.Desc" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-2  text-danger">*@HKDG.Resources.Label.Address</td>
+                <td class="col-md-10">
+
+
+                    <div v-for="sItem in StoreAddressView.AddressList">
+                        <textarea rows="3" class="form-control" v-bind:id="'address_' + sItem.Lang.Code" v-model="sItem.Desc" v-show="sItem.Lang.Code==languageType"></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-2">@HKDG.Resources.Label.Remark</td>
+                <td class="col-md-10">
+                    <div v-for="rItem in StoreAddressView.RemarkList">
+                        <textarea rows="3" class="form-control" v-bind:id="'remarks_' + rItem.Lang.Code" v-model="rItem.Desc" v-show="rItem.Lang.Code==languageType"></textarea>
+                    </div>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="text-center">
+                    <input type="submit" class="btn btn-primary size-large" value="@HKDG.Resources.Action.Save" />
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/admin/vue-component/multilangbar.js"></script>
+
+    <script type="text/javascript">
+        var cid = '@ViewBag.RelevanceId';
+        var isMerchant = Boolean(@ViewBag.IsMerchant);
+        var merchName = '@ViewBag.MerchantName';
+        var merchId = '@ViewBag.MerchantId';
+        var mEmptyGUID = "00000000-0000-0000-0000-000000000000";
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                MerchantName: merchName,
+                MerchantId: merchId,
+                IsMerchant: isMerchant,
+                cid:cid,
+                StoreAddressView: {
+                    MerchantName:"",
+                    MerchantId: "",
+                    RelevanceId: mEmptyGUID,
+                    NameList: [{ Lang: { Code: "", Text: "" }, Desc: "" }],
+                    AddressList: [{ Lang: { Code: "", Text: "" }, Desc: "" }],
+                    RemarkList: [{ Lang: { Code: "", Text: "" }, Desc: "" }],
+                    Remark: ""
+
+                },
+                language: "English",
+                languageType:"E",
+                IsShow:false,
+            },
+            methods: {
+                saveCheck:function()
+                {
+                    vm.StoreAddressView.MerchantId = vm.MerchantId;
+
+                    vm.save();
+                },
+                save:function()
+                {
+                    WS.AjaxP("post", "/adminapi/Delivery/StoreAddressSave", vm.StoreAddressView,function(response){
+                        if(response.Succeeded==true)
+                        {
+                            @*clowWin();*@
+                            showCloseInfo('@HKDG.Resources.Message.SaveSuccess');
+                        }
+                        else
+                        {
+                            showWarn('@HKDG.Resources.Message.SaveFail');
+                        }
+                    },function(){});
+                },
+
+                getById:function(){
+                    var obj = new Object();
+                    obj.RelevanceId = cid;
+                    WS.AjaxP("get", "/adminapi/Delivery/GetStoreAddressById", obj, function (response) {
+
+                        vm.StoreAddressView = response;
+                        if (vm.StoreAddressView.MerchantId != mEmptyGUID) {
+                            vm.MerchantId = vm.StoreAddressView.MerchantId;
+                            vm.MerchantName = vm.StoreAddressView.MerchantName;
+                        }
+                      
+
+                        vm.$nextTick(function () {
+                            vm.setDefaultLanguage(vm.StoreAddressView.AddressList);
+                            @*vm.StoreAddressView.NameList.forEach(function (val) {
+                        
+                                $("#name_" + val.Lang.Code).rules('add', { required: true, messages: { required: '@HKDG.Resources.Message.RequiredField' } });
+                            });*@
+                            @*vm.StoreAddressView.AddressList.forEach(function (val) {
+                                $("#address_" + val.Lang.Code).rules('add', { required: true, messages: { required: '@HKDG.Resources.Message.RequiredField' } });
+
+                            });*@
+                     
+
+                        });
+
+                    }, function () { });
+                },
+                selectLanguage: function (obj) {
+                    //$("#ulLang li.active").removeClass("active");
+                    //$(me.currentTarget).addClass("active")
+
+                    //vm.language = obj.Lang.Text;
+                    //vm.languageType = obj.Lang.Code;
+                 
+                    vm.$refs.langbar.setCurrentLanguage(obj.Lang.Code);
+                    vm.language = obj.Lang.Text;
+                    vm.languageType = obj.Lang.Code;
+                },
+                setDefaultLanguage:function(data)
+                {
+                    //if (data.length > 0) {
+                    //    var defaultLang = data[0].Lang.Code;
+                    //    vm.$refs.langbar.setCurrentLanguage(defaultLang);
+                    //    //vm.language = data[0].Lang.Text;
+                    //    //vm.languageTypeValue = data[0].Lang.Desc;
+                    
+                    //}
+                    if (data.length > 0) {
+                        var defaultLang = data[0].Lang.Code;
+                        vm.$refs.langbar.setCurrentLanguage(defaultLang);
+                        vm.language = data[0].Lang.Text;
+                        vm.languageType = data[0].Lang.Code;
+                    }
+                },
+                selectMerchant: function () {
+
+                    OpenDialog("@HKDG.Resources.Label.Merchant", 1000, 700, "/Merchant/SelectMerchant/1/0/0", null, function (data) {
+                        if (data && data.results && data.results.length > 0) {
+                            data.results.forEach(function (val) {
+
+                                vm.MerchantId = val.Id;
+                                vm.MerchantName = val.Name;
+
+
+                            });
+
+                        }
+                    });
+                }
+            }
+        });
+
+
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+        $(document).ajaxStop(function () {
+            hideLoading();
+        });
+        $(document).ready(function () {
+            vm.getById();
+
+         
+            $("#commentForm").validate({
+                submitHandler: function() {
+                    vm.saveCheck();
+                },
+                rules:{
+                    
+                },
+                messages:
+                {
+              
+
+                }
+            });
+
+        });
+    </script>
+}
+
+
+

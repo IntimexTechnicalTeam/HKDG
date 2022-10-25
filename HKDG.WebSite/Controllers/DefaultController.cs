@@ -6,20 +6,22 @@ using System.Diagnostics;
 
 namespace HKDG.WebSite.Controllers
 {
-    public class HKDGController : BaseMvcController
+    public class DefaultController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;
 
-        public HKDGController(IComponentContext service) : base(service)
+        public DefaultController(IComponentContext service) : base(service)
         {
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
         }
 
         //[AllowAnonymous]
        
-        public async Task<IActionResult> Index(string IspType)
+        public async Task<IActionResult> Index(string Id)
         {
-            if (IspType.IsEmpty()) IspType = "DG";
+            string IspType = "DG";
+            IspType = Id;
+            if (Id.IsEmpty()) IspType = "DG";
             var flag = await ispProviderBLL.CheckIspType(IspType);
             if (!flag) throw new BLException($"wrong IspType: {IspType}");
 

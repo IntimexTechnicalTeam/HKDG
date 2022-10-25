@@ -3318,4 +3318,7 @@
   <data name="SalesShipment" xml:space="preserve">
     <value>SalesShipment</value>
   </data>
+  <data name="IsShowAdult" xml:space="preserve">
+    <value>IsShowAdult</value>
+  </data>
 </root>

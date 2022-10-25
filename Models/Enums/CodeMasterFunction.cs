@@ -399,5 +399,27 @@
         /// 抢飞活动设定
         /// </summary>
         EventSetting,
+
+        /// <summary>
+        /// 產品驗證Icon
+        /// </summary>
+        ProductIcon,
+
+        /// <summary>
+        /// Transin积分兑换
+        /// </summary>
+        TransinFunExchange,
+
+        MaxLimitDayFun,
+
+        MaxLimitMonthFun,
+
+        MaxLimitYearFun,
+
+        /// <summary>
+        /// 發貨類型
+        /// </summary>
+        ShippedType
+
     }
 }

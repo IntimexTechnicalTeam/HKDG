@@ -165,6 +165,7 @@ namespace Web.Mvc
         {
             try
             {
+                if (!CurrentUser.Roles.Any()) return false;
 
                 foreach (var role in CurrentUser.Roles)
                 {
@@ -194,6 +195,7 @@ namespace Web.Mvc
         protected ActionResult GetActionResult(string viewName)
         {
             ViewBag.IsMobile = IsMobile;
+            ViewBag.Lang = CurrentUser.Lang;
             if (IsMobile)
             {
                 return View("Mobile" + viewName);
@@ -204,9 +206,22 @@ namespace Web.Mvc
             }
         }
 
-        public virtual async Task InitViewPage(string IspType)
-        {           
+        protected ActionResult GetActionResult(string viewName, object model)
+        {
+            ViewBag.IsMobile = IsMobile;
             ViewBag.Lang = CurrentUser.Lang;
+            if (IsMobile)
+            {
+                return View("Mobile" + viewName, model);
+            }
+            else
+            {
+                return View(viewName, model);
+            }
+        }
+
+        public virtual async Task InitViewPage(string IspType)
+        {                     
             await InitMenusAsync(IspType);
         }
 

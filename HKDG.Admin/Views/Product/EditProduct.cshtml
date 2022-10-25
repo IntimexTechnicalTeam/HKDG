@@ -122,38 +122,7 @@
                                     </div>
                                 </div>
                             </td>
-                        </tr>
-                        @*<tr>
-                                <td class="col-md-2">
-                                    @HKDG.Resources.Label.Ingredient
-                                </td>
-                                <td class="col-md-10">
-                                    <div v-for="pItem in productInfo.Ingredient">
-                                        <div v-show="pItem.Lang.Code==languageType" v-bind:id="'editorIngredient_'+pItem.Lang.Code" type="text/plain" style="overflow-y:scroll;">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-2">
-                                    @HKDG.Resources.Label.Specification
-                                </td>
-                                <td class="col-md-10">
-                                    <div v-for="pItem in productInfo.Instructions">
-                                        <div v-show="pItem.Lang.Code==languageType" v-bind:id="'editorInstructions_'+pItem.Lang.Code" type="text/plain" style="overflow-y:scroll;">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>*@
-
-                        @*<tr>
-                                <td class="col-md-2">
-                                    @HKDG.Resources.Label.PermissionLevel
-                                </td>
-                                <td class="col-md-10">
-                                    <select id="cboPermission" data-width="300px"></select>
-                                </td>
-                            </tr>*@
+                        </tr>                     
                         <tr>
                             <td class="col-md-2">
                                 <span style="color:red;">*</span>@HKDG.Resources.Label.ActiveDate
@@ -176,6 +145,14 @@
                         </tr>
                         <tr>
                             <td class="col-md-2">
+                                @HKDG.Resources.Label.ProductIcon
+                            </td>
+                            <td class="col-md-10">
+                                <select id="cboProductIcon" class="form-control" multiple data-width="300px"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-2">
                                 @HKDG.Resources.Label.IsLimitQty
                             </td>
                             <td class="col-md-10">
@@ -190,7 +167,7 @@
                                 <input type="checkbox" value="true" v-model="productInfo.SpecifExtension.NoRefund" />
                             </td>
                         </tr>
-                        @*<tr>
+                        <tr>
                                 <td class="col-md-2">
                                     <span style="color:red;">*</span>@HKDG.Resources.Label.ProductTag
                                 </td>
@@ -202,13 +179,21 @@
                                     <input id="radHot" type="radio" name="ProductType" value="1" v-model="productInfo.SpecifExtension.ProductType" />
                                     <label for="radHot"> @HKDG.Resources.Value.HotSaleProduct</label>
                                 </td>
-                            </tr>*@
+                            </tr>
                         <tr v-if="productInfo.GS1StatusString!=''">
                             <td class="col-md-2">
                                 @HKDG.Resources.Label.GS1Status
                             </td>
                             <td class="col-md-10">
                                 {{productInfo.GS1StatusString}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-2">
+                                @HKDG.Resources.Label.IsShowAdult
+                            </td>
+                            <td class="col-md-10">
+                                <input type="checkbox" value="true" v-model="productInfo.SpecifExtension.IsShowAdult" />
                             </td>
                         </tr>
                         @*<tr>
@@ -905,9 +890,17 @@
                     vm.productInfo.SalePrice = vm.productInfo.TimePrice;
                     vm.productInfo.Action = type;
                     vm.productInfo.CountryIds = $('[name="country"]').val() ==null ? [] : $('[name="country"]').val();
+                    if ($("#cboProductIcon").selectpicker('val')) {
+                        $("#cboProductIcon").selectpicker('val').forEach(function (val) {
+                            vm.productInfo.ProductIcons.push(val);
+                        });
+                    }
+                    else {
+                        vm.productInfo.ProductIcons = [];
+                    }
                     GetProductDetail();
                     fillProductAttrList();
-                    //console.log(vm.productInfo);                
+                    console.log(vm.productInfo);                
                     WS.AjaxP("post", "/adminapi/product/Save", vm.productInfo, function (response) {
                         if (response.Succeeded === true) {
                             @*showCloseInfo('@HKDG.Resources.Message.SaveSuccess');*@
@@ -1310,6 +1303,9 @@
             //InitBootstrapSelect("cboPermission", "/adminapi/Product/GetPermission", 1, false, false, data, function () {
             //    $("#cboPermission").selectpicker('val', vm.productInfo.SpecifExtension.PermissionLevel);
             //});
+            InitBootstrapSelect("cboProductIcon", "/adminapi/Dict/GetProductIconType", 10, false, false, null, function () {
+                $("#cboProductIcon").selectpicker('val', vm.productInfo.ProductIcons);
+            });
             InitBootstrapSelect("cboUnit", "/adminapi/Dict/GetProductUnit", 1, false, false, null, function () {
                 $("#cboUnit").selectpicker('val', vm.productInfo.Specification.Unit);
             });

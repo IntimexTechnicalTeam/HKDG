@@ -102,7 +102,12 @@ namespace HKDG.WebSite
             {
                 endpoints.MapControllerRoute(
                     name: "Default",
-                    pattern: "/{controller=HKDG}/{action=Index}/{IspType?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
+                    pattern: "/{controller=Default}/{action=Index}/{Id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
+
+                endpoints.MapControllerRoute(
+                    name: "Category",
+                    pattern: "/{controller=Product}/{action=Category}/{Id?}");  //让MVC Controller支持无参或一个参数以上
+
             });
         }
         /// <summary>

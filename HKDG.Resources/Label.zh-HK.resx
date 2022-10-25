@@ -3318,4 +3318,7 @@
   <data name="SalesShipment" xml:space="preserve">
     <value>銷售出貨</value>
   </data>
+  <data name="IsShowAdult" xml:space="preserve">
+    <value>是否顯示成人選項</value>
+  </data>
 </root>

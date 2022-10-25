@@ -10,9 +10,15 @@ namespace HKDG.WebSite.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Category()
+        {            
+            return GetActionResult("Category");
+        }
+
+        [AllowAnonymous]
+        public IActionResult Detail(Guid Id)
         {
-            return GetActionResult("Index");
+            return GetActionResult("Detail",Id);
         }
     }
 }

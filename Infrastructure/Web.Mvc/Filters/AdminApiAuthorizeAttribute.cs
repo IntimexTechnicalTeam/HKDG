@@ -76,6 +76,7 @@ namespace Web.Mvc
             
             string key = $"{CacheKey.CurrentUser}";
             var cacheUser = await RedisHelper.HGetAsync<UserDto>(key, uid);
+            if (cacheUser ==null) return false;
 
             flag = CheckRolePermission(cacheUser.Roles);
             return flag;

@@ -372,5 +372,31 @@ namespace HKDG.Admin.Areas.AdminAPI.Controllers
             return result;
         }
 
+        [HttpGet]
+        public List<KeyValue> GetProductIconType()
+        {            
+            var codeMasters = codeMasterBLL.GetCodeMasters(CodeMasterModule.Setting, CodeMasterFunction.ProductIcon);
+
+            var list = codeMasters.Select(s => new KeyValue
+            {
+                Id = s.Value,
+                Text = s.Description,
+            }).ToList();
+
+            return list;
+        }
+
+        public List<KeyValue> GetMerchantShipMethodDicts(Guid merchantId)
+        {
+            var methods = merchantBLL.GetMerchantShipMethods(merchantId);
+            var list = methods.MerchantShipMethods.Select(item => new KeyValue
+            {
+                Id = item.ShipMethodCode,
+                Text = item.ShipMethodName
+            }).ToList();
+            return list;
+        }
+
+      
     }
 }

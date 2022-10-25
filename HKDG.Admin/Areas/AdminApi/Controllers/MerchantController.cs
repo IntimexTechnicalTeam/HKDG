@@ -8,10 +8,13 @@
         IMerchantBLL merchantBLL;
         ISettingBLL settingBLL;
 
+        PreHeatMchFeeChargeService mchFeeChargeService;
+
         public MerchantController(IComponentContext services) : base(services)
         {
             merchantBLL = Services.Resolve<IMerchantBLL>();
-            settingBLL = services.Resolve<ISettingBLL>();           
+            settingBLL = services.Resolve<ISettingBLL>();
+            mchFeeChargeService = (PreHeatMchFeeChargeService)Services.Resolve(typeof(PreHeatMchFeeChargeService));
         }
 
         
@@ -242,6 +245,36 @@
         {
             SystemResult sysRslt = await merchantBLL.RejectMerchant(merchId, reason);
             return sysRslt;
+        }
+
+        [HttpPost]
+        [AdminApiAuthorize(Module = ModuleConst.MerchantModule, Function = new string[] { FunctionConst.Merch_Promt })]
+        public SystemResult<MerchantFreeChargeView> GetMerchantFreeChargeInfo([FromForm] MerchantFreeChargeCond cond)
+        {
+            var view = merchantBLL.GetMerchantFreeChargeInfo(cond);
+
+            var result = new SystemResult<MerchantFreeChargeView>();
+            result.ReturnValue = view;
+            result.Succeeded = true;
+            return result;
+        }
+
+        [HttpPost]
+        [AdminApiAuthorize(Module = ModuleConst.MerchantModule, Function = new string[] { FunctionConst.Merch_Promt })]
+        public async Task<SystemResult> SaveMerchantFreeChargeInfo([FromForm] MerchantFreeChargeView view)
+        {
+            SystemResult result = new SystemResult();
+            result = merchantBLL.SaveMerchantFreeChargeInfo(view);
+            await mchFeeChargeService.CreatePreHeat(view.MerchantId);
+            return result;
+        }
+
+        [HttpGet]
+        [AdminApiAuthorize(Module = ModuleConst.MerchantModule)]
+        public List<KeyValue> GetExternalMerchantOptions()
+        {
+            List<KeyValue> keyValLIst = merchantBLL.GetMerchantCboSrc();          
+            return keyValLIst;
         }
     }
 }

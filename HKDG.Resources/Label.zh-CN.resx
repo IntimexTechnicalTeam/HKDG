@@ -3300,4 +3300,7 @@
   <data name="SalesShipment" xml:space="preserve">
     <value>销售出货</value>
   </data>
+  <data name="IsShowAdult" xml:space="preserve">
+    <value>是否显示成人选项</value>
+  </data>
 </root>

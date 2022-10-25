@@ -1,0 +1,248 @@
+﻿@{
+    ViewBag.Title = "MonthlyStatementOutwardDetail";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div id="app">
+    <br>
+    <div class="form-inline" id="Search" style="display:none;">
+        @HKDG.Resources.Label.Month:
+        <input name="MonthPicker" type="text" class="form-control" id="DateB" style="width: 300px;" autocomplete="off">
+        @*@HKDG.Resources.Label.To
+            <input name="DateTimePicker" type="text" class="form-control" id="DateE" style="width: 300px;">*@
+        <span v-show="!IsMerchant">
+            @HKDG.Resources.Label.MerchantName
+            <select id="cboMerchant" class="form-control" style="width:300px;" v-model="condition.MerchantId"></select>
+        </span>
+        <button type="submit" class="btn btn-primary" onclick="exportData();">@HKDG.Resources.Action.Search</button>
+    </div>
+    <br />
+    <div id="Preview" style="display:none;">
+        <div class="form-inline">
+            <b style="color:brown;font-size:medium">@HKDG.Resources.Label.Preview:</b>
+            <div class="btn-group" style="float:right;">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">@HKDG.Resources.Label.ExportTo <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a onclick="exportTo('csv', 'Summary');">CSV</a></li>
+                    @*<li><a onclick="exportTo('xls', 'Summary');">XLS</a></li>*@
+                </ul>
+            </div>
+        </div>
+        <table class="table" style="width: 100%;" cellpadding=0 cellspacing=0 id="Summary">
+            <tr>
+                <td colspan="13">{{SummaryItem.Title}}</td>
+            </tr>
+            <tr>
+                <td colspan="8">{{SummaryItem.TransactionDateTime}}</td>
+                <td colspan="2">@HKDG.Resources.Label.PrintDate </td>
+                <td colspan="3">{{SummaryItem.PostingDate}}</td>
+            </tr>
+            <tr>
+                <td colspan="13"> </td>
+            </tr>
+            <tr>
+                <td colspan="13">@HKDG.Resources.Label.MerchantAccountSummary</td>
+            </tr>
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.SettlementReportNumber</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Summary.SettlementReportNum}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.Supplier：</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Merchant.Supplier}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.MerchantAccountPayeeName：</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Merchant.PayeeName}}</td>
+            </tr>
+            @*<tr>
+                <td colspan="2">FAS Supplier Number:</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Merchant.FASSupplierNumber}}</td>
+            </tr>*@
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.StatementDate</td>
+                <td colspan="11">{{SummaryItem.TransactionDateTime}}</td>
+            </tr>
+            <tr>
+                <td colspan="13"></td>
+            </tr>
+            <tr>
+                <td colspan="13">@HKDG.Resources.Label.SettlementSummary</td>
+            </tr>
+            @*<tr>
+                <td colspan="2">@HKDG.Resources.Label.CommissionRate：</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Summary.CommissionRateStr}}%</td>
+            </tr>
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.TotalSalesAmount</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Summary.TotalSalesAmountStr}}</td>
+            </tr>*@
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.CommissiontoBUYDONG:</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Summary.CommissionToHKPStr}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">@HKDG.Resources.Label.TotalPaymenttoMerchant</td>
+                <td colspan="11">{{SummaryItem.ReportModel.Summary.TotalPaymentMerchantStr}}</td>
+            </tr>
+            <tr>
+                <td colspan="13"></td>
+            </tr>
+            <tr>
+                <td colspan="13">@HKDG.Resources.Label.DeliveredItemsForSettlement</td>
+            </tr>
+            <tr>
+                <td colspan="13"></td>
+            </tr>
+            <tr>
+                <td style="width:100px;">@HKDG.Resources.Label.OrderDate</td>
+                @*<td>@HKDG.Resources.Label.OrderNO.</td>*@
+                <td>@HKDG.Resources.Label.SubOrderNo.</td>
+                <td style="width:100px;">@HKDG.Resources.Label.ProductCode</td>
+                <td>@HKDG.Resources.Label.ProductName</td>
+                @*<td> Mark-up Price</td>*@
+                @*<td>@HKDG.Resources.Label.RetailPrice</td>*@
+                <td style="width:100px;">@HKDG.Resources.Label.DiscountPrice</td>
+                <td style="width:100px;">@HKDG.Resources.Label.DiscountAmount</td>
+                <td>@HKDG.Resources.Label.PayPrice</td>
+                <td>@HKDG.Resources.Label.CommissionType</td>
+                <td>@HKDG.Resources.Label.CommissionRate</td>
+                <td>@HKDG.Resources.Label.CommissionAmount</td>
+                <td>@HKDG.Resources.Label.Quantity</td>
+                <td>@HKDG.Resources.Label.SubAmount</td>
+                <td>@HKDG.Resources.Label.TrackingNo</td>
+                @*<td>@HKDG.Resources.Label.DeliveryStatus</td>
+        <td>@HKDG.Resources.Label.ReturnOrderNo</td>*@
+            </tr>
+            <tr v-for="item in SummaryItem.ReportModel.Details">
+                <td style="width:100px;"> <span v-if="item.OrderDate!=null">{{item.OrderDate}}</span></td>
+                @*<td> <span v-if="item.OrderNo!=null">{{item.OrderNo}}</span></td>*@
+                <td> <span v-if="item.SubOrderNo!=null">{{item.SubOrderNo}}</span></td>
+                <td style="width:100px;"> <span v-if="item.ProductId!=null" style="word-break:break-word;">{{item.ProductId}}</span></td>
+                <td style="width:100px;"> <span v-if="item.ProductName!=null" style="word-break:break-word;">{{item.ProductName}}</span></td>
+                @*<td> <span v-if="item.MarkupPrice!=null">{{item.MarkupPrice}}</span></td>*@
+                @*<td> <span v-if="item.RetailPrice!=null">{{item.RetailPrice}}</span></td>*@
+                <td style="width:100px;"> <span v-if="item.DiscountPrice!=null">{{item.DiscountPrice}}</span></td>
+                <td style="width:100px;"> <span v-if="item.DiscountAmount!=null">{{item.DiscountAmount}}</span></td>
+                <td> <span v-if="item.PayPrice!=null">{{item.PayPrice}}</span></td>
+                <td> <span v-if="item.CommissionType!=null">{{item.CommissionType}}</span></td>
+                <td> <span v-if="item.CommissionRate!=null">{{item.CommissionRate}}</span></td>
+                <td> <span v-if="item.CommissionAmount!=null">{{item.CommissionAmount}}</span></td>
+                <td> <span v-if="item.Quantity!=null">{{item.Quantity}}</span></td>
+                <td> <span v-if="item.SubAmount!=null">{{item.SubAmount}}</span></td>
+                <td> <span v-if="item.TrackingNo!=null">{{item.TrackingNo}}</span></td>
+
+                @*<td> <span v-if="item.DeliveryStatus!=null">{{item.DeliveryStatus}}</span></td>
+        <td> <span v-if="item.RefundNo!=null">{{item.RefundNo}}</span></td>*@
+            </tr>
+        </table>
+    </div>
+</div>
+@section scripts {
+    <script src="~/Scripts/tableExporter.js?v=1.00"></script>
+    <script>
+        var params = bDialog.getDialogParams();
+        var IsMerchant = Boolean(@ViewBag.IsMerchant);
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                tabType: 0,
+                IsMerchant: IsMerchant,
+                condition: {
+                    Shipping: true,
+                    GroupBy: "",
+                    Warehouses: "",
+                    DateFrom: "2018-4-1",
+                    //DateTo: "2018-4-30",
+                    MerchantId: "-1",
+                },
+                SummaryItem: {
+                    Title: "",
+                    PostingDate: "",
+                    TransactionDateTime: "",
+                    CostCenter: "",
+                    Warehouses: "",
+                    ReportModel: {
+                        Merchant:[],
+                        Details: [],
+                        Summary:[]
+                    }
+
+                }
+            },
+            methods: {
+                tabClick: function (index) {
+                    vm.tabType = index;
+                },
+                checkIsAdmin: function () {
+                    //必须是admin时
+                    if (!vm.IsMerchant) {
+                        InitNormalSelect("cboMerchant", "/adminapi/Merchant/GetExternalMerchantOptions", true, null, false);
+                    }
+                }
+            }
+        });
+
+        function exportData() {
+            if (vm.condition.MerchantId == "-1"& !vm.IsMerchant)
+            {
+                alert("Have to choose merhcant!")
+            }
+            else
+            {
+                vm.condition.DateFrom = $("#DateB").val()+"-01";
+                //vm.condition.DateTo = $("#DateE").val();
+                WS.AjaxP("post", "/adminapi/Report/GetSTPMonthlyOutwardStatement", vm.condition,
+                function (response) {
+                    if (response != "") {
+                        var obj = new Object;
+                        obj.data = response;
+                        OpenDialog('@HKDG.Resources.Label.Preview', 1200, 700, "/Reports/MonthlyStatementOutwardDetail", obj, function () { });
+                    } else {
+                        showInfo('@HKDG.Resources.Message.DataNotFound');
+                    }
+                },
+                function () { });
+            }
+
+        }
+        function exportTo(type, name) {
+            var file = "";
+            if (name == "Summary"){
+                file = vm.SummaryItem.Warehouses + "_SettlementSummary_" + vm.SummaryItem.PostingDate
+            }
+            if (name == "Detailed") {
+                file = vm.DetailedItem.Warehouses + "_SettlementDetail_" + vm.DetailedItem.PostingDate
+            }
+            $('#' + name).tableExport({
+                filename: file,
+                format: type,
+            });
+
+        }
+        function checkData(params) {
+            if (params != null) {
+                vm.SummaryItem = params.data;
+                $("#Preview").css("display", "block");
+            }
+            else {
+                $("#Search").css("display", "block");
+            }
+        }
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+        $(document).ajaxStop(function () {
+            hideLoading();
+        });
+        $(document).ready(function () {
+
+            //InitNormalSelect("cboWarehouseName", "/adminapi/Inventory/GetWhseComboSrc", true);
+            InitDateTimePickerForMonth();
+            vm.checkIsAdmin();
+            //exportData();
+            checkData(params);
+        });
+    </script>
+}
+
+

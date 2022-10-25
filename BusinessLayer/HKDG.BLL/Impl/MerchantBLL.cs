@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Microsoft.EntityFrameworkCore;
+using Model;
 
 namespace HKDG.BLL
 {
@@ -10,7 +11,7 @@ namespace HKDG.BLL
         IMerchantShipMethodMappingRepository merchantShipMethodMappingRepository;
         ICodeMasterRepository codeMasterRepository;
         IExpressCompanyRepository expressCompanyRepository;
-
+        IMerchantFreeChargeRepository merchantFreeChargeRepository;
         IUserBLL userBLL;
         ISettingBLL settingBLL;
         public IProductBLL productBLL;
@@ -25,6 +26,7 @@ namespace HKDG.BLL
             merchantShipMethodMappingRepository = Services.Resolve<IMerchantShipMethodMappingRepository>();
             codeMasterRepository = Services.Resolve<ICodeMasterRepository>();
             expressCompanyRepository = Services.Resolve<IExpressCompanyRepository>();
+            merchantFreeChargeRepository = Services.Resolve<IMerchantFreeChargeRepository>();
             userBLL = Services.Resolve<IUserBLL>();           
             settingBLL = Services.Resolve<ISettingBLL>();
             merchantPromotionRepository = Services.Resolve<IMerchantPromotionRepository>();
@@ -915,6 +917,12 @@ namespace HKDG.BLL
             return flag;
         }
 
+        public MerchantFreeChargeView GetMerchantFreeChargeInfo(MerchantFreeChargeCond cond)
+        {
+            var view = merchantFreeChargeRepository.GetMerchantFreeChargeInfo(cond.Id, cond.ShipCodes);
+            return view;
+        }
+
         public SystemResult ApplyApprove(Guid id)
         {
             SystemResult result = new SystemResult();
@@ -1014,6 +1022,84 @@ namespace HKDG.BLL
 
             return obj;
         }
+
+        public SystemResult SaveMerchantFreeChargeInfo(MerchantFreeChargeView view)
+        {
+            SystemResult result = new SystemResult();
+            UnitOfWork.IsUnitSubmit = true;
+
+            if (view.ShipCodes == null || view.ShipCodes.Count <= 0)
+            {
+                throw new Exception(Resources.Message.ShipCodeNotAllowedEmpty);
+            }
+
+            var merchantFreeCharges = baseRepository.GetList<MerchantFreeCharge>(x => x.IsActive && !x.IsDeleted && x.MerchantId == view.MerchantId).ToList();
+            baseRepository.Delete(merchantFreeCharges);
+            List<MerchantFreeCharge> list = new List<MerchantFreeCharge>();
+            if (view.Products == null || view.Products.Count <= 0)
+            {
+                MerchantFreeCharge charge = new MerchantFreeCharge();
+
+                charge.Id = Guid.NewGuid();
+                charge.MerchantId = view.MerchantId;
+                charge.ProductCode = "";
+                //charge.ShipCode = item;
+                charge.ShipCode = "";
+                list.Add(charge);
+            }
+            else
+            {
+                foreach (var product in view.Products)
+                {
+                    foreach (var item in view.ShipCodes)
+                    {
+                        MerchantFreeCharge charge = new MerchantFreeCharge();
+
+                        charge.Id = Guid.NewGuid();
+                        charge.MerchantId = view.MerchantId;
+                        charge.ProductCode = product.Code;
+                        //charge.ShipCode = item;
+                        charge.ShipCode = item;
+                        list.Add(charge);
+                    }
+                }
+            }
+
+            //}
+            baseRepository.Insert(list);
+
+            UnitOfWork.Submit();
+
+            result.ReturnValue = view.Id;
+            result.Succeeded = true;
+            return result;
+        }
+
+        public List<KeyValue> GetMerchantCboSrc()
+        {
+            var merchantList = new List<KeyValue>();
+
+            var query = (from d in UnitOfWork.DataContext.Merchants.AsNoTracking()
+                         join t in UnitOfWork.DataContext.Translations.AsNoTracking() on new { a1 = d.NameTransId, a2 = CurrentUser.Lang } equals new { a1 = t.TransId, a2 = t.Lang }
+                         into TransTemp
+                         from tt in TransTemp.DefaultIfEmpty()
+                         where (!CurrentUser.IsMerchant || (CurrentUser.IsMerchant && d.Id == CurrentUser.MerchantId))
+
+                         && !d.IsDeleted
+                         select new KeyValue
+                         {
+                             Id = d.Id.ToString(),
+                             Text = tt != null ? tt.Value : string.Empty,
+                         }).OrderBy(x => x.Text).ToList();
+
+            if (query?.Count > 0)
+            {
+                merchantList.AddRange(query);
+            }
+
+            return merchantList;
+        }
+
 
         private MerchantShipMethodMappingView GenMerchantShipMethodView(List<MerchantActiveShipMethodDto> defaultShipMethod, List<MerchantActiveShipMethodDto> shipMethods)
         {

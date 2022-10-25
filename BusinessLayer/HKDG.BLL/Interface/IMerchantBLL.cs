@@ -18,7 +18,13 @@
         Task<SystemResult> DeactiveMerchantAsync(Guid merchID);
 
         Task<SystemResult> LogicalDelMerchRec(string recIDsList);
-        
+
+        SystemResult SaveMerchantFreeChargeInfo(MerchantFreeChargeView view);
+
+        MerchantFreeChargeView GetMerchantFreeChargeInfo(MerchantFreeChargeCond cond);
+
+        List<KeyValue> GetMerchantCboSrc();
+
         /// <summary>
         /// 获取系统所有ShipMethod
         /// </summary>

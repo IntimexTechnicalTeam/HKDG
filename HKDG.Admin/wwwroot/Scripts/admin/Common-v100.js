@@ -100,9 +100,9 @@ WS.Get = function (url, data, success, error) {
             403: function () {
 
                 console.log("no authorization ");
-                //$.cookie("access_token", null, { path: "/" });
-                // window.location.href = "/Account/Login?returnUrl=" + window.location.pathname;
-                //window.location.href = "/Personal/nopermission";
+                 $.cookie("access_token", null, { path: "/" });
+                window.location.href = "/";
+                window.location.reload();
             },
             500: function (xhr, status, text) {
                 console.log("statusCode=500");
@@ -146,9 +146,9 @@ WS.Post = function (url, data, success, error) {
                 alert("page not found");
             },
             403: function () {
-                //console.log("no authorization "); 
-                //window.location.href = "/Account/Login?returnUrl=" + window.location.pathname;
-                //window.location.href = "/Personal/nopermission";
+                console.log("no authorization "); 
+                window.location.href = "/";
+                window.location.reload();
             },
             500: function (xhr, status, text) {
                 console.log("statusCode=500");
@@ -196,9 +196,9 @@ WS.AjaxSP = function (p) {
             },
             403: function () {
                 console.log("no authorization ");
-                //$.cookie("access_token", null, { path: "/" });
-                //  window.location.href = "/Account/Login?returnUrl=" + window.location.pathname;
-                //window.location.href = "/Personal/nopermission";
+                $.cookie("access_token", null, { path: "/" });
+                window.location.href = "/";
+                window.location.reload();
             },
             500: function (xhr, status, text) {
                 console.log("statusCode=500");
@@ -229,9 +229,9 @@ WS.Ajax = function (p) {
             403: function () {
 
                 console.log("no authorization ");
-                //$.cookie("access_token", null, { path: "/" });
-                // window.location.href = "/Account/Login?returnUrl=" + window.location.pathname;
-                //window.location.href = "/Personal/nopermission";
+                $.cookie("access_token", null, { path: "/" });
+                window.location.href = "/";
+                window.location.reload();
             },
             500: function (xhr, status, text) {
                 console.log("statusCode=500");
@@ -284,8 +284,8 @@ WS.AjaxP = function (type, url, data, successcallback, errorcallback) {
             },
             403: function () {
                 console.log("no authorization ");
-                //$.cookie("access_token", null, { path: "/" });
-                // window.location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                $.cookie("access_token", null, { path: "/" });
+                window.location.href = "/";
                 //window.location.href = "/Personal/nopermission";
             },
             500: function (xhr, status, text) {

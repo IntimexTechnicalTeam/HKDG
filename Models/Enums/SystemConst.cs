@@ -138,6 +138,8 @@
         /// 商家柜台配对
         /// </summary>
         public const string Merch_CC_Setting = "CCSetting";
+
+        public const string Merch_StoreAddress = "MchStoreAddress";
         #endregion
 
         #region MARKETINGMNG

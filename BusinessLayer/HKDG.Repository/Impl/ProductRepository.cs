@@ -387,7 +387,13 @@
                 sb.AppendLine(" and p.CatalogId = @CatalogId");
                 paramList.Add(new SqlParameter("@CatalogId", cond.Category));
             }
-       
+
+            if (CurrentUser.IsMerchant)
+            {
+                sb.Append("and left(p.Code, 2)=@IspType");
+                paramList.Add(new SqlParameter("@IspType", CurrentUser.IspType));
+            }
+
             switch (cond.ProductSearchType)
             {
                 case ProductSearchType.AllProduct:

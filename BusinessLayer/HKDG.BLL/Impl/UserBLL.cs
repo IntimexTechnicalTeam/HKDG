@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using log4net;
+
+namespace HKDG.BLL
 {
     public class UserBLL : BaseBLL, IUserBLL
     {
@@ -432,6 +434,33 @@
             result.Succeeded = true;
             result.Message = HKDG.Resources.Message.SaveSuccess;
              
+            return result;
+        }
+
+        public SystemResult UpdatePassword(PasswordView passwordView)
+        {
+            SystemResult result = new SystemResult();
+            User user = baseRepository.GetModel<User>(x => x.Id == Guid.Parse(CurrentUser.UserId));
+
+            //todo 判斷是否包換至少一個數字和字母 
+            if (!StringUtil.ExistCharNum(passwordView.NewPwd))
+            {
+                result.Message = Resources.Message.PasswordFormatError;
+                return result;
+            }
+
+            string encriptPwd = HashUtil.HashPwd(passwordView.Pwd);
+
+            if (user.Password != encriptPwd)
+            {
+                result.Message = Resources.Message.PasswordNotMatch;
+                return result;
+            }
+
+            user.Password = HashUtil.HashPwd(passwordView.NewPwd);
+            baseRepository.Update(user);
+            result.Succeeded = true;
+            result.Message = Resources.Message.UpdateSuccess;
             return result;
         }
     }

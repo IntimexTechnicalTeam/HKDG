@@ -1,0 +1,241 @@
+﻿
+@{
+    ViewBag.Title = "StoreAddress";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div id="app" v-cloak>
+
+    <div>
+        <div class="form-inline">
+            @HKDG.Resources.Label.Merchant
+            <input type="text" class="form-control" id="txtexName" v-model="cond.merchName" v-bind:disabled="true">
+            <span v-if="IsMerchant==false">
+                <input type="button" class="btn btn-default" value="@HKDG.Resources.Action.Select" v-on:click="selectMerchant" />
+            </span>
+            @*<select id="cboMerchant" class="form-control" v-model="cond.MerchantId"></select>*@
+            <input type="button" class="btn btn-primary form-control" value="@HKDG.Resources.Action.Search" v-on:click="search" />
+        </div>
+        <div class="panel-body">
+            <div id="toolbar" class="btn-group">
+                <button id="btn_add" type="button" class="btn btn-default" v-on:click="add">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>@HKDG.Resources.Action.Add
+                </button>
+                <button id="btn_delete" type="button" class="btn btn-default" v-bind:disabled="isDelete==true" v-on:click="deleteSA">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>@HKDG.Resources.Action.Delete
+                </button>
+            </div>
+            <table id="tblMerchantList"></table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['miniTab'], function () {
+            var layer = layui.layer,
+                miniTab = layui.miniTab;
+        });
+        var tabId = self.frameElement.parentElement.id;
+        var isMerchant = Boolean(@ViewBag.IsMerchant);
+          var merchName = '@ViewBag.MerchantName';
+        var merchId = '@ViewBag.MerchantId';
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                IsMerchant: isMerchant,
+                isDelete: true,
+                cond: {
+                    MerchantId: merchId,
+                    merchName: merchName
+                }
+            },
+            methods: {
+                search: function ()
+                {
+                    console.log(vm.cond);
+                    $("#tblMerchantList").bootstrapTable("refresh", { url: "/adminapi/Delivery/GetStoreAddressList", pageNumber: 1 });
+                },
+                add: function () {
+                    miniTab.openNewTabByIframe({
+                        href:"/Delivery/StoreAddressEdit/" + WS.GuidEmpty ,
+                        title: '@HKDG.Resources.Action.Add' ,
+                        callback: vm.search
+                    });
+                },
+                deleteSA: function () {
+                   var objSelections = $("#tblMerchantList").bootstrapTable("getSelections");
+
+                    if (objSelections.length > 0) {
+                        SystemConfirm('@HKDG.Resources.Message.DeleteConfirm', function () {
+
+                            var strId = "";
+                            objSelections.forEach(function (val) {
+                                strId += val.RelevanceId + ",";
+                            });
+
+                            var data = new Object();
+                            data.relevanceIds = strId;
+
+                            WS.AjaxP("get", "/adminapi/Delivery/DeleteStoreAddress", data, function (response) {
+                                if (response.Succeeded == true) {
+                                    vm.search();
+                                }
+                                else {
+                                    showWarn('@HKDG.Resources.Message.DeleteFailed' + "\n\n" + response.Message);
+                                }
+                            }, function () { });
+                        });
+                    }
+                },
+                setToolbarBtnState: function ()
+                {
+                    var objSelections = $("#tblMerchantList").bootstrapTable("getSelections");
+
+                    if (objSelections.length >= 1) {
+                        vm.isDelete = false;
+                    }
+                    else {
+                        vm.isDelete = true;
+                    }
+                },
+                selectMerchant: function () {
+                    
+                    OpenDialog("@HKDG.Resources.Label.Merchant", 1000, 700, "/Merchant/SelectMerchant/1/0/0", null, function (data) {
+                        if (data && data.results && data.results.length > 0) {
+                            data.results.forEach(function (val) {
+
+                                vm.cond.MerchantId = val.Id;
+                                vm.cond.merchName = val.Name;
+
+
+                            });
+
+                        }
+                    });
+                },
+                getById: function () {
+                    var obj = new Object();
+                    obj.RelevanceId = merchId;
+                    WS.AjaxP("get", "/adminapi/Delivery/GetStoreAddressById", obj, function (response) {
+
+                        vm.cond.merchName = response.MerchantName;
+
+                    }, function () { });
+                },
+            }
+        })
+
+
+         var merchantListTableInit = function () {
+            var objDataTable = new Object();
+
+            objDataTable.Init = function () {
+                $("#tblMerchantList").bootstrapTable({
+                    method: 'post',
+                    url: '',         //请求后台的URL（*）//请求方式（*）
+                    queryParams: objDataTable.queryParams,//传递参数（*）
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: true,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    sortable: true,                     //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    smartDisplay: false,
+                    showRefresh: true,                  //是否显示刷新按钮
+                    clickToSelect: false,                //是否启用点击选中行
+                    //height: 750,                        //行高，如果没有设置height属性，表格自动根据记录条数決定表格高度
+                    uniqueId: "MerchantId",                     //每一行的唯一标识，一般为主键列
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                   //是否显示父子表
+                    pagination: true,                   //是否显示分页（*）
+                    dataField: "Data",
+                    totalField: "TotalRecord",
+                    ajaxOptions: {
+                        beforeSend: function (request) {
+                            var access_token = $.cookie("access_token");
+                            request.setRequestHeader("Authorization", "Bearer " + access_token);
+                        }
+                    },
+                    onCheck: function (row) {
+                        vm.setToolbarBtnState();
+                    },
+                    onUncheck: function (row) {
+                        vm.setToolbarBtnState();
+                    },
+                    onCheckAll: function (rows) {
+                        vm.setToolbarBtnState();
+                    },
+                    onUncheckAll: function (rows) {
+                        vm.setToolbarBtnState();
+                    },
+                    columns: [{
+                        checkbox: true
+                    }, {
+                        field: 'MerchantId',
+                        title: 'Id',
+                        visible: false
+                    }, {
+                        field: 'Name',
+                        title: '@HKDG.Resources.Label.Name',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            return '<a href="#" onClick="modify(\'' + row.RelevanceId + '\' ,\'' + value + '\');">' + value + '</a>';
+                        }
+                    }],
+                    formatLoadingMessage: function () {
+                        return '';
+                    }
+                });
+            };
+
+            objDataTable.queryParams = function (params) {
+                var page = 1;
+                if (params.offset > 0) {
+                    page = parseInt(params.offset / params.limit) + 1;
+                }
+                //var SortedBy = "MerchantName";
+                //var Sorted = "DESC";
+                vm.cond.Page = page;
+                vm.cond.PageSize = params.limit;
+                return vm.cond;
+            }
+            return objDataTable;
+        }
+
+
+
+        function modify(id, name) {
+            var id = id;
+            miniTab.openNewTabByIframe({
+                href:"/Delivery/StoreAddressEdit/" + id,
+                title: '@HKDG.Resources.Action.Modify' + "-" + name,
+                callback: vm.search
+            });
+         }
+
+
+        $(document).ajaxStart(function () {
+            showLoading();
+        });
+        $(document).ajaxStop(function () {
+            hideLoading();
+        });
+
+
+
+        $(document).ready(function () {
+          
+            var oTable = merchantListTableInit();
+            oTable.Init();
+            vm.getById();
+        });
+
+
+
+    </script>
+}

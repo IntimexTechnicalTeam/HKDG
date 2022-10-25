@@ -4147,6 +4147,15 @@ namespace HKDG.Resources {
         }
         
         /// <summary>
+        ///   查找类似 IsShowAdult 的本地化字符串。
+        /// </summary>
+        public static string IsShowAdult {
+            get {
+                return ResourceManager.GetString("IsShowAdult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Special time discount 的本地化字符串。
         /// </summary>
         public static string IsSpecificDate {

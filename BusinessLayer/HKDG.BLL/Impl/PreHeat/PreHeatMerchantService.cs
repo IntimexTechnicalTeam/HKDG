@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using WebCache;
+
+namespace HKDG.BLL
 {
     public class PreHeatMerchantService : AbstractPreHeatService
     {
@@ -106,84 +108,6 @@
             return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mp"></param>
-        /// <returns></returns>
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mp"></param>
-        /// <returns></returns>
-        //public async Task<Dictionary<string, List<Translation>>> DicCollection(MerchantPromotion mp)
-        //{
-        //    Dictionary<string, List<Translation>> dic = new Dictionary<string, List<Translation>>();
-        //    if (mp != null)
-        //    {
-        //        var noticeList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.NoticeTranId);
-        //        if (noticeList != null && noticeList.Any())
-        //            dic.Add("NoticeTranId", noticeList.ToList());
-        //        else
-        //            dic.Add("NoticeTranId", new List<Translation>());
-
-        //        var logoList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.SmallLogoId);
-        //        if (logoList != null && logoList.Any())
-        //            dic.Add("SmallLogoId", logoList.ToList());
-        //        else
-        //            dic.Add("SmallLogoId", new List<Translation>());
-
-        //        var compleleDayList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.OrderTransId);
-        //        if (compleleDayList != null && compleleDayList.Any())
-        //            dic.Add("OrderTransId", compleleDayList.ToList());
-        //        else
-        //            dic.Add("OrderTransId", new List<Translation>());
-
-        //        var coverList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.CoverId);
-        //        if (coverList != null && coverList.Any())
-        //            dic.Add("CoverId", coverList.ToList());
-        //        else
-        //            dic.Add("CoverId", new List<Translation>());
-
-        //        var promIntroductionList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.IntorductionTranId);
-        //        if (promIntroductionList != null && promIntroductionList.Any())
-        //            dic.Add("IntorductionTranId", promIntroductionList.ToList());
-        //        else
-        //            dic.Add("IntorductionTranId", new List<Translation>());
-
-        //        var promNameList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.NameTranId);
-        //        if (promNameList != null && promNameList.Any())
-        //            dic.Add("NameTranId", promNameList.ToList());
-        //        else
-        //            dic.Add("NameTranId", new List<Translation>());
-
-        //        //ReturnTerms
-        //        var ReturnTermsList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.ReturnTermsTranId);
-        //        if (ReturnTermsList != null && ReturnTermsList.Any())
-        //            dic.Add("ReturnTermsTranId", ReturnTermsList.ToList());
-        //        else
-        //            dic.Add("ReturnTermsTranId", new List<Translation>());
-
-        //        //TandC
-        //        var TandCList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.TAndCTranId);
-        //        if (TandCList != null && TandCList.Any())
-        //            dic.Add("TAndCTranId", TandCList.ToList());
-        //        else
-        //            dic.Add("TAndCTranId", new List<Translation>());
-
-        //        //Description
-        //        var DescriptionList = await baseRepository.GetListAsync<Translation>(x => x.TransId == mp.DescTransId);
-        //        if (DescriptionList != null && DescriptionList.Any())
-        //            dic.Add("DescTransId", DescriptionList.ToList());
-        //        else
-        //            dic.Add("DescTransId", new List<Translation>());
-
-        //    }
-
-
-        //    return dic;
-        //}
-
         public async Task<Dictionary<string, Translation>> DicCollection(MerchantPromotion mp,Language language)
         {
             Dictionary<string, Translation> dic = new Dictionary<string, Translation> ();
@@ -278,6 +202,67 @@
                         BannerLink = s.BannerLink
                     }).OrderBy(o => o.Seq).ToList();
             }
+            return result;
+        }
+
+        public async Task<SystemResult> SetStorePickUpAddressDataToHashCache(IQueryable<StorePickUpAddress> list)
+        {
+            var result = new SystemResult();
+            string key = $"{PreHotType.StorePickUpAddress}_{Language.C}";
+
+            var hotList = list.Where(x => x.Lang == Language.C).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.S}";
+
+            hotList = list.Where(x => x.Lang == Language.S).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.E}";
+
+            hotList = list.Where(x => x.Lang == Language.E).ToList();
+            if (hotList != null && hotList.Any())
+            {
+                foreach (var item in hotList)
+                {
+
+                    await RedisHelper.HSetAsync(key, item.Id.ToString(), item);
+                }
+            }
+
+
+            return result;
+        }
+
+        public async Task<SystemResult> DeleteStorePickUpAddressToHashCache(string[] ids)
+        {
+
+
+            var result = new SystemResult();
+            string key = $"{PreHotType.StorePickUpAddress}_{Language.C}";
+            await RedisHelper.HDelAsync(key, ids);
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.S}";
+            await RedisHelper.HDelAsync(key, ids);
+
+            key = $"{PreHotType.StorePickUpAddress}_{Language.E}";
+            await RedisHelper.HDelAsync(key, ids);
+
+
             return result;
         }
 

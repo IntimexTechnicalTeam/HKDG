@@ -472,5 +472,63 @@
             var list = DeliveryBLL.GetProvinceByCountryZoneForSelect(zoneId, exId);
             return list;
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        //[AdminApiAuthorize(Module = ModuleConst.MerchantModule, Function = new string[] { FunctionConst.Merch_StoreAddress })]
+        public async Task<PageData<StoreAddressView>> GetStoreAddressList(StoreAddressCond cond)
+        {
+            var sysRslt = new PageData<StoreAddressView>();
+            try
+            {
+                sysRslt = await DeliveryBLL.GetStoreAddressList(cond);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return sysRslt;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        // [AdminApiAuthorize(Module = ModuleConst.MerchantModule, Function = new string[] { FunctionConst.Merch_StoreAddress })]
+        public async Task<StoreAddressView> GetStoreAddressById(string RelevanceId)
+        {
+            var View = await DeliveryBLL.GetStoreAddressById(Guid.Parse(RelevanceId));
+            return View;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        //[AdminApiAuthorize(Module = ModuleConst.MerchantModule, Function = new string[] { FunctionConst.Merch_StoreAddress })]
+        public async Task<SystemResult> StoreAddressSave([FromForm]StoreAddressView view)
+        {
+            var sysRslt = new SystemResult();
+            try
+            {
+                sysRslt = await DeliveryBLL.StoreAddressSave(view);
+            }
+            catch (Exception ex)
+            {
+                sysRslt.Succeeded = false;
+                sysRslt.Message = ex.Message;
+            }
+            return sysRslt;
+        }
+
+        /// <summary>
+        /// 通過id刪除国家
+        /// </summary>
+        /// <param name="skus"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<SystemResult> DeleteStoreAddress(string relevanceIds)
+        {
+            string[] ids = relevanceIds.Split(',');
+            SystemResult result = await DeliveryBLL.DeleteStoreAddress(ids.ToList());
+            return result;
+        }
     }
 }

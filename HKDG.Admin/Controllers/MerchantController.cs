@@ -190,7 +190,5 @@
             ViewBag.IsSingleSelect = id;
             return View();
         }
-
-
     }
 }

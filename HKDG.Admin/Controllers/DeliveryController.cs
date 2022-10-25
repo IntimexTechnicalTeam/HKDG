@@ -1,4 +1,6 @@
-﻿namespace HKDG.Admin.Controllers
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+
+namespace HKDG.Admin.Controllers
 {
 
     /// <summary>
@@ -103,5 +105,28 @@
 
             return View();
         }
+
+        public ActionResult StoreAddress()
+        {
+            ViewBag.IsMerchant = CurrentUser.IsMerchant ? 1 : 0;
+            ViewBag.MerchantId = CurrentUser.IsMerchant ? CurrentUser.MerchantId : Guid.Empty;
+
+            string key = $"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}";
+            var mchInfo = RedisHelper.HGet<HotMerchant>(key, CurrentUser.MerchantId.ToString());
+            ViewBag.MerchantName = mchInfo?.Name ?? Resources.Value.Mall;
+            return View();
+        }
+
+        public ActionResult StoreAddressEdit(string id)
+        {
+            ViewBag.IsMerchant = CurrentUser.IsMerchant ? 1 : 0;
+            ViewBag.MerchantId = CurrentUser.IsMerchant ? CurrentUser.MerchantId : Guid.Empty;
+            string key = $"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}";
+            var mchInfo = RedisHelper.HGet<HotMerchant>(key, CurrentUser.MerchantId.ToString());
+            ViewBag.MerchantName = mchInfo?.Name ?? Resources.Value.Mall;
+            ViewBag.RelevanceId = new Guid(id);
+            return View();
+        }
+
     }
 }

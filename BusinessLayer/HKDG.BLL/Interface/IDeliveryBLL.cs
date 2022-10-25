@@ -72,6 +72,15 @@
         /// <returns></returns>
         List<ExpressCompanyDto> GetMerchantExpress(Guid merchId);
 
+        Task<PageData<StoreAddressView>> GetStoreAddressList(StoreAddressCond cond);
+
+        Task<StoreAddressView> GetStoreAddressById(Guid RelevanceId);
+
+        Task<SystemResult> StoreAddressSave(StoreAddressView view);
+
+        StoreAddressView GetStoreAddressLanguage(StoreAddressView view);
+
+        Task<SystemResult> DeleteStoreAddress(List<string> ids);
 
         /// <summary>
         /// 獲取快遞詳細信息

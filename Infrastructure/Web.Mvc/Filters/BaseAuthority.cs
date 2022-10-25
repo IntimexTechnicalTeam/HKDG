@@ -70,7 +70,7 @@ namespace Web.Mvc
             if (tokenType == TokenType.Expired)
             {
                 context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "token过期" });
-                context.HttpContext.Response.StatusCode = 401;
+                context.HttpContext.Response.StatusCode = 403;
                 flag = false;
                 return flag;
             }
@@ -89,7 +89,7 @@ namespace Web.Mvc
                 /*if (!bool.Parse(payload["IsLogin"]))
                 {
                     context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "请登录" });
-                    context.HttpContext.Response.StatusCode = 401;
+                    context.HttpContext.Response.StatusCode = 403;
                     flag = false;
                     return flag;
                 }*/

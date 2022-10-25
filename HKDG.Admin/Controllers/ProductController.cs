@@ -26,11 +26,14 @@
                 ViewBag.IsMerchant = CurrentUser.IsMerchant.ToInt();
 
             ViewBag.CanEdit = 0;
-            foreach (var role in CurrentUser.Roles)
+            if (CurrentUser?.Roles?.Any() ?? false)
             {
-                if (role.PermissionList.Any(x => string.Equals(x.Function, FunctionConst.Prod_Edit.ToString(), StringComparison.OrdinalIgnoreCase)))
+                foreach (var role in CurrentUser.Roles)
                 {
-                    ViewBag.CanEdit = 1; break;
+                    if (role.PermissionList.Any(x => string.Equals(x.Function, FunctionConst.Prod_Edit.ToString(), StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ViewBag.CanEdit = 1; break;
+                    }
                 }
             }
             ViewBag.Lang = CurrentUser.Lang;
@@ -120,7 +123,7 @@
         /// <returns></returns>
         public ActionResult EditProduct(string id, string para2)
         {
-            ViewBag.Id = id;
+            ViewBag.Id = id ?? Guid.Empty.ToString();
             ViewBag.Type = para2;
 
             if (!HasPermission(FunctionConst.Prod_Edit))
@@ -138,7 +141,7 @@
             else
                 ViewBag.IsMerchant = CurrentUser.IsMerchant.ToInt();
 
-
+            ViewBag.IspType = CurrentUser.IspType;
             ViewBag.Lang = CurrentUser.Lang;
             return View();
         }
@@ -151,7 +154,7 @@
         /// <returns></returns>
         public ActionResult ProductImg(Guid id, bool para2)
         {
-            ViewBag.LimitSize = 2048;// _settingBLL.GetProductImageLimtSize();
+            ViewBag.LimitSize = "2048";// _settingBLL.GetProductImageLimtSize();
             ViewBag.Id = id;
             if (CurrentUser == null)
                 ViewBag.IsMerchant = 0;

@@ -41,6 +41,8 @@
     <None Include="Views\Inventory\SupplierSetting.cshtml" />
     <None Include="Views\Inventory\WarehouseEdit.cshtml" />
     <None Include="Views\Inventory\WarehouseSetting.cshtml" />
+    <None Include="Views\Personal\ChangePassword.cshtml" />
+    <None Include="Views\Personal\NoPermission.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

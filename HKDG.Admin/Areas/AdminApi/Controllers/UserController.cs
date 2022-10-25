@@ -77,5 +77,12 @@
             }
             return result;
         }
+
+        [HttpPost]
+        public SystemResult UpdatePassword(PasswordView passwordView)
+        {
+            SystemResult result= userBLL.UpdatePassword(passwordView);
+            return result;
+        }
     }
 }

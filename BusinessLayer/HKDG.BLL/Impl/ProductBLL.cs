@@ -238,7 +238,7 @@
                 throw new BLException(HKDG.Resources.Message.DateCompareToday);
             }
 
-            UnitOfWork.IsUnitSubmit = true;
+            //UnitOfWork.IsUnitSubmit = true;
             if (product.Action == ActionTypeEnum.Add.ToString() || product.Action == ActionTypeEnum.Copy.ToString() || product.Action == ActionTypeEnum.NewVer.ToString())
             {
                 if (product.Action == ActionTypeEnum.Copy.ToString() || product.Action == ActionTypeEnum.NewVer.ToString())//創建新版本產品時判斷
@@ -261,7 +261,7 @@
                 baseRepository.Insert(dbProduct);
 
                 InsertOrUpdateProductTranslation(dbProduct, product, ActionTypeEnum.Add);
-                InsertOrUpdateProductDetail(product, ActionTypeEnum.Add);               
+                InsertOrUpdateProductDetail(product, ActionTypeEnum.Add);
                 InsertOrUpdateInvProductAttribute(dbProduct, product, ActionTypeEnum.Add);//插入库存属性并新增SKU
                 InsertOrUpdateNonInvProductAttribute(dbProduct, product, ActionTypeEnum.Add);
                 InsertOrUpdateProductExtension(product, ActionTypeEnum.Add);
@@ -279,7 +279,7 @@
                     {
                         item.IsActive = false;
                     }
-                    baseRepository.Update(oldProducts);    
+                    baseRepository.Update(oldProducts);
 
                     var oldStatics = baseRepository.GetModel<ProductStatistics>(p => p.Code == dbProduct.Code);
                     if (oldStatics != null) oldStatics.InternalNameTransId = dbProduct.NameTransId;
@@ -288,7 +288,7 @@
             }
             else  //编辑
             {
-                InsertOrUpdateProductTranslation(dbProduct, product, ActionTypeEnum.Modify);                
+                InsertOrUpdateProductTranslation(dbProduct, product, ActionTypeEnum.Modify);
                 InsertOrUpdateInvProductAttribute(dbProduct, product, ActionTypeEnum.Modify);
                 InsertOrUpdateNonInvProductAttribute(dbProduct, product, ActionTypeEnum.Modify);
                 InsertOrUpdateProductDetail(product, ActionTypeEnum.Modify);
@@ -314,9 +314,7 @@
             product.MerchantId = dbProduct.MerchantId;
             InsertOrUpdateFreeChargeProduct(product);
 
-
-
-            UnitOfWork.Submit();
+            //UnitOfWork.Submit();
 
             var dto = AutoMapperExt.MapTo<ProductDto>(dbProduct);
             return dto;
@@ -1596,7 +1594,7 @@
                 var supportLang = GetSupportLanguage();
                 productEditModel.OriginalId = Guid.Empty;
                 productEditModel.Id = Guid.NewGuid();
-                productEditModel.MerchantSupplierId = merchantSupplierId;
+                productEditModel.MerchantSupplierId = merchantSupplierId.Replace("BD",CurrentUser.IspType);
                 productEditModel.CurrencyCode = currencyBLL.GetDefaultCurrencyCode();               
                 productEditModel.Name = "";              
                 productEditModel.PageTitles = LangUtil.GetMutiLangFromTranslation(null, supportLang);

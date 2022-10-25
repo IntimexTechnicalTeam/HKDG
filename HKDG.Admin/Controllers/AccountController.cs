@@ -19,10 +19,10 @@ namespace HKDG.Admin.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string IspType)
+        public async Task<IActionResult> Login(string id)
         {
             ViewBag.CopyRight = "2341234";
-            ViewBag.IspType = IspType ?? "DG";
+            ViewBag.IspType = id ?? "DG";
             return View();
         }
 

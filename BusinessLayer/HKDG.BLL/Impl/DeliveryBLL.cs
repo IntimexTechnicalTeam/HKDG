@@ -14,6 +14,8 @@ namespace HKDG.BLL
         IMerchantBLL _merchantBLL;
         IDeliveryAddressBLL _deliveryAddressBLL;
         private List<MutiLanguage> _EmptyLangs;
+         PreHeatMerchantService mchService;
+
         public DeliveryBLL(IServiceProvider services) : base(services)
         {
             _translationRepository = Services.Resolve<ITranslationRepository>();
@@ -26,6 +28,7 @@ namespace HKDG.BLL
             _deliveryAddressBLL = Services.Resolve<IDeliveryAddressBLL>();
             _provinceRepository = Services.Resolve<IProvinceRepository>();
             _cityRepository = Services.Resolve<ICityRepository>();
+            mchService = (PreHeatMerchantService)Services.GetService(typeof(PreHeatMerchantService));
         }
 
         public List<ProductRefuseResult> CheckCountryIsVaild(CountryVaildInfo vailInfo)
@@ -626,6 +629,224 @@ namespace HKDG.BLL
 
             return data;
         }
+
+        /// 獲取門店地址列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PageData<StoreAddressView>> GetStoreAddressList(StoreAddressCond cond)
+        {
+            PageData<StoreAddressView> result = new PageData<StoreAddressView>();
+            var query = (from q in baseRepository.GetList<StorePickUpAddress>()
+                         where !q.IsDeleted
+                         group q by new
+                         {
+                             q.RelevanceId,
+                             q.MerchantId
+                         } into g
+                         select new StoreAddressView
+                         {
+                             MerchantId = g.Key.MerchantId,
+                             RelevanceId = g.Key.RelevanceId,
+                             UpdateDate = g.Max(q => q.UpdateDate),
+                         });
+
+            if (!(cond.MerchantId == Guid.Empty))
+            {
+                query = query.Where(x => x.MerchantId == cond.MerchantId);
+            }
+
+            result.TotalRecord = query.Count();
+            var Data = query.OrderByDescending(o => o.UpdateDate).Skip(cond.Offset).Take(cond.PageSize).ToList();
+            foreach (var item in Data)
+            {
+                item.MerchantName = GetMerchantName(item.MerchantId);
+                GetStoreAddressLanguage(item);
+                item.Name = item.NameList.FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "";
+                item.Remark = item.RemarkList.FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "";
+                item.Address = item.AddressList.FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "";
+            }
+            result.Data = Data;
+            return result;
+        }
+
+        public async Task<StoreAddressView> GetStoreAddressById(Guid RelevanceId)
+        {
+            var result = new StoreAddressView();
+
+            var View = (from q in baseRepository.GetList<StorePickUpAddress>()
+                        where q.RelevanceId == RelevanceId
+                        select new StoreAddressView
+                        {
+                            MerchantId = q.MerchantId,
+                            RelevanceId = q.RelevanceId
+                        }).FirstOrDefault();
+
+
+            if (View != null)
+            {
+                View.MerchantName = GetMerchantName(View.MerchantId);
+                GetStoreAddressLanguage(View);
+                result = View;
+            }
+            else
+            {
+                result.NameList = GetEmptyMultiLangs();
+                result.RemarkList = GetEmptyMultiLangs();
+                result.AddressList = GetEmptyMultiLangs();
+                result.MerchantId = CurrentUser.MerchantId;
+                result.MerchantName = GetMerchantName(CurrentUser.MerchantId);
+            }
+
+            return result;
+        }
+
+        public async Task<SystemResult> StoreAddressSave(StoreAddressView view)
+        {
+            var result = new SystemResult();
+
+            var storeAddressList = baseRepository.GetList<StorePickUpAddress>().Where(x => x.RelevanceId == view.RelevanceId).ToList();
+            if (storeAddressList.Any())
+            {
+                foreach (var item in storeAddressList)
+                {
+                    item.Address = view.AddressList.FirstOrDefault(p => p.Language == item.Lang)?.Desc ?? "";
+                    item.Remark = view.RemarkList.FirstOrDefault(p => p.Language == item.Lang)?.Desc ?? "";
+                    item.Name = view.NameList.FirstOrDefault(p => p.Language == item.Lang)?.Desc ?? "";
+                    item.MerchantId = view.MerchantId;
+
+                    item.UpdateDate = DateTime.Now;
+                    item.UpdateBy = Guid.Parse(CurrentUser.UserId);
+                }
+
+                using (var tran = baseRepository.CreateTransation())
+                {
+                    await baseRepository.UpdateAsync(storeAddressList);
+
+                    tran.Commit();
+                    result.Succeeded = true;
+
+                }
+            }
+            else
+            {
+                var list = new List<StorePickUpAddress>();
+                view.RelevanceId = Guid.NewGuid();
+
+                foreach (var item in view.AddressList)
+                {
+
+
+                    StorePickUpAddress storeAddress = new StorePickUpAddress();
+                    storeAddress.MerchantId = view.MerchantId;
+                    storeAddress.Id = Guid.NewGuid();
+                    storeAddress.Lang = item.Language;
+                    storeAddress.Name = view.NameList.FirstOrDefault(p => p.Language == item.Language)?.Desc ?? "";
+                    storeAddress.Remark = view.RemarkList.FirstOrDefault(p => p.Language == item.Language)?.Desc ?? "";
+                    storeAddress.Address = view.AddressList.FirstOrDefault(p => p.Language == item.Language)?.Desc ?? "";
+                    storeAddress.RelevanceId = view.RelevanceId;
+                    storeAddress.CreateDate = DateTime.Now;
+                    storeAddress.UpdateDate = DateTime.Now;
+                    storeAddress.CreateBy = Guid.Parse(CurrentUser.UserId);
+                    storeAddress.UpdateBy = Guid.Parse(CurrentUser.UserId);
+                    list.Add(storeAddress);
+                }
+
+                using (var tran = baseRepository.CreateTransation())
+                {
+                    await baseRepository.InsertAsync(list);
+                    tran.Commit();
+                    result.Succeeded = true;
+                }
+            }
+            if (result.Succeeded)
+            {
+                var DataSource = baseRepository.GetList<StorePickUpAddress>().Where(x => x.IsActive && !x.IsDeleted && x.RelevanceId == view.RelevanceId);
+                if (DataSource != null && DataSource.Any())
+                {
+                    //重新刷新缓存
+                    await mchService.SetStorePickUpAddressDataToHashCache(DataSource);
+                }
+            }
+            return result;
+        }
+
+        public StoreAddressView GetStoreAddressLanguage(StoreAddressView view)
+        {
+            view.NameList = new List<MutiLanguage>();
+            view.RemarkList = new List<MutiLanguage>();
+            view.AddressList = new List<MutiLanguage>();
+
+            var data = new List<MutiLanguage>();
+            var supportLangs = _settingBLL.GetSupportLanguages();
+            if (view.RelevanceId == Guid.Empty)
+            {
+                foreach (var supportLang in supportLangs)
+                {
+                    view.NameList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+                    view.RemarkList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+                    view.AddressList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+                }
+            }
+            else
+            {
+                var translates = baseRepository.GetList<StorePickUpAddress>().Where(d => d.RelevanceId == view.RelevanceId && d.IsActive && !d.IsDeleted).Select(d => d).ToList();
+                bool exist = false;
+                foreach (var supportLang in supportLangs)
+                {
+                    exist = false;
+                    foreach (var tran in translates)
+                    {
+                        if (supportLang.Code.Trim() == tran.Lang.ToString().Trim())
+                        {
+                            exist = true;
+
+                            view.NameList.Add(new MutiLanguage { Desc = tran.Name, Lang = supportLang });
+                            view.RemarkList.Add(new MutiLanguage { Desc = tran.Remark, Lang = supportLang });
+                            view.AddressList.Add(new MutiLanguage { Desc = tran.Address, Lang = supportLang });
+                        }
+
+                    }
+                    if (!exist)
+                    {
+
+                        view.NameList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+                        view.RemarkList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+                        view.AddressList.Add(new MutiLanguage { Desc = "", Lang = supportLang });
+
+                    }
+                }
+            }
+            return view;
+        }
+
+        /// <summary>
+        /// 批量删除地址
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task<SystemResult> DeleteStoreAddress(List<string> ids)
+        {
+            SystemResult result = new SystemResult();
+
+                var List = baseRepository.GetList<StorePickUpAddress>().Where(d => ids.Contains(d.RelevanceId.ToString())).Select(d => d).ToList();
+                foreach (var item in List)
+                {
+                    item.IsDeleted = true;
+                    item.IsActive = false;
+                }
+                using (var tran = baseRepository.CreateTransation())
+                {
+                    await baseRepository.UpdateAsync(List);
+                    tran.Commit();
+                    result.Succeeded = true;
+                }
+                if (result.Succeeded)
+                {
+                    var AddressIDs = List.Select(s => s.Id.ToString());
+                    await mchService.DeleteStorePickUpAddressToHashCache(AddressIDs.ToArray());                  
+                }
+            return result;
+        }
+
 
         /// <summary>
         /// 计算ECship的运费
