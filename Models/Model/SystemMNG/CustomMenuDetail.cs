@@ -21,5 +21,10 @@
         [Required]
         [Column(Order = 6)]
         public bool IsAnchor { get; set; }
+
+        [Required]
+        [Column(Order = 7, TypeName = "varchar")]
+        [StringLength(100)]
+        public string IspType { get; set; }
     }
 }

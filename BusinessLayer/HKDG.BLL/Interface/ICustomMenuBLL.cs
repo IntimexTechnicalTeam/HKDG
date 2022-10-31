@@ -30,6 +30,6 @@ namespace HKDG.BLL
 
         SystemResult SaveSeq(MenuCond cond);
 
-        Task<List<Menu>> GetMenuBarAsync();
+        Task<MenuModel> GetMenuBarAsync();
     }
 }

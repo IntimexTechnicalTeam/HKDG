@@ -1,7 +1,6 @@
 ﻿using Autofac;
-using HKDG.BLL;
 using Domain;
-using Enums;
+using HKDG.BLL;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +9,18 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
-using System.Threading.Tasks;
 
 namespace Web.Mvc
 {
     public abstract class BaseMvcController : Controller
     {
         public IComponentContext Services;
+
+        ICustomMenuBLL customMenuBLL;
+        IIspProviderBLL ispProviderBLL;
 
         /// <summary>
         /// 默认注入AutoFac的IComponentContext
@@ -27,7 +29,8 @@ namespace Web.Mvc
         public BaseMvcController(IComponentContext service)
         {
             this.Services = service;
-
+            ispProviderBLL = Services.Resolve<IIspProviderBLL>();
+            customMenuBLL = Services.Resolve<ICustomMenuBLL>();
         }
 
         IConfiguration _configuration;
@@ -220,14 +223,45 @@ namespace Web.Mvc
             }
         }
 
+        /// <summary>
+        /// 初始化IspType,HeaderMenu,FooterMenu等
+        /// </summary>
+        /// <param name="IspType"></param>
+        /// <returns></returns>
         public virtual async Task InitViewPage(string IspType)
-        {                     
-            await InitMenusAsync(IspType);
+        {
+            await InitIspType(IspType);
+            await InitMenusAsync(ViewBag.IspType);
         }
 
-        async Task InitMenusAsync(string IspType) { 
-        
-        
+        /// <summary>
+        /// 设置ViewBag.IspType
+        /// </summary>
+        /// <param name="IspType"></param>
+        /// <returns></returns>
+        /// <exception cref="BLException"></exception>
+        async Task InitIspType(string IspType)
+        {
+            if (IspType.IsEmpty()) IspType = "DG";
+            var flag = await ispProviderBLL.CheckIspType(IspType);
+            if (!flag) throw new BLException($"wrong IspType: {IspType}");
+            ViewBag.IspType = IspType;
+        }
+
+        public virtual void SetTempData<T>(string key, T t)
+        {
+            var json = JsonUtil.ToJson(t);
+            TempData[key] = json;
+        }
+
+        async Task InitMenusAsync(string IspType)
+        {
+            var menus = await customMenuBLL.GetMenuBarAsync();
+            menus.HeaderMenus = menus.HeaderMenus.Where(x => x.IspType == IspType).ToList();
+            menus.FooterMenus = menus.FooterMenus.Where(x => x.IspType == IspType).ToList();
+
+            SetTempData("MenuBarDatas", menus);
+
         }
     }
 }

@@ -22,7 +22,7 @@
         public async Task<SystemResult<List<Menu>>> GetMenuBar()
         {
             var result = new SystemResult<List<Menu>>();
-            result.ReturnValue = await customMenuBLL.GetMenuBarAsync();
+            //result.ReturnValue = await customMenuBLL.GetMenuBarAsync();
             return result;
         }
 

@@ -11,5 +11,6 @@
 
         public bool IsAnchor { get; set; }
 
+        public string IspType { get; set; }
     }
 }

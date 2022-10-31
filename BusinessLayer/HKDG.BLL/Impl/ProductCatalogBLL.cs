@@ -168,7 +168,7 @@
             return result;
         }
 
-        public async Task<List<Catalog>> GetCatalogAsync()
+        public async Task<List<ProdCatatogInfo>> GetCatalogAsync()
         {
             var result =new List<Catalog>();
             string key = CacheKey.MenuCatalog.ToString();
@@ -181,8 +181,8 @@
                 await RedisHelper.HSetAsync(key,field,data);
             }
 
-            result = AutoMapperExt.MapToList<ProdCatatogInfo,Catalog>(data);      
-            return result;
+          
+            return data;
         }
 
         public List<ProdCatatogInfo> GetCatalogListById(Guid catID)
@@ -217,7 +217,7 @@
             info.ParentId = catalog.ParentId;
             //info.PathId = catalog.PathId;
             info.Level = catalog.Level;
-
+            info.IspType = catalog.IspType;
             return info;
         }
 
@@ -238,6 +238,7 @@
                 node.ImgSM = item.ImgSM;
                 node.ImgBM = item.ImgBM;
                 node.Name = item.Name;
+                node.IspType = item.IspType;
                 result.Add(node);
                 var childs = data.Where(p => p.ParentId == item.Id && p.ParentId != p.Id).ToList();
                 if (childs.Count > 0)

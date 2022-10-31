@@ -46,5 +46,8 @@
         public bool IsNewWin { get; set; }
 
         public List<TypeDetail> Details { get; set; }
+
+        public string IspType { get; set; }
+
     }
 }

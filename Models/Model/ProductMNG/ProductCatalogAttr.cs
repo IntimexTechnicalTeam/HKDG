@@ -16,5 +16,10 @@
         /// </summary>
         public bool IsInvAttribute { get; set; }
         //public virtual ICollection<ProductAttribute> Attributes { get; set; }
+
+        [Required]
+        [Column(Order = 7, TypeName = "varchar")]
+        [StringLength(100)]
+        public string IspType { get; set; }
     }
 }

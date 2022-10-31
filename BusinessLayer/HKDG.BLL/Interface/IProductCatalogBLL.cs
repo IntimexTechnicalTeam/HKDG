@@ -20,7 +20,7 @@
 
         string GetCatalogPath(Guid catID);
 
-        Task<List<Catalog>> GetCatalogAsync();
+        Task<List<ProdCatatogInfo>> GetCatalogAsync();
 
         List<ProdCatatogInfo> GetCatalogListById(Guid catID);
     }

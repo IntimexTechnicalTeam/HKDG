@@ -34,6 +34,7 @@
                              CreateDate = c.CreateDate,
                              UpdateBy = c.UpdateBy,
                              UpdateDate = c.UpdateDate,
+                             IspType = c.IspType,
                          });
             return query;    
         }

@@ -1,6 +1,4 @@
-﻿using Menu = Domain.Menu;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     public class CustomMenuBLL : BaseBLL, ICustomMenuBLL
     {
@@ -117,7 +115,7 @@ namespace HKDG.BLL
             return CustomMenuRepo.GetCustomMenuById(id);
         }
 
-        public async Task<List<Menu>> GetMenuBarAsync()
+        public async Task<MenuModel> GetMenuBarAsync()
         {
             var result = new SystemResult();
             string key = CacheKey.MenuBars.ToString();
@@ -129,8 +127,7 @@ namespace HKDG.BLL
                 await RedisHelper.HSetAsync(key, field, data);
             }
 
-            var menuData = data?.HeaderMenus?.Select(item => new Menu { Id = item.Id, Name= item.Name }).ToList();
-            return menuData;
+            return data;
         }
 
         public List<CustomMenuDetailDto> GetCustomMenuDetailByMenuId(Guid menuId)

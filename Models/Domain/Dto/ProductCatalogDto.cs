@@ -64,6 +64,6 @@
 
         public List<MutiLanguage> Descs { get; set; } = new List<MutiLanguage>();
 
-
+        public string IspType { get; set; }
     }
 }

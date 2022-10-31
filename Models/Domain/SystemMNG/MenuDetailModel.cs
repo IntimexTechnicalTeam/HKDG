@@ -36,5 +36,7 @@
         public Guid NameTransId { get; set; }
         public Guid TitleTransId { get; set; }
         public Guid ImageTransId { get; set; }
+
+        public string IspType { get; set; }
     }
 }

@@ -43,5 +43,6 @@
         /// </summary>
         public int Level { get; set; }
 
+        public string IspType { get; set; }
     }
 }

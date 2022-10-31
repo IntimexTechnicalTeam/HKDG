@@ -15,5 +15,9 @@
         //[Column(Order = 6)]
         //public Guid PathId { get; set; }
 
+        [Required]
+        [Column(Order = 6, TypeName = "varchar")]
+        [StringLength(100)]
+        public string IspType { get; set; }
     }
 }

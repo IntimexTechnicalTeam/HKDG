@@ -11,5 +11,7 @@
         public Guid ParentId { get;set;}    
 
         public List<Catalog> Children { get; set; } = new List<Catalog>();
+
+        public string IspType { get; set; }
     }
 }

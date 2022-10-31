@@ -14,5 +14,7 @@
         /// 是否打開新窗口
         /// </summary>
         public bool IsNewWin { get; set; }
+
+        public string IspType { get; set; }
     }
 }

@@ -244,5 +244,7 @@
         public DbSet<StorePickUpAddress> StorePickUpAddresses { get; set; }
 
         public DbSet<IspProvider> IspProviders { get; set; }
+
+        public DbSet<SystemAnnouncement> SystemAnnouncements { get; set; }
     }
 }

@@ -29,5 +29,7 @@
         public bool IsAnchor { get; set; }
         public List<FrontMenuDetailModel> Childs { get; set; }
         public int Seq { get; set; }
+
+        public string IspType { get; set; }
     }
 }

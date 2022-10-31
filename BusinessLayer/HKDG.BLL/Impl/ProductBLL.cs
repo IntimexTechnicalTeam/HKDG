@@ -1594,7 +1594,7 @@
                 var supportLang = GetSupportLanguage();
                 productEditModel.OriginalId = Guid.Empty;
                 productEditModel.Id = Guid.NewGuid();
-                productEditModel.MerchantSupplierId = merchantSupplierId.Replace("BD",CurrentUser.IspType);
+                productEditModel.MerchantSupplierId = merchantSupplierId.Replace("BD",CurrentUser.IspType);    //替换为IspType标识，至此可通过这个前缀来识别是哪个平台的产品
                 productEditModel.CurrencyCode = currencyBLL.GetDefaultCurrencyCode();               
                 productEditModel.Name = "";              
                 productEditModel.PageTitles = LangUtil.GetMutiLangFromTranslation(null, supportLang);

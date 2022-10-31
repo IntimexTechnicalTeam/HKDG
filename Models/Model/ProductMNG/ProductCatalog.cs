@@ -67,5 +67,9 @@
         [StringLength(50)]
         public string Code { get; set; }
 
+        [Required]
+        [Column(Order = 11, TypeName = "varchar")]
+        [StringLength(100)]
+        public string IspType { get; set; }
     }
 }

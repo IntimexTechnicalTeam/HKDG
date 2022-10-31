@@ -61,5 +61,10 @@
 
         [Column(Order = 16)]
         public bool IsNewWin { get; set; }
+
+        [Required]
+        [Column(Order = 17, TypeName = "varchar")]
+        [StringLength(100)]
+        public string IspType { get; set; }
     }
 }

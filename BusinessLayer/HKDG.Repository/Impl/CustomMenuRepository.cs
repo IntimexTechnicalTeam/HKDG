@@ -33,6 +33,7 @@ namespace HKDG.Repository
                     Title = GetMutiLanguage(item.TitleTransId).FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "",
                     IsNewWin = item.IsNewWin,
                     Seq = item.Seq,
+                    IspType =item.IspType,
                 });
             }
             return tree;
@@ -62,6 +63,7 @@ namespace HKDG.Repository
                     Name = GetMutiLanguage(item.NameTransId).FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "",
                     Title = GetMutiLanguage(item.TitleTransId).FirstOrDefault(p => p.Language == CurrentUser.Lang)?.Desc ?? "",
                     IsNewWin = item.IsNewWin,
+                    IspType = item.IspType,
                 });
             }
             return tree;
@@ -565,6 +567,7 @@ namespace HKDG.Repository
                              NameTransId = m.NameTransId,
                              TitleTransId = m.TitleTransId,
                              ImageTransId = m.ImageTransId,
+                             IspType = m.IspType,
                          }).ToList();
 
 
@@ -602,6 +605,7 @@ namespace HKDG.Repository
                 a.IsNewWin = item.IsNewWin;
                 a.IsAnchor = item.IsAnchor;
                 a.Seq = item.Seq;
+                a.IspType = item.IspType;
                 list.Add(a);
             }
 
@@ -628,7 +632,7 @@ namespace HKDG.Repository
                     node.PlaceTop = item.PlaceTop;
                     node.IsNewWin = item.IsNewWin;
                     node.Seq = item.Seq;
-
+                    node.IspType = item.IspType;
                     //node.RedirectType = item.RedirectType;
                     //node.RedirectValue = item.RedirectValue;
                     if (item.RedirectType == (int)CustomMenuType.Link)
@@ -692,6 +696,7 @@ namespace HKDG.Repository
                             node.PlaceTop = firstVal.PlaceTop;
                             node.IsAnchor = firstVal.IsAnchor;
                             node.Childs = firstVal.Childs;
+                            node.IspType = firstVal.IspType;
                         }
                     }
                 }
@@ -920,7 +925,8 @@ namespace HKDG.Repository
                             {
                                 Id = item.Id.ToString()
                             },
-                            IsAnchor = false
+                            IsAnchor = false,
+                            IspType = item.IspType,
                         });
                     }
                 }
@@ -944,6 +950,7 @@ namespace HKDG.Repository
                             {
                                 Id = item.Id.ToString()
                             },
+                            IspType = item.IspType
                         });
                     }
                 }
@@ -980,6 +987,7 @@ namespace HKDG.Repository
                     node.Image = item.OriginalIcon; //PathUtil.GetPMServer() + item.OriginalIcon;
                     node.Type = (int)CustomMenuType.Catalog;
                     node.Url = "";
+                    node.IspType = item.IspType;
                     node.Value = new ValueModel
                     {
                         Id = item.Id.ToString()
@@ -1070,7 +1078,8 @@ namespace HKDG.Repository
                     {
                         Id = item.content.Key.ToString()
                     },
-                    IsAnchor = item.detail.IsAnchor
+                    IsAnchor = item.detail.IsAnchor,
+                    IspType = item.detail.IspType
                 });
             }
             return list;
@@ -1224,7 +1233,8 @@ namespace HKDG.Repository
                     {
                         Id = item.Value.ToString()
                     },
-                    IsAnchor = false
+                    IsAnchor = false,
+                    IspType = item.IspType,
                 });
             }
             return list;

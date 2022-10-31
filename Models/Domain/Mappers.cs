@@ -77,7 +77,12 @@ namespace Domain
 
             ConfigMap<MerchantInfoView, HotMerchant>();
             ConfigMap<MemberGroupDto, MemberGroup>();
+
+            ConfigMap<SystemAnnouncement, SystemAnnouncementDto>();
+            ConfigMap<SystemAnnouncement, SysAnnounceFrontView>();
+            ConfigMap<SystemAnnouncementDto, SysAnnounceFrontView>();
         }
+
         void ConfigMap<TSource, TDestination>()
         {
             CreateMap<TSource, TDestination>();
