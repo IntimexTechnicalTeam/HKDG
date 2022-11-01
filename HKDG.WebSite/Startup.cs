@@ -2,6 +2,7 @@ using Autofac.Core;
 using Microsoft.AspNetCore.Mvc.Razor;
 using NETCoreViewLocationExpander.ViewLocationExtend;
 using System.Xml.Linq;
+using Web.Swagger;
 
 namespace HKDG.WebSite
 {
@@ -24,6 +25,9 @@ namespace HKDG.WebSite
                 })               
                 .AddRazorRuntimeCompilation();              //可以在编译调试模式下编辑view
             //builder.Services.AddScoped(typeof(UserAuthorizeAttribute));         //注入Filter
+
+            //追加API 参数描述
+            SwaggerExtension.AddSwagger(builder.Services, "HKDG.WebSite.xml", "HKDG.Domain.xml");
 
             builder.Services.Configure<MvcViewOptions>(configureOptions =>
             {
@@ -78,6 +82,8 @@ namespace HKDG.WebSite
                 app.UseHsts();
             }
 
+            app.ConfigureSwagger();
+
             app.UseMiddleware<GlobalErrorHandlingMiddleware>();         //全局异常处理
             //app.UseMiddleware<JwtAuthenticationMiddleware>();
 
@@ -98,17 +104,7 @@ namespace HKDG.WebSite
 
             app.UseRouting();
             app.UseAuthorization();         //这个必须在UseRouting 和 UseEndpoints 之间
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "Default",
-                    pattern: "/{controller=Default}/{action=Index}/{Id?}/{para2?}/{para3?}");  //让MVC Controller支持无参或一个参数以上
-
-                endpoints.MapControllerRoute(
-                    name: "Category",
-                    pattern: "/{controller=Product}/{action=Category}/{Id?}");  //让MVC Controller支持无参或一个参数以上
-
-            });
+            app.UseEndpoints(endpoints => { endpoints = endpoints.BindEndPoints(); });
         }
         /// <summary>
         /// 模型验证

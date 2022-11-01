@@ -52,6 +52,8 @@
 
         public MerchantType MerchantType { get; set; }
 
+        public MerchantShopType MerchantShopType { get; set; } = MerchantShopType.Shop;
+
         public List<MerchantPromotionBannerView> Banners { get; set; } = new List<MerchantPromotionBannerView>();
 
         public List<MerchantPromotionProductView> ProductList { get; set; } = new List<MerchantPromotionProductView>();

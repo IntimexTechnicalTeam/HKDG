@@ -49,5 +49,6 @@
         /// </summary>
         public bool IsHongKong { get; set; }
 
+        public MerchantShopType MerchShopType { get; set; } = MerchantShopType.Shop;
     }
 }

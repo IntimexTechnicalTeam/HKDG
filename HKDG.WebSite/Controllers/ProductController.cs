@@ -17,9 +17,9 @@
         /// <param name="Id"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> Category(string Id)
+        public async Task<IActionResult> Category(string IspType)
         {
-            await InitViewPage(Id);
+            await InitViewPage(IspType);
 
             var result = await productCatalogBLL.GetCatalogAsync();
             result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
@@ -34,14 +34,26 @@
         /// <param name="Id">ProductCode</param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> Detail(string Id)
+        public async Task<IActionResult> Detail(string IspType, string Id)
         {
-            await InitViewPage(Id);
+            await InitViewPage(IspType);
 
             var details =await productBLL.GetProductDetailAsync(Id);
             SetTempData("ProudctDetail", details);
 
             return GetActionResult("Detail");
-        }      
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> Search(string IspType, string key)
+        {
+            await InitViewPage(IspType);
+            if (key.IsEmpty())
+                return RedirectToAction("Index", "Default");
+
+            ViewBag.Key = key;         
+            return GetActionResult("Search", key);
+
+        }
     }
 }

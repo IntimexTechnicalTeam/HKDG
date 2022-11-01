@@ -25,5 +25,7 @@
         public string ProductCode { get; set; } = "";
 
         public string OrderBy { get; set; } = "New";
+
+        public ProductStatus? ProductStatus { get; set; }
     }
 }

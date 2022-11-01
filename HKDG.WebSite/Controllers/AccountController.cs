@@ -11,9 +11,9 @@
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> MyMessage(string Id)
+        public async Task<IActionResult> MyMessage(string IspType)
         {
-            await InitViewPage(Id);
+            await InitViewPage(IspType);
 
             var data = await interactMessageBLL.GetLatesNoticeAsync();
             SetTempData("LatesNotice", data);

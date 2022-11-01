@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Model;
+using WebCache;
 
 namespace HKDG.BLL
 {
@@ -106,6 +107,52 @@ namespace HKDG.BLL
             data.TotalRecord = query.Select(d => d.Id).Count();
             data.Data = query.Skip(cond.Offset).Take(cond.PageSize).ToList();
             return data;
+        }
+
+        public async Task<PageData<MerchantSummary>> GetMchListAsync(MerchantCond cond)
+        {
+            var result = new PageData<MerchantSummary>();
+            int offset = 0;
+            offset = (cond.Page - 1) * cond.PageSize;
+            var mchkey = $"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}";
+            var cacheData = await RedisHelper.HGetAllAsync<HotMerchant>(mchkey);
+
+            //读数据库，并回写缓存
+            if (!cacheData.Any() || !cacheData.Values.Any())
+            {
+                var mchList = await mchHeatService.GetDataSourceAsync(Guid.Empty);
+                if (mchList != null && mchList.Any())
+                {
+                    //重新刷新缓存
+                    await mchHeatService.SetDataToHashCache(mchList, CurrentUser.Lang);
+                    cacheData = mchList.ToDictionary(x => x.MchId.ToString());
+                }
+            }
+
+            var query = cacheData.Values.AsQueryable().Select(s => new MerchantSummary
+            {
+                Code = s.Code,
+                Name = s.Name,
+                LogoB = s.LogoB,
+                Score = s.Score,
+                Id = s.MchId,
+                MerchShopType = s.MerchantShopType
+            });
+
+            if (!string.IsNullOrEmpty(cond.Name))
+                query = query.Where(x => x.Name.Contains(cond.Name));
+
+            //2022-7-4 接口需要隱藏kol商家，新版再考慮怎麽顯示
+            query = query.Where(x => x.MerchShopType == MerchantShopType.Shop);
+
+            result.TotalRecord = query.Count();
+            query = query.OrderBy(t => t.Name).Skip(offset).Take(cond.Page);
+
+            if (query != null && query.Any())
+            {
+                result.Data = query.ToList();
+            }
+            return result;
         }
 
         public async Task<PageData<MicroMerchant>> GetMerchantListAsync(MerchantCond cond)

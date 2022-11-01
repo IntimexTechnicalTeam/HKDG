@@ -290,6 +290,27 @@
             }
         }
 
+        /// <summary>
+        /// 將數據實體中所有金額進行換算處理
+        /// </summary>
+        /// <param name="entityList"></param>
+        protected void CurrencyMoneyConversion(List<MicroProduct> entityList)
+        {
+            if (IsMatchBaseCurrency(CurrentUser.CurrencyCode)) return;
+
+            if (entityList?.Count > 0)
+            {
+                foreach (var entity in entityList)
+                {
+                    if (entity != null)
+                    {                     
+                        entity.Currency2 = currencyBLL.GetSimpleCurrency(CurrentUser.CurrencyCode);
+                        entity.SalePrice2 = MoneyConversion(entity.SalePrice);
+                        //entity.OriginalPrice2 = MoneyConversion(entity.OriginalPrice);
+                    }
+                }
+            }
+        }
     }
 
     public class ServiceBase<TDal> : BaseBLL

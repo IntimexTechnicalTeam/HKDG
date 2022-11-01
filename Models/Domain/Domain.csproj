@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>bin\Debug\BDMall.Domain.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\net6.0\HKDG.Domain.XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

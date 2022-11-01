@@ -234,6 +234,12 @@ namespace Web.Mvc
             await InitMenusAsync(ViewBag.IspType);
         }
 
+        public virtual void SetTempData<T>(string key, T t)
+        {
+            var json = JsonUtil.ToJson(t);
+            TempData[key] = json;
+        }
+
         /// <summary>
         /// 设置ViewBag.IspType
         /// </summary>
@@ -246,12 +252,6 @@ namespace Web.Mvc
             var flag = await ispProviderBLL.CheckIspType(IspType);
             if (!flag) throw new BLException($"wrong IspType: {IspType}");
             ViewBag.IspType = IspType;
-        }
-
-        public virtual void SetTempData<T>(string key, T t)
-        {
-            var json = JsonUtil.ToJson(t);
-            TempData[key] = json;
         }
 
         async Task InitMenusAsync(string IspType)

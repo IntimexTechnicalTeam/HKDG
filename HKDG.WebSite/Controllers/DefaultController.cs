@@ -13,11 +13,10 @@
        /// 
        /// </summary>
        /// <param name="Id">IspType</param>
-       /// <returns></returns>
-       
-        public async Task<IActionResult> Index(string Id)
+       /// <returns></returns>      
+        public async Task<IActionResult> Index(string IspType)
         {
-            await InitViewPage(Id);
+            await InitViewPage(IspType);
             return GetActionResult("Index");
         }
 

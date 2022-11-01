@@ -53,6 +53,8 @@
 
         PageData<MerchantSelectSummary> SearchMerchantList(MerchantCond cond);
 
+        Task<PageData<MerchantSummary>> GetMchListAsync(MerchantCond cond);
+
         Task<MerchantInfoView> GetMerchantInfoAsync(Guid merchID);
 
         Task<PageData<MicroProduct>> GetMchProductListAsync(ProductCond cond);

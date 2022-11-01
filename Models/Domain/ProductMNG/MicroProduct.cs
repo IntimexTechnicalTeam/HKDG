@@ -40,6 +40,10 @@
 
         public DateTime CreateDate { get; set; }
 
-        public DateTime UpdateDate { get; set; }    
-    }
+        public DateTime UpdateDate { get; set; }
+
+        public List<string> ProductIcon { get; set; } = new List<string>();
+
+        public Guid KolId { get; set; } = Guid.Empty;
+     }
 }

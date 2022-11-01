@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RazorCompileOnBuild>false</RazorCompileOnBuild>
     <RazorCompileOnPublish>false</RazorCompileOnPublish>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>bin\Debug\net6.0\HKDG.WebSite.XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +32,7 @@
     <ProjectReference Include="..\Infrastructure\Web.Framework\Web.Framework.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.MediatR\Web.MediatR.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.Mvc\Web.Mvc.csproj" />
+    <ProjectReference Include="..\Infrastructure\Web.Swagger\Web.Swagger.csproj" />
     <ProjectReference Include="..\Infrastructure\WebCache\WebCache.csproj" />
   </ItemGroup>
 

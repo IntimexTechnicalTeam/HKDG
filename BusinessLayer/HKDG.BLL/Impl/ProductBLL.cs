@@ -793,6 +793,7 @@
                             CreateDate = a.CreateDate,
                             UpdateDate= a.UpdateDate,
                             PurchaseCounter = b.PurchaseCounter,
+                            ProductStatus = a.Status,                            
                         };
 
             #region 组装条件
@@ -810,6 +811,8 @@
             if (!cond.ProductName.IsEmpty())
                 query = query.Where(x => x.Name.Contains(cond.ProductName));
 
+            if (cond.ProductStatus.HasValue)
+                query = query.Where(x => x.ProductStatus == cond.ProductStatus);
             #endregion
 
 
@@ -835,16 +838,17 @@
 
             }).ToList();
 
-
             if (list != null && list.Any())
             {
                 foreach (var item in list)
                 {
-                    item.Currency = currencyBLL.GetDefaultCurrency();
+                    item.Currency = currencyBLL.GetSimpleCurrency(item.CurrencyCode);
                     item.Score = NumberUtil.ConvertToRounded(item.Score);
                     item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
                     item.ImagePath = (await GetProductImages(item.ProductId, item.Code)).FirstOrDefault();
                 }
+
+                CurrencyMoneyConversion(list);
                 result.Data = list;
             }
 
@@ -3151,6 +3155,5 @@
             }
             return result;
         }
-
     }
 }

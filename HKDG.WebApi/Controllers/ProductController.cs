@@ -19,10 +19,10 @@
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("GetCatalogs")]    
-        [ProducesResponseType(typeof(SystemResult<List<Catalog>>), 200)]
-        public async Task<SystemResult<List<Catalog>>> GetCatalogs()
+        [ProducesResponseType(typeof(SystemResult<List<ProdCatatogInfo>>), 200)]
+        public async Task<SystemResult<List<ProdCatatogInfo>>> GetCatalogs()
         { 
-            var result = new SystemResult<List<Catalog>>();
+            var result = new SystemResult<List<ProdCatatogInfo>>();
             result.ReturnValue= await productCatalogBLL.GetCatalogAsync();
             result.Succeeded = true;
             return result;
