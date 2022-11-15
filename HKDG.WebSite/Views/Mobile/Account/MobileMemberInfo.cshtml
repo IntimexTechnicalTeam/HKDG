@@ -1,0 +1,39 @@
+﻿@{
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="container" class="memberinfo-page">
+    <div class="mid-box">
+        <div class="nav-tab">
+            <a href="javascript:;" class="active">個人資訊</a>
+            <a href="javascript:;">優惠券</a>
+            <a href="javascript:;">訊息</a>
+            <a href="javascript:;">行程表</a>
+            <a href="javascript:;">我的訂單</a>
+            <a href="javascript:;">喜愛清單</a>
+        </div>
+        <div class="nav-tab-content">
+            <div class="nav-tab-title">
+                <p>個人資料</p>
+            </div>
+            <div class="member-info">
+                <div>
+                    <label>帳號：</label>
+                    <span>Apple123</span>
+                </div>
+                <div>
+                    <label>電郵：</label>
+                    <span>Apple123@gmail.com</span>
+                </div>
+                <button>更改密碼</button>
+            </div>
+            <div class="address-box">
+                <p class="title">我的收貨地址：</p>
+            </div>
+            <button class="logout">登出</button>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+	<!-- <script src="/js/page/orderlist.js" asp-append-version="true"></script> -->
+}

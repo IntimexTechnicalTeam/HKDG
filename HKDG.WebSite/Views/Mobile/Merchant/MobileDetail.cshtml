@@ -1,5 +1,97 @@
-﻿
-@{
-    // ViewBag.Title = "Detail";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+	// ViewBag.Title = "Detail";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="container" class="merchant-page">
+    <div class="merchant-banner">
+        <img src="https://img0.baidu.com/it/u=2564065540,1877968420&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313">
+    </div>
+    <div class="mid-box">
+        <div class="merchant-main">
+            <div class="img-box">
+                <img src="https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500">
+            </div>
+            <div class="merchant-info">
+                <p class="merchant-name">Traveler’s Art Journal</p>
+                <div class="rating-box">
+                    <div class="rating">
+                        <span>☆</span>
+                        <span>☆</span>
+                        <span class="active">☆</span>
+                        <span>☆</span>
+                        <span>☆</span>
+                    </div>
+                    <span>5.0</span>
+                    <span>(20)</span>
+                </div>
+                <div class="merchant-bottom">
+                    <div class="left">
+                        <p>2019開館</p>
+                        <div class="other">
+                            <div>
+                                <span>追蹤人數</span>
+                                <span>1288</span>
+                            </div>
+                            <div>
+                                <span>已賣出件數</span>
+                                <span>540</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <button>聯絡設計師</button>
+                        <button>+追蹤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mer-msg-one introduce">
+            <p class="util-title2">品牌介紹</p>
+            <div class="content">
+                <p>一個插畫家，想用畫筆記下世界上每個美麗的角落，從而勾起大家心中美好的回憶。「旅遊不在乎終點，而是在乎途中的人和事還有那些美好的記憶和景色。」</p>
+            </div>
+            <div class="terms">
+                <a href="javascript:;">退貨及退款條款</a>
+                <a href="javascript:;">運送及運費條款</a>
+            </div>
+        </div>
+        <div class="mer-msg-one about">
+            <p class="util-title2">關於設計館</p>
+            <div class="content">
+                <p>*Traveler’s Art Journal 手作工作室</p>
+                <p>週一休息、公眾假期不出貨。香港郵政、順豐速運：週二至週五出貨。</p>
+                <p>如有問題歡迎私訊查詢，謝謝。</p>
+            </div>
+        </div>
+        <div class="screen-box">
+            <div class="screen-list">
+                <select>
+                    <option selected disabled hidden>全部商品</option>
+                    <option>option1</option>
+                </select>
+                <select>
+                    <option selected disabled hidden>排序</option>
+                    <option>option1</option>
+                </select>
+                <select>
+                    <option selected disabled hidden>價格</option>
+                    <option>option1</option>
+                </select>
+                <select>
+                    <option selected disabled hidden>免運</option>
+                    <option>option1</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button><img src="./wwwroot/imgs/icons/layout2.png"></button>
+                <button><img src="./wwwroot/imgs/icons/classify.png"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+	<!-- <script src="/js/components/StarRating.js" asp-append-version="true"></script> -->
+	<script src="/js/page/merchant.js" asp-append-version="true"></script>
 }
