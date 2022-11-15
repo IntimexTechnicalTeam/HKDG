@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -138,22 +139,20 @@ namespace Web.Jwt
             {
                 if (payload.Any(x => x.Key == item.Name))
                 {
-                    if (item.PropertyType == typeof(string))
-                    {
-                        item.SetValue(currentUser, payload[item.Name]);
-                    }
-                    else if (item.PropertyType.IsEnum)
+                    if (item.PropertyType == typeof(string)) item.SetValue(currentUser, payload[item.Name]);
+                    if (item.PropertyType == typeof(Guid))  item.SetValue(currentUser, new Guid(payload[item.Name]));
+                    if (item.PropertyType.IsEnum)
                     {
                         if (item.PropertyType.Name == "Language" || item.PropertyType.Name == "Lang")
                             item.SetValue(currentUser, payload[item.Name].ToEnum<Language>());
                         else if (item.PropertyType.Name == "LoginType")
                             item.SetValue(currentUser, payload[item.Name].ToEnum<LoginType>());
                     }
-                    else if (item.PropertyType == typeof(bool))
-                    {
-                        item.SetValue(currentUser, bool.Parse(payload[item.Name]));
-                    }
-                }
+
+                    if (item.PropertyType == typeof(bool))  item.SetValue(currentUser, bool.Parse(payload[item.Name]));                   
+                    if (item.PropertyType == (typeof(int))) item.SetValue(currentUser, int.Parse(payload[item.Name]));
+                    
+                }             
             }
             return currentUser;
         }
@@ -340,6 +339,9 @@ namespace Web.Jwt
         }
 
         private long ToUnixEpochDate(DateTime date) => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
+       
+
     }
 
     public enum TokenType { Ok, Fail, Expired }

@@ -102,5 +102,48 @@ namespace Web.Framework
             });
         }
 
+
+    }
+
+    public static class ReflectionUtil
+    {
+        /// <summary>
+        /// 设置属性
+        /// </summary>
+        /// <param name="obj">反射对象</param>
+        /// <param name="name">属性名</param>
+        /// <param name="value">值</param>
+        public static string SetProperty<T>(this T obj, string name, object value) where T : class
+        {
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var property = Expression.PropertyOrField(parameter, name);
+            var before = Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
+            if (value.Equals(before))
+            {
+                return value.ToString();
+            }
+
+            if (property.Type.IsGenericType && property.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                typeof(T).GetProperty(name)?.SetValue(obj, value);
+            }
+            //else if (property.Type == typeof(Guid))
+            //{
+            //    var assign = Expression.Assign(property, Expression.Constant(new Guid(value.ToString())));
+            //    Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+            //}
+            //else if (property.Type == typeof(bool))
+            //{
+            //    var assign = Expression.Assign(property, Expression.Constant(bool.Parse(value.ToString())));
+            //    Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+            //}
+            else
+            {
+                var assign = Expression.Assign(property, Expression.Constant(value));
+                Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+            }
+
+            return JsonUtil.ToJson(before);
+        }
     }
 }

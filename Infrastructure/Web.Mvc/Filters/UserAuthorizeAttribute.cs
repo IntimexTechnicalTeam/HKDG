@@ -47,15 +47,18 @@ namespace Web.Mvc
             var configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
             var authorization = context.HttpContext.Request.Headers["Authorization"].ToString();
 
+            var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
+            CurrentUser user = null;
             var access_token = string.Empty;
             if (authorization.IsEmpty())
             {
                 logger.LogInformation($"Headers中的Authorization为空了");
                 access_token = context.HttpContext.Request.Query["para2"].ToString() ?? "";
-                if (access_token.IsEmpty()) access_token = context.HttpContext.Request.Cookies["B_ticket"] ?? "";
+
+                if (access_token.IsEmpty()) access_token = context.HttpContext.Request.Cookies["access_token"] ?? "";
                 if (access_token.IsEmpty())
                 {
-                    logger.LogInformation($"Cookies中的B_ticket为空了");
+                    logger.LogInformation($"Cookies中的access_token为空了");
                     string url = configuration["BuyDongWeb"] + "/api/Account/CreateTempToken";
                     logger.LogInformation($"call {url}前");
                     var tokenResult = await RestClientHelper.HttpGetAsync<SystemResult<ClientToken>>(url, null, AuthorizationType.Bearer);
@@ -63,10 +66,15 @@ namespace Web.Mvc
                     logger.LogInformation($"call {url}后生成token{access_token}");
                 }
 
-                var user = await RedisHelper.GetAsync<CurrentUser>($"{CacheKey.OnLine}_{access_token}");
-                if (user == null) throw new BLException("token isnot exists");
+                var payload = jwtToken.DecodeJwt(access_token);
+                authorization = access_token;
 
-                authorization = user.Token;
+                if (bool.Parse(payload["IsLogin"]))
+                {
+                    user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}",payload["Id"]);
+                    if (user == null) throw new BLException("token isnot exists");
+                    authorization = user.Token;
+                }
                 context.HttpContext.Request.Headers.Remove("Authorization");
                 context.HttpContext.Request.Headers.Add("Authorization", $"Bearer {authorization}");
             }
@@ -75,7 +83,7 @@ namespace Web.Mvc
             {
                 logger.LogInformation("鉴权并验证token已通过");
                 //鉴权通过，当前站和buydong的token做刷新过期时间              
-                var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
+                
                 var payload = jwtToken.DecodeJwt(authorization);
                 var language = payload["Language"];
                 var currencyCode = payload["CurrencyCode"];
@@ -88,9 +96,9 @@ namespace Web.Mvc
                 context.HttpContext.Response.Headers.Add("Authorization", $"Bearer {result.Message}");
 
                 var option = new CookieOptions { HttpOnly = true };
-                context.HttpContext.Response.Cookies.Append("B_ticket", access_token, option);
+                context.HttpContext.Response.Cookies.Append("access_token", access_token, option);
 
-                logger.LogInformation($"设置B_ticket={access_token}");
+                logger.LogInformation($"设置access_token={access_token}");
                 await next();
             }
         }

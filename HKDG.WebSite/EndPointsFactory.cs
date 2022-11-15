@@ -1,18 +1,7 @@
 ﻿namespace HKDG.WebSite
 {
     public static class EndPointsFactory
-    {
-        /// <summary>
-        /// 增加自定义EndPoints 节点，比如，Mvc--Controller---View
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="name"></param>
-        /// <param name="pattern"></param>
-         static void AddEndPoints(this IEndpointRouteBuilder builder, string name, string pattern)
-        {
-            builder.MapControllerRoute(name, pattern);
-        }
-
+    {      
         /// <summary>
         /// 所有的路由地址绑定在这里实现
         /// </summary>
@@ -30,5 +19,17 @@
 
             return builder;
         }
+
+        /// <summary>
+        /// 增加自定义EndPoints 节点，比如，Mvc--Controller---View
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="name"></param>
+        /// <param name="pattern"></param>
+        static void AddEndPoints(this IEndpointRouteBuilder builder, string name, string pattern)
+        {
+            builder.MapControllerRoute(name, pattern);
+        }
+
     }
 }

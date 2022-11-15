@@ -12,7 +12,18 @@ namespace Domain
 
         public Guid MerchantId { get; set; }
 
-        public bool IsMerchant => LoginType <= LoginType.ThirdMerchantLink ? true : false;
+        // public bool IsMerchant =>LoginType <= LoginType.ThirdMerchantLink ? true : false;
+
+        private bool _IsMerchant;
+        public bool IsMerchant {
+
+            get { return LoginType <= LoginType.ThirdMerchantLink ? true : false; }
+            set
+            {
+                _IsMerchant = value;
+                
+            }
+        }
     }
 
 
