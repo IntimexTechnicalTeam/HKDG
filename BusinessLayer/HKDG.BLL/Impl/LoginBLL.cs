@@ -50,11 +50,13 @@
             var result = new SystemResult();
             //string pwd = ToolUtil.Md5Encrypt(input.Password);
             string pwd = HashUtil.HashPwd(input.Password);
-            var accounts = baseRepository.GetModel<User>(d => d.IsActive && !d.IsDeleted && (d.Account == input.Account || d.Email == input.Account) && d.Password == pwd);
-            if (accounts == null)
-                throw new ServiceException("错误的账号或密码");
+           
+            var dbUser = await baseRepository.GetModelAsync<User>(d => d.IsActive && !d.IsDeleted && (d.Account == input.Account || d.Email == input.Account));
 
-            var user = AutoMapperExt.MapTo<UserDto>(accounts);
+            if (dbUser == null) throw new ServiceException(HKDG.Resources.Message.AccountNotExist);
+            if (dbUser.Password != pwd) throw new ServiceException(HKDG.Resources.Message.PasswordNotMatch);
+
+            var user = AutoMapperExt.MapTo<UserDto>(dbUser);
 
             if (user.MerchantId != Guid.Empty)
             {
