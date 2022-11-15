@@ -234,10 +234,11 @@ namespace Web.Mvc
             await InitMenusAsync(ViewBag.IspType);
         }
 
-        public virtual void SetTempData<T>(string key, T t)
+        public virtual void SetViewData<T>(string key, T t)
         {
             var json = JsonUtil.ToJson(t);
-            TempData[key] = json;
+            //TempData[key] = json;
+            ViewData[key] = json;
         }
 
         /// <summary>
@@ -260,7 +261,7 @@ namespace Web.Mvc
             menus.HeaderMenus = menus.HeaderMenus.Where(x => x.IspType == IspType).ToList();
             menus.FooterMenus = menus.FooterMenus.Where(x => x.IspType == IspType).ToList();
 
-            SetTempData("MenuBarDatas", menus);
+            SetViewData("MenuBarDatas", menus);
 
         }
     }

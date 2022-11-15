@@ -16,7 +16,7 @@
             builder.AddEndPoints("ProductDetail", "/{controller=Product}/{action=Detail}/{IspType?}/{Id}");
             builder.AddEndPoints("MerchantList", "/{controller=Merchant}/{action=List}/{IspType?}/{key?}");
             builder.AddEndPoints("MerchantDetail", "/{controller=Merchant}/{action=Detail}/{IspType?}/{Id}");
-
+            builder.AddEndPoints("CatProduct", "/{controller=Product}/{action=CatProduct}/{IspType?}/{Id}");
             return builder;
         }
 

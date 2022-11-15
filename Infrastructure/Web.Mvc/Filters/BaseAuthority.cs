@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
@@ -14,7 +15,7 @@ namespace Web.Mvc
     public  class BaseAuthority
     {
         /// <summary>
-        /// 检查Token
+        /// 检查Web Api Token
         /// </summary>
         /// <param name="context"></param>
         /// <param name="next"></param>
@@ -93,6 +94,55 @@ namespace Web.Mvc
                     flag = false;
                     return flag;
                 }*/
+            }
+
+            return flag;
+        }
+
+        /// <summary>
+        /// 检查会员token
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="next"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next, string token)
+        {
+            var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
+            var Configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+
+            bool flag = true;
+            var attributes = context.ActionDescriptor.FilterDescriptors;
+            bool isAnonymous = attributes.Any(p => p.Filter is AllowAnonymousFilter);//匿名标识 无需验证
+            if (isAnonymous)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            if (token.IsEmpty()) token = context.HttpContext.Request.Cookies["access_token"];
+            token = token.Substring("Bearer ".Length).Trim();
+
+            var payload = jwtToken.DecodeJwt(token);
+            if (!bool.Parse(payload["IsLogin"]))
+            {
+                //临时用户
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            //会员登录
+            string userId = "";
+            //检查token
+            TokenType tokenType = jwtToken.ValidatePlus(token, a => a["iss"] == Configuration["Jwt:Issuer"] && a["aud"] == Configuration["Jwt:Audience"], action => { userId = action["UserId"]; });
+            if (tokenType != TokenType.Ok)
+            {
+                context.HttpContext.Response.Cookies.Delete("access_token");
+                context.HttpContext.Response.Redirect("/");
+                flag = false;
+                return flag;
             }
 
             return flag;

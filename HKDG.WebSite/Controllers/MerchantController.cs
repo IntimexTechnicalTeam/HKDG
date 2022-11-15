@@ -25,7 +25,7 @@ namespace HKDG.WebSite.Controllers
             ViewBag.SearchKey = key;
             var cond = new MerchantCond { Name = key , Page = 1, PageSize = 15 };
             var result = await merchantBLL.GetMchListAsync(cond);
-            SetTempData("Merchants", result);
+            SetViewData("Merchants", result);
             return GetActionResult("List");
         }
 
@@ -40,8 +40,8 @@ namespace HKDG.WebSite.Controllers
             var mchDetail = await merchantBLL.GetMerchantInfoAsync(Id);
             var mchProductList = await GetMchProduct(Id);
 
-            SetTempData("MerchantDetail", mchDetail);
-            SetTempData("MerchantProdData", mchProductList);
+            SetViewData("MerchantDetail", mchDetail);
+            SetViewData("MerchantProdData", mchProductList);
 
             return GetActionResult("Detail");
         }

@@ -13,5 +13,4 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(autofac
 Startup.ConfigureServices(builder);
 var app = builder.Build();
 Startup.ConfigurePipeLine(app, builder);
-Startup.RegisterSetting();
 app.Run();

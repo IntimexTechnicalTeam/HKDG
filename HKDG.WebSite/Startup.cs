@@ -1,4 +1,5 @@
 using Autofac.Core;
+using Intimex.Runtime;
 using Microsoft.AspNetCore.Mvc.Razor;
 using NETCoreViewLocationExpander.ViewLocationExtend;
 using System.Xml.Linq;
@@ -130,6 +131,20 @@ namespace HKDG.WebSite
                     return new OkObjectResult(result);
                 };
             });
+        }
+
+        public static void RegisterSetting()
+        {
+            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
+            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "MemTokenExpire")?.Value ?? "";
+
+            if (!string.IsNullOrEmpty(master))
+            {
+                if (int.TryParse(master, out var time))
+                    Setting.MemberAccessTokenExpire = time;
+            }
+
+            Setting.BuyDongWebUrl = Globals.Configuration["BuyDongWebUrl"];
         }
     }
 }

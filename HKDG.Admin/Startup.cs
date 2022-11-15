@@ -142,13 +142,12 @@ namespace HKDG.Admin
 
         public static void RegisterSetting()
         {
-            Setting.UserSessionTimeout = 20;
             var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
-            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "UserSessionTimeout")?.Value ?? "";
+            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "UserTokenExpire")?.Value ?? "";
             if (!string.IsNullOrEmpty(master))
             {
                 if (int.TryParse(master, out var time))
-                    Setting.UserSessionTimeout = time;
+                    Setting.UserAccessTokenExpire = time;
             }
         }
     }

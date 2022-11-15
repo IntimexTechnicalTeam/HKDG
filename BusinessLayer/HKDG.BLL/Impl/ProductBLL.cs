@@ -864,14 +864,14 @@
             //读数据库，回写缓存
             if (cacheData == null || !cacheData.Any())
             {
-                var view = await productImageService.GetDataSourceAsync(Guid.Empty);
+                var view = await productImageService.GetDataSourceAsync(ProductId);
                 if (view != null && view.Any())
                 {
                     await productImageService.SetDataToHashCache(view);
                     cacheData = await RedisHelper.HGetAsync<List<HotProductImage>>(key, Code);
                 }
             }
-            var productImages = cacheData.Select(s => fileServer + s.ImagePath).ToList();
+            var productImages = cacheData?.Select(s => fileServer + s.ImagePath).ToList() ?? null;
             return productImages;
         }
 

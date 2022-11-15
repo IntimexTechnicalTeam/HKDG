@@ -115,18 +115,6 @@ namespace HKDG.WebApi
             });
         }
 
-        public static void RegisterSetting()
-        {
-            Setting.MemberSessionTimeout = 20;
-            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
-            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "MemSessionTimeout")?.Value ?? "";
-            if (!string.IsNullOrEmpty(master))
-            {
-                if (int.TryParse(master, out var time))
-                    Setting.MemberSessionTimeout = time;
-            }
-
-            Setting.BuyDongWebUrl = Globals.Configuration["BuyDongWebUrl"];
-        }
+        
     }
 }

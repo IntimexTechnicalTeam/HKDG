@@ -79,7 +79,8 @@ namespace Web.Mvc
                 context.HttpContext.Request.Headers.Add("Authorization", $"Bearer {authorization}");
             }
 
-            if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
+            //if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
+            if (await BaseAuthority.CheckMemeberToken(context,next,authorization))
             {
                 logger.LogInformation("鉴权并验证token已通过");
                 //鉴权通过，当前站和buydong的token做刷新过期时间              
@@ -89,7 +90,7 @@ namespace Web.Mvc
                 var currencyCode = payload["CurrencyCode"];
                 var result = jwtToken.RefreshToken(authorization, language.ToEnum<Language>(), currencyCode);
 
-                logger.LogInformation($"call api 刷新token 并更新到redis中,token ={result.Message}");
+                logger.LogInformation($"call api 刷新token 并更新到redis中,token ={result?.Message ?? ""}");
 
                 //result.Message 就是刷新后的ticket
                 context.HttpContext.Response.Headers.Remove("Authorization");

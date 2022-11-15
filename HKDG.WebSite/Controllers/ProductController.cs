@@ -23,7 +23,7 @@
 
             var result = await productCatalogBLL.GetCatalogAsync();
             result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
-            SetTempData("Category", result);
+            SetViewData("Category", result);
 
             return GetActionResult("Category");
         }
@@ -39,8 +39,8 @@
             await InitViewPage(IspType);
 
             var details =await productBLL.GetProductDetailAsync(Id);
-            SetTempData("ProudctDetail", details);
-
+            SetViewData("ProudctDetail", details);
+            
             return GetActionResult("Detail");
         }
 
@@ -55,5 +55,15 @@
             return GetActionResult("Search", key);
 
         }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> CatProduct(string IspType, string Id)
+        {
+            await InitViewPage(IspType);            
+            return GetActionResult("CatProduct");
+
+        }
+
+
     }
 }

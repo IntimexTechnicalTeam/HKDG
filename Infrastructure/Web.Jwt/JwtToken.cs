@@ -54,14 +54,20 @@ namespace Web.Jwt
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:SecretKey"]));
             //int expireMinute = int.Parse(this.configuration["Jwt:ExpireMinute"]);
-            int expireMinute = Setting.MemberSessionTimeout;
+            int expireSecond = 7200;
+            if (claimList.Any(x => x.Type == "LoginType" && (x.Value == "Admin" || x.Value=="Merchant" || x.Value== "ThirdMerchantLink")))
+                expireSecond = Setting.UserAccessTokenExpire;
+
+            if (claimList.Any(x => x.Type == "LoginType" && (x.Value == "Member" || x.Value =="TempUser" ))) 
+                expireSecond = Setting.MemberAccessTokenExpire;
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var jwtToken = new JwtSecurityToken(
-                    issuer: this.configuration["Jwt:Issuer"],                           //TOKEN发布者
+                    issuer: this.configuration["Jwt:Issuer"],                    //TOKEN发布者
                     audience: this.configuration["Jwt:Audience"],                //Token接受者
-                    expires: DateTime.Now.AddSeconds(expireMinute*60),
-                    notBefore :DateTime.Now,                                            //nbf缩写
+                    expires: DateTime.Now.AddSeconds(expireSecond),
+                    notBefore :DateTime.Now,                                     //nbf缩写
                     signingCredentials: creds,
                     claims: claimList
                     );

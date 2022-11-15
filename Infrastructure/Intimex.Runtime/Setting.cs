@@ -28,11 +28,14 @@ namespace Intimex.Runtime
         public static int PurchaseLimit = 999;
 
         /// <summary>
-        /// 会员token过期时间（分钟）
+        /// 会员token过期时间（秒）
         /// </summary>
-        public static int MemberSessionTimeout = 15;
+        public static int MemberAccessTokenExpire = 1200;
 
-        public static int UserSessionTimeout = 15;
+        /// <summary>
+        /// 后台token过期时间（秒）
+        /// </summary>
+        public static int UserAccessTokenExpire = 1200;
 
         public static string BuyDongWebUrl = "";
     }

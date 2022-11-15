@@ -16,9 +16,33 @@
             await InitViewPage(IspType);
 
             var data = await interactMessageBLL.GetLatesNoticeAsync();
-            SetTempData("LatesNotice", data);
+            SetViewData("LatesNotice", data);
 
             return GetActionResult("MyMessage");
         }
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Login()
+        {
+            
+            return GetActionResult("Login");
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> MyCoupon()
+        {
+
+            return GetActionResult("MyCoupon");
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> MemberInfo()
+        {
+
+            return GetActionResult("MemberInfo");
+        }
+
+
     }
 }
