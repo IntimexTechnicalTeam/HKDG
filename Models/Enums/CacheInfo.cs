@@ -32,6 +32,7 @@
         ProductTrack,
         ProductSku,
         Token,
+        PageSizeSetting,
     }
 
     public enum CacheField
@@ -59,5 +60,8 @@
         Mobile,
         Desktop,
         StoreLogo,
+        ProductPageSize,
+        MerchantPageSize,
+        MerchantProductSize,
     }
 }

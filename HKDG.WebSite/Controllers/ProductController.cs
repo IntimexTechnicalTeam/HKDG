@@ -1,14 +1,17 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using HKDG.BLL;
+
+namespace HKDG.WebSite.Controllers
 {
     public class ProductController : BaseMvcController
     {
         IProductCatalogBLL productCatalogBLL;
         IProductBLL productBLL;
-
+        IMerchantBLL merchantBLL;
         public ProductController(IComponentContext service) : base(service)
         {
             productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
             productBLL = Services.Resolve<IProductBLL>();
+            merchantBLL = Services.Resolve<IMerchantBLL>();
         }
 
         /// <summary>
@@ -40,7 +43,11 @@
 
             var details =await productBLL.GetProductDetailAsync(Id);
             SetViewData("ProudctDetail", details);
-            
+
+            var mchDetail = await merchantBLL.GetMerchantInfoAsync(details.MerchantId);            
+            SetViewData("MerchantDetail", mchDetail);
+           
+
             return GetActionResult("Detail");
         }
 

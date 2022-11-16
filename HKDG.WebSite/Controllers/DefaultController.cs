@@ -1,12 +1,19 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using HKDG.BLL;
+using WebCache;
+
+namespace HKDG.WebSite.Controllers
 {
     public class DefaultController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;
+        IPromotionBLL promotionBLL;
+        IProductCatalogBLL productCatalogBLL;
 
         public DefaultController(IComponentContext service) : base(service)
         {
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
+            promotionBLL = Services.Resolve<IPromotionBLL>();
+            productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
         }
 
        /// <summary>
@@ -17,6 +24,15 @@
         public async Task<IActionResult> Index(string IspType)
         {
             await InitViewPage(IspType);
+
+            var cond = new PromotionCond { IspType = IspType, ShowBanner = true, ShowProduct = true, ShowMerchant = false };
+            var promotionList = await promotionBLL.ShowPromotionList(cond);
+            SetViewData("PromotionList", promotionList);
+
+            var result = await productCatalogBLL.GetCatalogAsync();
+            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
+            SetViewData("Category", result);
+
             return GetActionResult("Index");
         }
 

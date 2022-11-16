@@ -58,7 +58,7 @@ namespace Web.Mvc
                 if (access_token.IsEmpty()) access_token = context.HttpContext.Request.Cookies["access_token"] ?? "";
                 if (access_token.IsEmpty())
                 {
-                    logger.LogInformation($"Cookies中的access_token为空了");
+                    //logger.LogInformation($"Cookies中的access_token为空了");
                     string url = configuration["BuyDongWeb"] + "/api/Account/CreateTempToken";
                     logger.LogInformation($"call {url}前");
                     var tokenResult = await RestClientHelper.HttpGetAsync<SystemResult<ClientToken>>(url, null, AuthorizationType.Bearer);
@@ -82,7 +82,7 @@ namespace Web.Mvc
             //if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
             if (await BaseAuthority.CheckMemeberToken(context,next,authorization))
             {
-                logger.LogInformation("鉴权并验证token已通过");
+                //logger.LogInformation("鉴权并验证token已通过");
                 //鉴权通过，当前站和buydong的token做刷新过期时间              
                 
                 var payload = jwtToken.DecodeJwt(authorization);
@@ -99,7 +99,7 @@ namespace Web.Mvc
                 var option = new CookieOptions { HttpOnly = true };
                 context.HttpContext.Response.Cookies.Append("access_token", access_token, option);
 
-                logger.LogInformation($"设置access_token={access_token}");
+                //logger.LogInformation($"设置access_token={access_token}");
                 await next();
             }
         }
