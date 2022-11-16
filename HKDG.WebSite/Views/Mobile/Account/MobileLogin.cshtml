@@ -3,3 +3,32 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" class="login-page">
+  <div class="login-box">
+    <img src="/imgs/logo.png" class="logo">
+
+    <form>
+      <div class="form-group">
+        <label>擺檔帳號</label>
+        <input type="text" placeholder="e.g. your@email.address" v-model="email" />
+      </div>
+      <div class="form-group">
+        <label>密碼</label>
+        <input type="text" v-model="email" />
+        <a href="javascript:;" class="forget">忘記密碼？</a>
+      </div>
+
+      <div class="login-btns">
+        <button>登入</button>
+        <span>或</span>
+        <button><img src="/imgs/icons/fb-green.png"> 以FACEBOOK賬號繼續</button>
+
+        <span>還沒加入擺檔？<a href="javascript:;">註冊</a></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section scripts{
+	<!-- <script src="~/js/page/index.js" asp-append-version="true"></script> -->
+}

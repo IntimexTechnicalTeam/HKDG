@@ -1,6 +1,70 @@
-﻿
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" class="order-page">
+    <div class="mid-box">
+        <div class="nav-tab-content">
+            <div class="nav-tab-title">
+                <p>我的訂單</p>
+            </div>
+            <div class="order-tab">
+                <a href="javascript:;" class="active">待付款</a>
+                <a href="javascript:;">處理中</a>
+                <a href="javascript:;">待收貨</a>
+                <a href="javascript:;">已完成</a>
+                <a href="javascript:;">已取消</a>
+            </div>
+            <div class="order-list">
+                <div class="order-one">
+                    <span class="status" v-if="!status">待付款</span>
+                    <span class="status" v-else>運輸中</span>
+                    <div class="merchant" title="Traveler’s Art Journal">
+                        <img src="/imgs/icons/store.png">
+                        <span>Traveler’s Art Journal <b>›</b></span>
+                    </div>
+                    <div class="pro-list">
+                        <div class="pro-one">
+                            <div class="img-box">
+                                <img src="https://img2.baidu.com/it/u=3094149767,177600321&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1668186000&t=e5b23c961185843076ceb25061a9dff3">
+                            </div>
+                            <div class="pro-info">
+                                <p class="pro-name">香港插畫絲巾 | 古典約依印花</p>
+                                <p class="pro-attr">
+                                    <span>靛藍色</span>
+                                    <span>精品</span>
+                                    <span class="pro-num"> x 1</span>
+                                </p>
+                            </div>
+                            <div class="pro-price">HKD $288</div>
+                        </div>
+                    </div>
+                    <div class="sub-sum">
+                        <p>含運費及折扣</p>
+                        <div>
+                            <span>（共2件）</span>
+                            <span>金額小計： </span>
+                            <span>HKD $556</span>
+                        </div>
+                        <button>評分及確認收貨</button>
+                    </div>
+                    <div class="evaluate-box">
+                        <div class="evaluate-rating">
+                            <label>為設計館評價：</label>
+                            <star-rating v-model="rating"></star-rating>
+                        </div>
+                        <div class="evaluate-text">
+                            <textarea placeholder="請為本店的留下評價"></textarea>
+                        </div>
+                        <button>簽收</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+@section scripts{
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+	<script src="/js/page/orderlist.js" asp-append-version="true"></script>
+}

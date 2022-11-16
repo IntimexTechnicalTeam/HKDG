@@ -1,7 +1,37 @@
 ﻿
 @{
-    
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container">
+	<ul class="msg-list mid-box">
+		<li class="msg-item" tabindex="-1" @@click="viewDtls">
+			<div class="img-box">
+				<img src="https://img2.baidu.com/it/u=1536642037,1165863875&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500">
+			</div>
+
+			<div class="dtls">
+				<p class="subject">10/9 迎接中秋節！</p>
+
+				<p class="describe">
+					誠意邀請設計師參與【香港行銷活動報名】，即將於01/09/2022截止報名，請趕快點按下方按鈕參考活動細節，並立刻報名吧～
+				</p>
+
+				<div class="content">
+					<p>活動內容：</p>
+					<p>活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情活動詳情</p>
+				</div>
+
+				<div class="classify-date">
+					<span class="classify">活動報名</span>
+					<span class="date">5天前</span>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+@section scripts{
+	<script src="/js/page/myMessage.js" asp-append-version="true"></script>
+}
 

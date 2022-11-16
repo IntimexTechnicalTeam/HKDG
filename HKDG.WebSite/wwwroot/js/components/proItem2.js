@@ -1,4 +1,4 @@
-var tempStr = '<div class="pro-item">\
+var tempStr = '<div class="pro-item layout2">\
     <a v-bind:href="\'/product/detail?id=\'+data.Code" v-bind:title="data.Name">\
         <div class="img-box">\
             <img v-bind:src="data.Imgs[2] || \'\'" v-bind:title="data.Name" v-bind:alt="data.Name" />\
@@ -31,7 +31,7 @@ var tempStr = '<div class="pro-item">\
 </div>';
 
 // 定义一个產品组件
-var ProItem = {
+var ProItem2 = {
     props: ['data'],
     data: function () {
         return {

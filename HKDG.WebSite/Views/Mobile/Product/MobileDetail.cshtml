@@ -1,4 +1,120 @@
 ﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-    Layout = "~/Views/Shared/_Layout.cshtml";
+<div id="container">
+    <div class="swiper proSwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="item in banner">
+                <img v-bind:src="item.src">
+            </div>
+        </div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div class="mid-box">
+        <div class="pro-panel">
+            <p class="pro-name">香港插畫絲巾 | 古典約依印花 - 靛藍色</p>
+            <p class="old-price">HKD $338</p>
+            <p class="sale-price">HKD $288</p>
+            <div class="rating-box">
+                <star-rating v-model="rating" disabled></star-rating>
+                <span>5.0</span>
+                <span>(20)</span>
+            </div>
+            <div class="attr-group">
+                <div class="attr-one">
+                    <label>顏色</label>
+                    <div class="options">
+                        <span class="selected">靛藍色</span>
+                        <span>土黃色</span>
+                        <span>酒紅色</span>
+                    </div>
+                </div>
+            </div>
+            <div class="number-box">
+                <label>數量</label>
+                <div class="input-number">
+                    <span role="button">-</span>
+                    <input type="number" v-model.number.lazy="buyQty" oninput="if(value.length>4) value=value.slice(0,4);" />
+                    <span role="button">+</span>
+                </div>
+            </div>
+            <div class="related-dtls">
+                <p class="tips">付款後，從備貨到寄出商品為5個工作天。</p>
+                <a href="javascript:;">退貨及退款條款</a>
+                <a href="javascript:;">運送及運費條款</a>
+            </div>
+            <div class="btn-box">
+                <button>加入購物車</button>
+                <button>立即購買</button>
+            </div>
+            <div class="fav-box">
+                <button>
+                    <img src="/imgs/icons/heart.png">
+                    加入喜愛清單
+                </button>
+            </div>
+            <div class="share-box">
+                <span>分享至</span>
+                <a href="javascript:;" class="fb"></a>
+                <a href="javascript:;" class="whatsapp"></a>
+                <a href="javascript:;" class="link"></a>
+            </div>
+        </div>
+        <div class="pro-introduce">
+            <div class="tabs">
+                <a href="javascript:;" class="active">商品詳情</a>
+                <a href="javascript:;">顧客評價</a>
+            </div>
+            <div class="tab-content" v-if="false">
+                <div class="tab-title">
+                    <p>商品詳情</p>
+                </div>
+                <div class="content">
+                    商品詳情商品詳情商品詳情商品詳情商品詳情...
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-title">
+                    <p>顧客評價</p>
+                </div>
+                <div class="content">
+                    顧客評價...
+                </div>
+            </div>
+        </div>
+        <div class="about-merchant">
+            <div class="img-box">
+                <img src="https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500">
+            </div>
+            <div class="merchant-info">
+                <p class="merchant-name">Traveler’s Art Journal</p>
+                <div class="merchant-bottom">
+                    <div class="left">
+                        <div>
+                            <img src="/imgs/icons/star.png">
+                            <span>評價</span>
+                            <span>5.0</span>
+                        </div>
+                        <div>
+                            <img src="/imgs/icons/user2.png">
+                            <span>關注人數</span>
+                            <span>1,200</span>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <button>+追蹤</button>
+                        <button>進入商店</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+	<script src="/js/page/detail.js" asp-append-version="true"></script>
 }
