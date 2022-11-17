@@ -23,5 +23,7 @@
         Task<List<ProdCatatogInfo>> GetCatalogAsync();
 
         List<ProdCatatogInfo> GetCatalogListById(Guid catID);
+
+        Task<ProdCatatogInfo> GetCatalogById(Guid catID);
     }
 }

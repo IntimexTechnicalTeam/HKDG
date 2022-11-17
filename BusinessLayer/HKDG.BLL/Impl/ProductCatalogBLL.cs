@@ -56,6 +56,40 @@
             return result;
         }
 
+        public async Task<ProdCatatogInfo> GetCatalogById(Guid catID)
+        {
+
+            var dbCatalog = await baseRepository.GetModelByIdAsync<ProductCatalog>(catID);
+            var catalog = AutoMapperExt.MapTo<ProductCatalog,ProductCatalogDto>(dbCatalog);
+
+            var catalogView = GenProductCatalogInfo(catalog);
+
+            var catalogPaths = productCatalogRepository.GetCatalogUrlByCatalogId(catalog.Id).OrderBy(o => o.Level).ToList();
+
+            //var currentNode = GenProductCatalogInfo(catalog);
+            //currentNode.Nodes = new List<ProdCatatogInfo>();
+            //currentNode.Children = new List<ProdCatatogInfo>();
+
+            foreach (var item in catalogPaths)//添加当前节点的父节点
+            {
+                var dbParentNode = await baseRepository.GetModelByIdAsync<ProductCatalog>(item.Id);
+                var parentNode = AutoMapperExt.MapTo<ProductCatalog, ProductCatalogDto>(dbParentNode);
+                catalogView.Nodes.Add(GenProductCatalogInfo(parentNode));
+            }
+            catalogView.Nodes.Add(GenProductCatalogInfo(catalog));//包含当前节点
+
+            var currentNodeChilds = productCatalogRepository.GetCatalogChilds(catID);
+
+            foreach (var item in currentNodeChilds)
+            {
+                var dbChildNode = await baseRepository.GetModelByIdAsync<ProductCatalog>(item.Id);
+                var childNode = AutoMapperExt.MapTo<ProductCatalog, ProductCatalogDto>(dbChildNode);
+                catalogView.Children.Add(GenProductCatalogInfo(childNode));
+            }
+
+            return catalogView;
+        }
+
         public void DeleteCatalog(Guid id)
         {
             var flag = baseRepository.Any<Product>(x => x.CatalogId == id && x.IsActive && !x.IsDeleted);

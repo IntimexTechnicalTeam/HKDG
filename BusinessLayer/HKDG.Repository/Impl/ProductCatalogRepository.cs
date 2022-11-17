@@ -7,7 +7,7 @@
 
         }
 
-        public  IQueryable<ProductCatalogDto> baseQuery()
+        public IQueryable<ProductCatalogDto> baseQuery()
         {
             var query = (from c in baseRepository.GetList<ProductCatalog>()
                          join t in baseRepository.GetList<Translation>() on new { a1 = c.NameTransId, a2 = CurrentUser.Lang }
@@ -35,13 +35,14 @@
                              UpdateBy = c.UpdateBy,
                              UpdateDate = c.UpdateDate,
                              IspType = c.IspType,
+                             Name = tt.Value ?? "",
                          });
-            return query;    
+            return query;
         }
 
         public List<ProductCatalogDto> GetAllActiveCatalog()
         {
-            var query =  baseQuery().Where(c=>c.IsActive && !c.IsDeleted).OrderBy(o => o.Seq).ToList();
+            var query = baseQuery().Where(c => c.IsActive && !c.IsDeleted).OrderBy(o => o.Seq).ToList();
             return query;
         }
 
@@ -57,7 +58,7 @@
             var result = new ProductCatalogDto();
 
             var query = (from c in baseRepository.GetList<ProductCatalog>().ToList()
-                         join t in baseRepository.GetList <Translation>().ToList() on c.NameTransId equals t.TransId into tc
+                         join t in baseRepository.GetList<Translation>().ToList() on c.NameTransId equals t.TransId into tc
                          from tt in tc.DefaultIfEmpty()
                          where c.IsActive && !c.IsDeleted && c.Id == id
                          select new { catalog = c, name = tt }
@@ -114,38 +115,45 @@
         }
 
         public List<ProductCatalogDto> GetCatalogUrlByCatalogId(Guid Id)
-        {           
+        {
             var list = (from u in baseRepository.GetList<ProductCatalogParent>()
-                         join c in baseRepository.GetList<ProductCatalog>() on u.ParentCatalogId equals c.Id
-                         join t in baseRepository.GetList<Translation>() on new { a1 = c.NameTransId, a2 = CurrentUser.Lang }
-                          equals new { a1 = t.TransId, a2 = t.Lang } into tc
-                         from tt in tc.DefaultIfEmpty()
-                         where u.CatalogId == Id && u.IsDeleted == false && u.IsActive
-                         select new ProductCatalogDto
-                         {
-                             Desc = tt.Value ?? "",
-                             Id = c.Id,
-                             Level = c.Level,
-                             Code = c.Code,
-                             MBigIcon = c.MBigIcon,
-                             MOriginalIcon = c.MOriginalIcon,
-                             MSmallIcon = c.MSmallIcon,
-                             OriginalIcon = c.OriginalIcon,
-                             ParentId = c.ParentId,
-                             Seq = c.Seq,
-                             SmallIcon = c.SmallIcon,
-                             NameTransId = c.NameTransId,
-                             IsActive = c.IsActive,
-                             IsDeleted = c.IsDeleted,
-                             CreateDate = c.CreateDate,
-                             CreateBy = c.CreateBy,
-                             UpdateDate = c.UpdateDate,
-                             UpdateBy = c.UpdateBy,
-                             BigIcon = c.BigIcon,
-                         }
+                        join c in baseRepository.GetList<ProductCatalog>() on u.ParentCatalogId equals c.Id
+                        join t in baseRepository.GetList<Translation>() on new { a1 = c.NameTransId, a2 = CurrentUser.Lang }
+                         equals new { a1 = t.TransId, a2 = t.Lang } into tc
+                        from tt in tc.DefaultIfEmpty()
+                        where u.CatalogId == Id && u.IsDeleted == false && u.IsActive
+                        select new ProductCatalogDto
+                        {
+                            Desc = tt.Value ?? "",
+                            Id = c.Id,
+                            Level = c.Level,
+                            Code = c.Code,
+                            MBigIcon = c.MBigIcon,
+                            MOriginalIcon = c.MOriginalIcon,
+                            MSmallIcon = c.MSmallIcon,
+                            OriginalIcon = c.OriginalIcon,
+                            ParentId = c.ParentId,
+                            Seq = c.Seq,
+                            SmallIcon = c.SmallIcon,
+                            NameTransId = c.NameTransId,
+                            IsActive = c.IsActive,
+                            IsDeleted = c.IsDeleted,
+                            CreateDate = c.CreateDate,
+                            CreateBy = c.CreateBy,
+                            UpdateDate = c.UpdateDate,
+                            UpdateBy = c.UpdateBy,
+                            BigIcon = c.BigIcon,
+                        }
                      ).OrderBy(o => o.Seq).ToList();
 
             return list;
         }
+
+        public List<ProductCatalogDto> GetCatalogChilds(Guid id)
+        {
+            var query = baseQuery().Where(x => x.ParentId == id && x.IsActive && !x.IsDeleted).OrderBy(o => o.Seq).ToList();
+            return query;
+        }
+
     }
 }

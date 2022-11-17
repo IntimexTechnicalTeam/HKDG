@@ -1,4 +1,5 @@
 ﻿using HKDG.BLL;
+using System.Security.Cryptography;
 
 namespace HKDG.WebSite.Controllers
 {
@@ -66,7 +67,23 @@ namespace HKDG.WebSite.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> CatProduct(string IspType, string Id)
         {
-            await InitViewPage(IspType);            
+            if (!Guid.TryParse(Id, out var catId)) catId = Guid.Empty;
+
+            ViewBag.CatId = catId;
+            await InitViewPage(IspType);
+            
+            var result = await productCatalogBLL.GetCatalogAsync();
+            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
+            SetViewData("Category", result);
+
+            var catalog =await productCatalogBLL.GetCatalogById(catId);
+            SetViewData("CurrentCatalog", catalog);
+
+            CatProdPager pager = new CatProdPager() { CatId = catId };                      
+            if (!IsMobile)pager.PageSize = 9;
+            var catProduct = await productBLL.GetCatProdPageData(pager);
+            SetViewData("CatalogProducts", catalog);
+
             return GetActionResult("CatProduct");
 
         }

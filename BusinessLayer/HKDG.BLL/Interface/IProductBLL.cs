@@ -76,5 +76,7 @@
         Task<List<string>> GetProductImages(Guid ProductId, string Code);
 
         Task CountClick(string code, bool isSearch);
+
+        Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager);
     }
 }

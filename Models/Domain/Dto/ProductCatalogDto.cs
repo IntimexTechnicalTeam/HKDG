@@ -65,5 +65,7 @@
         public List<MutiLanguage> Descs { get; set; } = new List<MutiLanguage>();
 
         public string IspType { get; set; }
+
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -15,5 +15,7 @@
         List<Product> GetAllCatalogChildProducts(Guid id);
 
         List<ProductCatalogDto> GetCatalogUrlByCatalogId(Guid Id);
+
+        List<ProductCatalogDto> GetCatalogChilds(Guid id);
     }
 }

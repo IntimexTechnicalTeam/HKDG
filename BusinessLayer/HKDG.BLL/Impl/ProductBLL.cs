@@ -3155,5 +3155,157 @@
             }
             return result;
         }
+
+        public async Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager)
+        {
+            Favorite favoriteData = null;
+            PageData<ProductSummary> returnData = new PageData<ProductSummary>(pager);
+            //returnData = _productRepository.GetCatProdPageData(pager);
+
+            pager.DisplayCurrency = currencyBLL.GetSimpleCurrency(CurrentUser.CurrencyCode);
+
+            string simpleKey = $"{CacheKey.System}";
+            string field = $"{CacheField.Info}_{CurrentUser.Lang}";
+            var currcencyCache = await RedisHelper.HGetAsync<SystemInfoDto>(simpleKey, field);
+
+            var proKey = $"{PreHotType.Hot_Products}_{CurrentUser.Lang}";
+            var productList = await RedisHelper.HGetAllAsync<HotProduct>(proKey);
+            //读数据库，并回写缓存           
+            if (!productList.Any() || !productList.Values.Any())
+            {
+                var view = await productService.GetDataSourceAsync(Guid.Empty);
+                if (view != null && view.Any())
+                {
+                    //重新刷新缓存
+                    await productService.SetDataToHashCache(view, CurrentUser.Lang);
+                    productList = view.Where(x => x.LangType == CurrentUser.Lang).ToDictionary(x => x.ProductId.ToString());
+                }
+            }
+
+            var statistKey = $"{PreHotType.Hot_PreProductStatistics}";
+            var productStatists = await RedisHelper.HGetAllAsync<HotPreProductStatistics>(statistKey);
+            //读数据库，并回写缓存
+            if (!productStatists.Any() || !productList.Values.Any())
+            {
+                var statitsView = await productStatisticsService.GetDataSourceAsync(Guid.Empty, "");
+                if (statitsView != null)
+                {
+                    //重新刷新缓存
+                    await productStatisticsService.SetDataToHashCache(statitsView);
+                    productStatists = statitsView.ToDictionary(x => x.Code);
+                }
+            }
+
+            var mchKey = $"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}";
+            var mchList = await RedisHelper.HGetAllAsync<HotMerchant>(mchKey);
+            if (!mchList.Any() || !mchList.Values.Any())
+            {
+                var view = await merchantService.GetDataSourceAsync(Guid.Empty);
+                if (view != null && view.Any())
+                {
+                    //重新刷新缓存
+                    await merchantService.SetDataToHashCache(view, CurrentUser.Lang);
+                    mchList = view.Where(x => x.LangType == CurrentUser.Lang).ToDictionary(x => x.MerchantId.ToString());
+                }
+            }
+
+            var query = from a in productList.Values.AsQueryable()
+                        join b in productStatists.Values.AsQueryable() on a.Code equals b.Code
+                        where a.Status == ProductStatus.OnSale
+                        select new ProductSummary
+                        {
+                            MerchantId = a.MchId,
+                            ProductId = a.ProductId,
+                            Code = a.Code,
+                            Name = a.Name,
+                            SalePrice = a.SalePrice,
+                            OriginalPrice = a.OriginalPrice,
+                            Score = b.Score,
+                            CurrencyCode = a.CurrencyCode,
+                            UpdateDate = a.UpdateDate,
+                            CreateDate = a.CreateDate,
+                            PurchaseCounter = b.PurchaseCounter,
+                            IsActive = true,
+                            ApproveType = a.Status,
+                            CatalogId = a.CatalogId,
+                            IconType = a.IconType,
+                        };
+
+            var subCatQuery = this.baseRepository.GetList<ProductCatalog>(d => d.ParentId == pager.CatId && d.IsActive && !d.IsDeleted).Select(d => d.Id).ToList();
+            if (subCatQuery != null && subCatQuery.Any())
+                query = query.Where(d => d.CatalogId == pager.CatId | subCatQuery.Contains(d.CatalogId));
+            else
+                query = query.Where(d => d.CatalogId == pager.CatId);
+
+            returnData.TotalRecord = query.Count();
+
+            #region 组装排序
+
+            if (string.IsNullOrEmpty(pager.OrderBy))
+                pager.OrderBy = "UpdateDate";
+
+            switch (pager.OrderBy)
+            {
+                case "UpdateDate":
+                    pager.SortName = "UpdateDate";
+                    pager.SortOrder = "DESC";
+                    break;
+                case "New":
+                    pager.SortName = "CreateDate";
+                    pager.SortOrder = "DESC";
+                    break;
+                case "HighPrice":
+                    pager.SortName = "SalePrice";
+                    pager.SortOrder = "DESC";
+                    break;
+                case "LowPrice":
+                    pager.SortName = "SalePrice";
+                    pager.SortOrder = "ASC";
+                    break;
+                case "HotSale":
+                    pager.SortName = "PurchaseCounter";
+                    pager.SortOrder = "DESC";
+                    break;
+            }
+
+            #endregion
+
+            var sortBy = (SortType)Enum.Parse(typeof(SortType), pager.SortOrder.ToUpper());
+            returnData.Data = query.AsQueryable().SortBy(pager.SortName, sortBy).Skip(pager.Offset).Take(pager.PageSize).ToList();
+
+            foreach (var item in returnData.Data)
+            {
+                item.MerchantName = mchList.Values.FirstOrDefault(x => x.MchId == item.MerchantId)?.MerchantName ?? "";
+
+                //GetCornermarker(item);
+            }
+
+            if (CurrentUser.IsLogin)
+            {
+                string favKey = CacheKey.Favorite.ToString();
+                string favField = CurrentUser.UserId;
+                favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
+                //读数据库,回写缓存
+                if (favoriteData == null)
+                {
+                    favoriteData = await productFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
+                    if (favoriteData != null)
+                    {
+                        await productFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                    }
+                }
+
+                foreach (var item in returnData.Data)
+                {
+                    item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
+                }
+            }
+
+
+            CurrencyMoneyConversion(returnData.Data);
+
+            return returnData;
+
+        }
     }
 }
