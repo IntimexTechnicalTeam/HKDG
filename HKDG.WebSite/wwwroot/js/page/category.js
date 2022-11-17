@@ -1,38 +1,43 @@
 createApp({
+  components: {
+    'sys-switch': SysSwitch
+  },
   data() {
-  		return {
-  			// lang: getQueryString("lang") || getUILanguage(), // 當前語言值
-  			lang: '',
-  			langList: [{    // 系統語言列表
-                lang: '繁體',
-                value: 'C'
-            }, {
-                lang: '简体',
-                value: 'S'
-            }, {
-                lang: 'English',
-                value: 'E'
-            }],
-            currencyList: [   // 貨幣列表
-                {Code: 'HKD', id: 1},          
-                {Code: 'USD', id: 2},
-                {Code: 'RMB', id: 3}     
-            ],
-  		}
+		return {
+			category: category
+		}
 	},
 	methods: {
-		// 確認系統語言/貨幣設置
-		confirm: function () {
-			this.quitDialog();
-		},
-		openDialog: function () {
-			$('body').css({ 'overflow': 'hidden' });
-            $('.bd-dialog').fadeIn();
-		},
-		quitDialog: function () {
-			$('body').css({ 'overflow': 'auto' });
-            $('.bd-dialog').fadeOut();
-		}
+	    // 返回
+	    backPage: function() {
+	      location.href="/default/menu";
+	    },
+	    // 跳轉目錄產品頁
+	    pushPage: function(item) {
+	    	InstoreSdk.api.member.setUILanguage('C', function(data) {
+                if (data.Succeeded) {
+
+                    var href = window.location.href;
+                    if (href.indexOf("?") === -1) {
+                        if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
+                            href = setUrlParam(href, ["lang"], [e]);
+                        } else {
+                            href += "?lang=" + e;
+                        }
+
+                    } else {
+                        if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
+                            href = setUrlParam(href, ["lang"], [e]);
+                        } else {
+                            href += "&lang=" + e;
+                        }
+                    }
+                    window.location.href = href;
+                } else {
+                    console.log(data);
+                }
+            });
+	    }
 	},
 	created() {
 	},

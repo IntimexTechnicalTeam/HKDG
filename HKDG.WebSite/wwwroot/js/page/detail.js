@@ -17,7 +17,7 @@ createApp({
 	},
 	methods: {
     initPreview: function () {
-      var swiper = new Swiper(".proSwiper", {
+      var swiper = new Swiper(".proPreview", {
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',

@@ -606,13 +606,13 @@ createApp({
 		    });
 		},
 		initCatSwiper: function () {
-			var swiper = new Swiper(".category .pmtSwiper", {
+			var swiper = new Swiper(".category .proSwiper", {
 		        slidesPerView : 9,  
                 spaceBetween: 10
 		    });
 		},
 		initBrandSwiper: function () {
-			var swiper = new Swiper(".brand .pmtSwiper", {
+			var swiper = new Swiper(".brand .proSwiper", {
 				autoHeight: true,
 		        slidesPerView : 3.5,  
                 spaceBetween: 15

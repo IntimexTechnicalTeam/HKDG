@@ -5,65 +5,26 @@
 
 <div id="container" class="category-page">
 	<div class="mid-box">
-		<!-- Menu Bar -->
-		<div class="menu-bar">
-			<ul class="nav-list" v-if="false">
-				<li>擺檔</li>
-				<li>擺檔</li>
-				<li>擺檔</li>
-			</ul>
-		</div>
-
 		<!-- Category -->
 		<div class="menu-bar">
 			<div class="top-bar">
-				<div class="back-btn"><span>香港設計館</span></div>	
+				<div class="back-btn" @@click="backPage"><span>香港設計館</span></div>	
 				<div class="join-in"><img src="/imgs/icons/join.png"> <span>加盟設計館</span></div>	
 			</div>
 			<ul class="nav-list">
-				<li>擺檔</li>
-				<li>擺檔</li>
-				<li>擺檔</li>
+				<li v-for="item in category" @@click="pushPage(item)">{{item.Name}}</li>
 			</ul>
 		</div>
 
-		<!-- Language -->
-		<div class="lang-switch" @@click="openDialog">
-			<img src="/imgs/icons/language.png">
-			<span>繁體中文</span>
-		</div>
-
-		<!-- Dialog -->
-		<div class="bd-dialog lang-currency">
-			<div class="dlg-mask"></div>
-			<div class="dlg-content-box">
-				<div class="dlg-body">
-					<div class="set-one">
-						<p>語言 / Language</p>
-
-						<ul>
-							<li v-for="(item,index) in langList" :class="{'active': !index}">{{item.lang}}</li>
-						</ul>
-					</div>
-
-					<div class="set-one">
-						<p>貨幣 / Currency</p>
-
-						<ul>
-							<li v-for="item in currencyList">{{item.Code}}</li>
-						</ul>
-					</div>
-
-					<div class="currency-tips">貨幣匯率會因應市場情況變動而不定期更新</div>
-				</div>
-				<div class="dlg-footer">
-					<button @@click="confirm">確認</button>
-				</div>
-			</div>
-		</div>
+		<sys-switch></sys-switch>
 	</div>
 </div>
 
 @section scripts{
-	<script src="~/js/page/category.js" asp-append-version="true"></script>
+	<script type="text/javascript">
+		// var IsNew = '@ViewBag.IsNew';
+		var category = @Html.Raw(ViewData["Category"]); // 产品目录
+	</script>
+	<script type="text/javascript" src="/js/components/SysSwitch.js" asp-append-version="true"></script>
+	<script type="text/javascript" src="/js/page/category.js" asp-append-version="true"></script>
 }

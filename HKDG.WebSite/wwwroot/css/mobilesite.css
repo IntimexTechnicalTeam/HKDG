@@ -99,7 +99,8 @@ button {
   margin-bottom: 0.5rem;
 }
 
-.form-group > input[type="text"] {
+.form-group > input[type="text"],
+.form-group > input[type="password"] {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -112,6 +113,12 @@ button {
   padding: 0 0.5rem;
   box-sizing: border-box;
 }
+
+p.errorTip {
+  font-size: 1rem;
+  color: red;
+  margin: 0.5rem 0;
+} 
 
 /* 對話框 */
 .bd-dialog {
@@ -513,30 +520,30 @@ button {
   height: 1.8rem;
 }
 
-.pmtSwiper {
+.proSwiper {
   overflow: visible;
 }
 
-.pmtSwiper.scrollbar {
+.proSwiper.scrollbar {
   padding-bottom: 2rem;
 }
 
-.pmtSwiper .swiper-horizontal>.swiper-scrollbar, 
-.pmtSwiper .swiper-scrollbar.swiper-scrollbar-horizontal {
+.proSwiper .swiper-horizontal>.swiper-scrollbar, 
+.proSwiper .swiper-scrollbar.swiper-scrollbar-horizontal {
   width: 100vw;
   left: -3%;
   height: 8px;
 }
 
-.pmtSwiper .swiper-scrollbar {
+.proSwiper .swiper-scrollbar {
   background: rgb(196 196 196 / 10%);
 }
 
-.pmtSwiper .swiper-scrollbar-drag {
+.proSwiper .swiper-scrollbar-drag {
   background: #276643;
 }
 
-.pmtSwiper.swiper-grid-column {
+.proSwiper.swiper-grid-column {
   height: 50rem;
   padding-bottom: 0;
 }
@@ -559,11 +566,11 @@ button {
   align-items: center;
 }
 
-.pmt-one.category .pmtSwiper {
+.pmt-one.category .proSwiper {
   height: 10rem;
 }
 
-.pmt-one.category .pmtSwiper .swiper-slide > a {
+.pmt-one.category .proSwiper .swiper-slide > a {
   display: block;
   width: 100%;
   height: 100%;
@@ -579,7 +586,7 @@ button {
   position: relative;
 }
 
-.pmt-one.category .pmtSwiper .swiper-slide > a::before {
+.pmt-one.category .proSwiper .swiper-slide > a::before {
   content: '.';
   position: absolute;
   top: 0.3rem;
@@ -588,7 +595,7 @@ button {
   width: 100%;
 }
 
-.pmt-one.brand .pmtSwiper .swiper-slide > a p {
+.pmt-one.brand .proSwiper .swiper-slide > a p {
   color: #276643;
   font-size: 1rem;
   line-height: 1;
@@ -974,30 +981,39 @@ button {
   height: 8.5rem;
 }
 
-.login-box form {
+form#login-form {
   margin: 5rem 0 2rem;
 }
 
-.login-box .form-group {
+#login-form .form-group {
   margin-bottom: 2rem;
 }
 
-.login-box .form-group > input[type="text"] {
+#login-form .form-group > input[type="text"],
+#login-form .form-group > input[type="password"] {
   border: 0;
   border-bottom: 1px solid #b1bdb5;
 }
 
-.login-box .forget {
+#login-form .form-group.password {
+  position: relative;
+  margin-bottom: 4.5rem;
+}
+
+#login-form .forget {
   display: inline-block;
   color: #2c6442;
   margin: 0.5rem 0;
+  position: absolute;
+  left: 0;
+  top: 100%;
 }
 
-.login-box .login-btns {
+#login-form .login-btns {
   text-align: center;
 }
 
-.login-box .login-btns button {
+#login-form .login-btns button {
   width: 100%;
   height: 2.2rem;
   font-size: 1.2rem;
@@ -1007,20 +1023,20 @@ button {
   border-radius: 5px;
 }
 
-.login-box .login-btns button > img {
+#login-form .login-btns button > img {
   width: 1.2rem;
   vertical-align: middle;
   margin-right: 0.2rem;
 }
 
-.login-box .login-btns > span {
+#login-form .login-btns > span {
   font-size: 1rem;
   color: #758b7d;
   display: inline-block;
   margin: 1rem 0;
 }
 
-.login-box .login-btns > span > a {
+#login-form .login-btns > span > a {
   font-size: 1rem;
   color: #758b7d;
   border-bottom: 1px solid;
@@ -1028,27 +1044,27 @@ button {
 }
 
 /* ------ 產品詳情 ------ */
-.proSwiper {
+.proPreview {
   height: 32rem;
   overflow: visible;
   padding-bottom: 3.5rem;
 }
 
-.proSwiper .swiper-slide img {
+.proPreview .swiper-slide img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.proSwiper .swiper-pagination {
+.proPreview .swiper-pagination {
   bottom: 1rem;
   font-size: 1.2rem;
   color: #58595b;
   font-weight: bold;
 }
 
-.proSwiper [class^="swiper-button"] {
+.proPreview [class^="swiper-button"] {
   width: auto;
   height: auto;
   top: unset;
@@ -1056,7 +1072,7 @@ button {
   z-index: 12;
 }
 
-.proSwiper [class^="swiper-button"]::after {
+.proPreview [class^="swiper-button"]::after {
   font-size: 1rem;
   color: #171717;
   font-weight: bold;
@@ -1064,11 +1080,11 @@ button {
   background: rgb(255 255 255 / 50%);
 }
 
-.proSwiper .swiper-button-next {
+.proPreview .swiper-button-next {
   right: 35%;
 }
 
-.proSwiper .swiper-button-prev {
+.proPreview .swiper-button-prev {
   left: 35%;
 }
 
@@ -1367,8 +1383,8 @@ button {
   left: 35%;
 }
 
-.pro-introduce .tab-content .content,
-.pro-introduce .tab-content .content p {
+.pro-introduce .tab-content .content.details,
+.pro-introduce .tab-content .content.details p {
   font-size: 1.1rem;
   color: #58595b;
 }
@@ -1377,24 +1393,138 @@ button {
   max-width: 100%;
 }
 
-.about-merchant {
+/*產品評論*/
+.comments .total-sum {
+  font-size: 1.2rem;
+  color: #575757;
+}
+
+.comments .rating > span {
+  font-size: 1.8rem;
+}
+
+.comments .rating-box > span {
+  font-size: 1.5rem;
+  margin: 0 0.8rem;
+}
+
+.comments-list {
+  margin: 1.5rem 0 2rem;
+}
+
+.comment-one {
+  padding: 1rem 0;  
+}
+
+.comment-one:not(:last-child) {
+  border-bottom: 1px solid #bab7b7;
+}
+
+.comment-one .user {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.comment-one .avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 1rem;
+}
+
+.comment-one .avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comment-one .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-one .info > span:first-child {
+  font-size: 1rem;
+  color: #000;
+}
+
+.comment-one .info > span:last-child {
+  font-size: 1rem;
+  color: #6f6f6f;
+  line-height: 1;
+}
+
+.comment-one .rating-box {
+  margin: 0.5rem 0;
+}
+
+.comment-one .rating > span {
+  font-size: 1.1rem;
+}
+
+.comment-one .rating-box > span {
+  font-size: 1.1rem;
+}
+
+.comment-one .comments-text {
+  font-size: 1rem;
+  color: #000;
+}
+
+.comment-one .comments-imgs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 1rem;
+  display: flex;
+}
+
+.comment-one .comments-imgs li {
+  width: 5.5rem;
+  height: 5.5rem;
+  flex-shrink: 0;
+}
+
+.comment-one .comments-imgs li:not(:last-child) {
+  margin-right: 0.8rem;
+}
+
+.comment-one .comments-imgs li > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pro-dtl-page hr {
+  height: 1rem;
+  width: 100vw;
+  margin-left: -3vw;
+  background: #e9e8e8;
+}
+
+.about-merchant .util-title {
+  margin: 0;
+}
+
+.merchant-box {
   display: flex;
   padding: 1rem 0;
   border-bottom: 1px solid #c5c2c1;
 }
 
-.about-merchant .img-box {
+.merchant-box .img-box {
   width: 7.5rem;
   height: 7.5rem;
   margin-right: 1.5rem;
   flex-shrink: 0;
 }
 
-.about-merchant .merchant-info {
+.merchant-box .merchant-info {
   width: 100%;
 }
 
-.about-merchant .merchant-name {
+.merchant-box .merchant-name {
   font-family: 'Micross';
   font-size: 1.5rem;
   color: #575757;
@@ -1406,38 +1536,38 @@ button {
   margin-bottom: 1rem;
 }
 
-.about-merchant .merchant-bottom {
+.merchant-box .merchant-bottom {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
 
-.about-merchant .merchant-bottom .left img {
+.merchant-box .merchant-bottom .left img {
   height: 1.3rem;
   vertical-align: middle;
   margin-right: 0.5rem;
 }
 
-.about-merchant .merchant-bottom .left span {
+.merchant-box .merchant-bottom .left span {
   font-size: 1rem;
   color: #9f9f9f;
   vertical-align: middle;
 }
 
-.about-merchant .merchant-bottom .left > div {
+.merchant-box .merchant-bottom .left > div {
   margin-bottom: 0.2rem;
 }
 
-.about-merchant .merchant-bottom .left > div > span:not(:first-child) {
+.merchant-box .merchant-bottom .left > div > span:not(:first-child) {
   margin: 0 0.3rem;
 }
 
-.about-merchant .merchant-bottom .right {
+.merchant-box .merchant-bottom .right {
   display: flex;
   flex-direction: column;
 }
 
-.about-merchant .merchant-bottom .right button {
+.merchant-box .merchant-bottom .right button {
   font-size: 1.2rem;
   color: #768b81;
   background: #fff;
@@ -1447,7 +1577,7 @@ button {
   font-family: 'HanyiSentyPailouArch';
 }
 
-.about-merchant .merchant-bottom .right button:not(:last-child) {
+.merchant-box .merchant-bottom .right button:not(:last-child) {
   margin-bottom: 0.5rem;
 }
 

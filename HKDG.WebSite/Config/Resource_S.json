@@ -1,4 +1,7 @@
 {
   "PayType": "支付方式",
-  "MemberName":"会员姓名"
+  "MemberName":"会员姓名",
+
+  "AccountNo" : "摆档帐号",
+  "EnterCorrectEmail": "请输入正确的电邮格式"
 }

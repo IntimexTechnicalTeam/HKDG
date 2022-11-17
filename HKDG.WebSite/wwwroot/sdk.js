@@ -131,11 +131,11 @@
                  * @param rememberMe
                  * @param callback
                  */
-                MemberApi.prototype.login = function (account, password, rememberMe, callback) {
+                MemberApi.prototype.login = function (param, callback) {
                     var _this = this;
                     WSPost(
                         //this.apiPath + "/Member/Login",
-                        "/account/Login", { Account: account, Password: password, RememberMe: rememberMe }, function (data, status) {
+                        "/api/account/Login", param, function (data, status) {
                             _this.log(data);
                             if (status === "success") {
                                 if (data.Succeeded) {
@@ -519,7 +519,7 @@
                  */
                 MemberApi.prototype.setUILanguage = function (code, callback) {
                     var _this = this;
-                    WSGet(this.apiPath + "/Member/SaveUILang", { lang: code }, function (data, status) {
+                    WSGet(this.apiPath + "/Member/ChangeLang", { lang: code }, function (data, status) {
                         _this.log(data);
                         if (status === "success") {
                             if (callback) {

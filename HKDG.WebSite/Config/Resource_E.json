@@ -2,5 +2,8 @@
   "PayType": "PayType",
   "MemberName": "MemberName",  
   
-
+  "AccountNo" : "Account No",
+  "EnterEmail": "Please enter your email address.",
+  "EnterCorrectEmail": "Please enter the correct email format",
+  "EnterPWD": "Please enter your password"
 }

@@ -2,6 +2,9 @@
   "PayType": "支付方式",
   "MemberName":"會員姓名",
 
-  
+  "AccountNo" : "擺檔帳號",
+  "EnterEmail": "請輸入你的電郵地址",
+  "EnterCorrectEmail": "請輸入正確的電郵格式",
+  "EnterPWD": "請輸入你的密碼"
 
 }
