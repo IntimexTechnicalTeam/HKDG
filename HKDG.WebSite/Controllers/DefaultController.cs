@@ -36,6 +36,21 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("Index");
         }
 
+        public async Task<IActionResult> Menu(string IspType)
+        {
+            await InitViewPage(IspType);
+
+            //var cond = new PromotionCond { IspType = IspType, ShowBanner = true, ShowProduct = true, ShowMerchant = false };
+            //var promotionList = await promotionBLL.ShowPromotionList(cond);
+            //SetViewData("PromotionList", promotionList);
+
+            //var result = await productCatalogBLL.GetCatalogAsync();
+            //result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
+            //SetViewData("Category", result);
+
+            return GetActionResult("Menu");
+        }
+
         public IActionResult Privacy()
         {
             return View();

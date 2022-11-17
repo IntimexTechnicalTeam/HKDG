@@ -1,19 +1,11 @@
-﻿using Autofac.Core;
-using Domain;
+﻿using Domain;
 using Enums;
-using Intimex.Common;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
@@ -49,26 +41,24 @@ namespace Web.Mvc
 
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             CurrentUser user = null;
-            var access_token = string.Empty;
+            //var access_token = string.Empty;
             if (authorization.IsEmpty())
             {
                 logger.LogInformation($"Headers中的Authorization为空了");
-                access_token = context.HttpContext.Request.Query["para2"].ToString() ?? "";
+                authorization = context.HttpContext.Request.Query["para2"].ToString() ?? "";
 
-                if (access_token.IsEmpty()) access_token = context.HttpContext.Request.Cookies["access_token"] ?? "";
-                if (access_token.IsEmpty())
+                if (authorization.IsEmpty()) authorization = context.HttpContext.Request.Cookies["access_token"] ?? "";
+                if (authorization.IsEmpty())
                 {
                     //logger.LogInformation($"Cookies中的access_token为空了");
                     string url = configuration["BuyDongWeb"] + "/api/Account/CreateTempToken";
                     logger.LogInformation($"call {url}前");
                     var tokenResult = await RestClientHelper.HttpGetAsync<SystemResult<ClientToken>>(url, null, AuthorizationType.Bearer);
-                    access_token = tokenResult.ReturnValue.Token;
-                    logger.LogInformation($"call {url}后生成token{access_token}");
+                    authorization = tokenResult.ReturnValue.Token;
+                    logger.LogInformation($"call {url}后生成token{authorization}");
                 }
 
-                var payload = jwtToken.DecodeJwt(access_token);
-                authorization = access_token;
-
+                var payload = jwtToken.DecodeJwt(authorization);               
                 if (bool.Parse(payload["IsLogin"]))
                 {
                     user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}",payload["Id"]);
@@ -81,23 +71,24 @@ namespace Web.Mvc
 
             //if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
             if (await BaseAuthority.CheckMemeberToken(context,next,authorization))
-            {
-                //logger.LogInformation("鉴权并验证token已通过");
-                //鉴权通过，当前站和buydong的token做刷新过期时间              
-                
+            {              
                 var payload = jwtToken.DecodeJwt(authorization);
                 var language = payload["Language"];
                 var currencyCode = payload["CurrencyCode"];
-                var result = jwtToken.RefreshToken(authorization, language.ToEnum<Language>(), currencyCode);
 
-                logger.LogInformation($"call api 刷新token 并更新到redis中,token ={result?.Message ?? ""}");
-
-                //result.Message 就是刷新后的ticket
+                //鉴权通过，当前站和buydong的会员token做刷新过期时间              
+                if (bool.Parse(payload["IsLogin"]))
+                {
+                    var result = jwtToken.RefreshToken(authorization, language.ToEnum<Language>(), currencyCode);
+                    logger.LogInformation($"call api 刷新token 并更新到redis中,token ={result?.Message ?? ""}");
+                    authorization = result.Message;
+                }
+                
                 context.HttpContext.Response.Headers.Remove("Authorization");
-                context.HttpContext.Response.Headers.Add("Authorization", $"Bearer {result.Message}");
+                context.HttpContext.Response.Headers.Add("Authorization", $"Bearer {authorization}");
 
                 var option = new CookieOptions { HttpOnly = true };
-                context.HttpContext.Response.Cookies.Append("access_token", access_token, option);
+                context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
 
                 //logger.LogInformation($"设置access_token={access_token}");
                 await next();

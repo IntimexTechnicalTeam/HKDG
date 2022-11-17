@@ -63,17 +63,24 @@
 
             member.Validate();
 
-            var dbModel = new Member {
-
+            string pwdBase = PwdUtil.GenPwdBase(member.Email, member.Password);
+            var dbModel = new Member
+            {
                 Id = Guid.NewGuid(),
                 Account = member.Account,
                 Email = member.Email,
-                Password = ToolUtil.Md5Encrypt(member.Password),
-                IsActive = true, IsApprove = true, IsDeleted = false,
-                CreateDate = DateTime.Now, UpdateDate = DateTime.Now,
-                CurrencyCode = "HKD", Language = Language.C, BirthDate = member.BirthDate,
+                Password = HashUtil.MD5(pwdBase),
+                IsActive = true,
+                IsApprove = true,
+                IsDeleted = false,
+                CreateDate = DateTime.Now,
+                UpdateDate = DateTime.Now,
+                CurrencyCode = "HKD",
+                Language = Language.C,
+                BirthDate = member.BirthDate,
                 Code = AutoGenerateNumber("MB"),
-                FirstName = member.FirstName, LastName = member.LastName,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
                 OptOutPromotion = member.OptOutPromotion,
             };
 

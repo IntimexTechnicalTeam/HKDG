@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using System.Security.Principal;
+
+namespace HKDG.BLL
 {
     public class LoginBLL : BaseBLL, ILoginBLL
     {
@@ -14,7 +16,11 @@
             var user = await baseRepository.GetModelAsync<Member>(x =>x.Account == input.Account);
 
             if (user == null) throw new BLException("账号错误");
-            if (user.Password != ToolUtil.Md5Encrypt(input.Password)) throw new BLException("密码错误");
+            string pwdBase = PwdUtil.GenPwdBase(user.Account, input.Password);
+            if (user.Password != HashUtil.MD5(pwdBase))
+            {
+                throw new BLException("密码错误");
+            }
 
             result.ReturnValue = AutoMapperExt.MapTo<MemberDto>(user);
             result.Succeeded = true;          

@@ -1,9 +1,12 @@
 ﻿using Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -127,18 +130,18 @@ namespace Web.Mvc
             var payload = jwtToken.DecodeJwt(token);
             if (!bool.Parse(payload["IsLogin"]))
             {
-                //临时用户
-                await next();
-                flag = false;
+                //临时用户，不处理
+                flag = true;
                 return flag;
             }
-
+           
             //会员登录
             string userId = "";
             //检查token
             TokenType tokenType = jwtToken.ValidatePlus(token, a => a["iss"] == Configuration["Jwt:Issuer"] && a["aud"] == Configuration["Jwt:Audience"], action => { userId = action["UserId"]; });
             if (tokenType != TokenType.Ok)
             {
+                //这里可能会有问题
                 context.HttpContext.Response.Cookies.Delete("access_token");
                 context.HttpContext.Response.Redirect("/");
                 flag = false;
