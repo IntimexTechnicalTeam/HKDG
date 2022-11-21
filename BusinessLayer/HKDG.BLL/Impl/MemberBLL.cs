@@ -93,34 +93,47 @@
         public async Task<SystemResult> ChangeLang(CurrentUser currentUser, Language Lang)
         {
             var result = new SystemResult() { Succeeded = false };
-
-            var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
-            member.Language = Lang;
-
+            string message = string.Empty;
             if (currentUser.IsLogin)
+            {
+                var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
+                member.Language = Lang;
                 await baseRepository.UpdateAsync(member);
 
-            var newToken = jwtToken.RefreshToken(CurrentUser.Token, Lang, "");
-
-            result.ReturnValue = newToken.Message;
-            result.Succeeded = newToken.Succeeded;
+                var newToken = jwtToken.RefreshToken(CurrentUser.Token, Lang, "");
+                message = newToken.Message;
+            }
+            else {                
+                message = jwtToken.RefreshToken<string>(CurrentUser.Token, null,Lang, "");
+            }
+ 
+            result.ReturnValue = message;
+            result.Succeeded = true;
             return result;
         }
 
         public async Task<SystemResult> ChangeCurrencyCode(CurrentUser currentUser, string CurrencyCode)
         {
             var result = new SystemResult() { Succeeded = false };
-
-            var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
-            member.CurrencyCode = CurrencyCode;
-
+            string message = string.Empty;
             if (currentUser.IsLogin)
+            {
+                var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
+                member.CurrencyCode = CurrencyCode;
+
                 await baseRepository.UpdateAsync(member);
+                var newToken = jwtToken.RefreshToken(CurrentUser.Token, null, CurrencyCode);
 
-            var newToken = jwtToken.RefreshToken(CurrentUser.Token, null, CurrencyCode);
+                message = newToken.Message;
+            }
+            else
+            {
+                var currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
+                message = jwtToken.RefreshToken<string>(CurrentUser.Token, currency, null, CurrencyCode);
+            }
 
-            result.ReturnValue = newToken.Message;
-            result.Succeeded = newToken.Succeeded;
+            result.ReturnValue = message;
+            result.Succeeded = true;
             return result;
         }
 
@@ -383,34 +396,14 @@
         /// 获取会员信息
         /// </summary>
         /// <returns></returns>
-        public async Task<CurrentUser<MemberUser>> GetMemberInfo()
+        public async Task<MemberItem> GetMemberInfo()
         {
-            var member = await baseRepository.GetModelAsync<MemberAccount>(x => x.MemberId == Guid.Parse(CurrentUser.UserId));
-            var memberData = new CurrentUser<MemberUser>
-            {
-                Account = CurrentUser.Account,
-                CurrencyCode = CurrentUser.CurrencyCode,
-                Email = CurrentUser.Email,
-                IsLogin = CurrentUser.IsLogin,
-                Lang = CurrentUser.Lang,
-                LoginType = CurrentUser.LoginType,
-                MerchantId = CurrentUser.MerchantId,
-                Roles = null,
-                Token = "",
-                UserId = "",
-                UserData = new MemberUser
-                {
-                    Fun = member?.Fun ?? 0,
-                    //MaxLimitDayFun = member?.MaxLimitDayFun ?? 0,
-                    //MaxLimitMonthFun = member?.MaxLimitMonthFun ?? 0,
-                    //MaxLimitYearFun = member?.MaxLimitYearFun ?? 0,
-                    //TotalDayFun = member?.TotalDayFun ?? 0,
-                    //TotalMonthFun = member?.TotalMonthFun ?? 0,
-                    //TotalYearFun = member?.TotalYearFun ?? 0,
-                }
-            };
+            var dbMember = await baseRepository.GetModelAsync<Member>(x => x.Id == CurrentUser.Id);
+            if (dbMember == null) return new MemberItem { };
 
-            return memberData;
+            var mItem = AutoMapperExt.MapTo<MemberItem>(dbMember);          
+            mItem.Currency = currencyBLL.GetSimpleCurrency(dbMember.CurrencyCode);
+            return mItem;
         }
 
         public async Task<PageData<MicroProduct>> MyProductTrack(TrackCond cond)

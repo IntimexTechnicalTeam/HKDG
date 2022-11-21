@@ -28,7 +28,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
                 var userInfo = result.ReturnValue as UserDto;
 
                 var tokenInfo = AutoMapperExt.MapTo<TokenInfo>(userInfo);
-                tokenInfo.UserId = userInfo.Id.ToString();
+                tokenInfo.Id = userInfo.Id;
                 tokenInfo.IsLogin = true;
                 tokenInfo.IspType = input.IspType ?? "DG";
                 userInfo.Token = jwtToken.CreateToken(tokenInfo);

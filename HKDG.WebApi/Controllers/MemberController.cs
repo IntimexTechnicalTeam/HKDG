@@ -101,18 +101,6 @@
             return result;
         }
 
-        /// <summary>
-        /// 会员信息
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost("GetMemberInfo")]
-        [ProducesResponseType(typeof(SystemResult<CurrentUser<MemberUser>>), 200)]
-        public async Task<SystemResult<CurrentUser<MemberUser>>> GetMemberInfo()
-        {
-            var result = new SystemResult<CurrentUser<MemberUser>> { Succeeded = true };
-            result.ReturnValue  = await memberBll.GetMemberInfo();
-            return result;
-        }
 
         /// <summary>
         /// 我的足迹

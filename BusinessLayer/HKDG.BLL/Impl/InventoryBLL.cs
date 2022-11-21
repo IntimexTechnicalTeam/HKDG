@@ -1540,5 +1540,61 @@ namespace HKDG.BLL
             return cacheData.ToList();
         }
 
+        /// <summary>
+        /// 在操作购物车和创建订单时CheckQty
+        /// </summary>
+        /// <param name="SkuId"></param>
+        /// <param name="Qty"></param>
+        /// <returns></returns>
+        public SystemResult CheckQty(Guid SkuId, int Qty)
+        {
+            var result = new SystemResult { Succeeded = true };
+            var sellOutSkuList = GetSelloutSkus();
+            if (sellOutSkuList != null && sellOutSkuList.Any(d => d == SkuId.ToString()))
+            {
+                var errEnum = OrderErrorEnum.Sellout;
+                result.Succeeded = false;
+                var error = new SystemError()
+                {
+                    Code = (int)OrderErrorEnum.Sellout,
+                    Description = GetErrorDesription((int)errEnum, CurrentUser.Lang)
+                };
+                result.Message = error.Message;
+                result.ReturnValue = error;
+                return result;
+            }
+
+            int enableQty = GetEnableQty(SkuId.ToString());
+            if (enableQty < Qty)
+            {
+                result.Succeeded = false;
+                var error = new SystemError()
+                {
+                    Code = (int)OrderErrorEnum.OverSold,
+                    Description = GetErrorDesription((int)OrderErrorEnum.OverSold, CurrentUser.Lang)
+                };
+                result.Message = error.Message;
+                result.ReturnValue = error;
+                return result;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 獲取可用Qty 即SaleQty-FreezeQty,因為到發貨流程時，SaleQty做減法，FreezeQty也做減法
+        /// </summary>
+        /// <param name="SkuId"></param>
+        /// <returns></returns>
+        int GetEnableQty(string SkuId)
+        {
+            var saleQty = RedisHelper.ZScore($"{CacheKey.SalesQty}", SkuId) ?? 0;
+            //冻结Qty
+            var freezeQty = RedisHelper.ZScore($"{CacheKey.InvtReservedQty}", SkuId) ?? 0;
+
+            var enableQty = saleQty - freezeQty;   //可用Qty
+            return (int)enableQty;
+        }
+
     }
 }

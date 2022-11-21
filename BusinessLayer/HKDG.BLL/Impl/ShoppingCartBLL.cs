@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using WebCache;
+
+namespace HKDG.BLL
 {
     public class ShoppingCartBLL : BaseBLL, IShoppingCartBLL
     {
@@ -61,7 +63,7 @@
 
             if (string.IsNullOrEmpty(cartItem.ProdCode)) throw new BLException("缺少ProdCode参数");
 
-            string key = $"{PreHotType.Hot_Products}_{CurrentUser.Lang}";
+            string key = $"{PreHotType.Hot_Products}_{CurrentUser.Language}";
             var product = await RedisHelper.HGetAsync<HotProduct>(key, cartItem.ProdCode);
             if (product == null)
             {
@@ -84,7 +86,8 @@
             }
             var sku = skuList.FirstOrDefault(d => d.ProductCode == cartItem.ProdCode && d.AttrValue1 == cartItem.Attr1 && d.AttrValue2 == cartItem.Attr2 && d.AttrValue3 == cartItem.Attr3 && d.IsActive && !d.IsDeleted);
             if (sku == null)
-            {             
+            {
+                
                 throw new BLException("SKU is not exsit.");
             }
             cartItem.Sku = sku.Id;
@@ -92,7 +95,7 @@
             #endregion
 
             cartItem.AddQty = cartItem.Qty;
-            var item = await baseRepository.GetModelAsync<ShoppingCartItem>(d => d.ProductId == cartItem.ProductId && d.SkuId == sku.Id && d.MemberId ==Guid.Parse(CurrentUser.UserId) && d.IsActive && !d.IsDeleted && d.KolId == cartItem.KolId);
+            var item = await baseRepository.GetModelAsync<ShoppingCartItem>(d => d.ProductId == cartItem.ProductId && d.SkuId == sku.Id && d.MemberId == CurrentUser.Id && d.IsActive && !d.IsDeleted && d.KolId == cartItem.KolId);
 
             int holdQty = cartItem.Qty + (int)CalculateFreeQty(product.MchId, product.Code, cartItem.Qty);
             if (item != null) holdQty = cartItem.Qty;
@@ -106,15 +109,15 @@
                 {
                     Id = Guid.NewGuid(),
                     SkuId = cartItem.Sku,
-                    MemberId = Guid.Parse(CurrentUser.UserId),
+                    MemberId = CurrentUser.Id,
                     Qty = cartItem.Qty,
                     ProductId = cartItem.ProductId,
                     KolId = cartItem.KolId,
-                    CreateBy =Guid.Parse( CurrentUser.UserId),
-                    UpdateBy = Guid.Parse(CurrentUser.UserId),
+                    CreateBy = CurrentUser.Id,
+                    UpdateBy = CurrentUser.Id,
                 };
 
-                var details = await GenShoppingCartItemDetail(item);
+                var details = await GenShoppingCartItemDetail(item, cartItem.Attr1, cartItem.Attr2, cartItem.Attr3);
                 UnitOfWork.IsUnitSubmit = true;
                 await baseRepository.InsertAsync(item);
                 await baseRepository.DeleteAsync(details.Item1);
@@ -127,7 +130,8 @@
                 item.Qty += cartItem.Qty;
                 item.UpdateDate = DateTime.Now;
 
-                var details = await GenShoppingCartItemDetail(item);
+                var dbDetail = await baseRepository.GetModelAsync<ShoppingCartItemDetail>(x => x.ShoppingCartItemId == item.Id);
+                var details = await GenShoppingCartItemDetail(item, dbDetail.AttrValue1, dbDetail.AttrValue2, dbDetail.AttrValue3);
                 UnitOfWork.IsUnitSubmit = true;
                 await baseRepository.UpdateAsync(item);
                 await baseRepository.DeleteAsync(details.Item1);
@@ -136,10 +140,10 @@
             }
 
             result.Succeeded = true;
-            result.Message = Resources.Message.AddtoCartSuccess;
+            result.Message = HKDG.Resources.Message.AddtoCartSuccess;
             //await dealProductQtyCacheBll.UpdateQtyWhenAddToCart(sku.Id, holdQty, item.Id);
+
             return result;
-           
         }
 
         public async Task<SystemResult> UpdateCartItemAsync(Guid itemId, int qty)
@@ -433,7 +437,7 @@
 
             #region 判斷是否有庫存
 
-            result = await InventoryBLL.CheckSalesQtyAsync(item.Sku, item.AddQty, HoldQty);
+            result = InventoryBLL.CheckQty(item.Sku, HoldQty);
             #endregion
 
             return result;
@@ -444,19 +448,32 @@
         /// </summary>
         /// <param name="memberId"></param>
         /// <returns></returns>
-        public async Task DisableMallCartItem(Guid memberId)
+        public async Task DisableMallCartItem(Guid memberId, int top = 10)
         {
-            var details = (await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.IsActive && !x.IsDeleted && x.MemberId ==Guid.Parse(CurrentUser.UserId))).ToList();
-            if (memberId != Guid.Empty) details = details.Where(x => x.MemberId == Guid.Parse(CurrentUser.UserId)).ToList();
+            var query = await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.IsActive && !x.IsDeleted);
+            if (memberId != Guid.Empty) query = query.Where(x => x.MemberId == CurrentUser.Id);
 
-            string key = $"{PreHotType.Hot_Products}_{CurrentUser.Lang}";
+            query = query.Take(top);
+            var details = query.ToList();
+            string key = string.Empty;
+
+            HotProduct p = null;
             foreach (var item in details)
             {
-                var p = await RedisHelper.HGetAsync<HotProduct>(key, item.ProductCode);
+                p = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_C", item.ProductCode);
+                if (p == null) p = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_E", item.ProductCode);
+                if (p == null) p = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_S", item.ProductCode);
+                if (p == null)
+                {
+                    var product = await baseRepository.GetModelAsync<Product>(x => x.Code == item.ProductCode && x.IsActive && !x.IsDeleted);
+                    p = new HotProduct { Status = product.Status };
+                }
+
+                if (p == null) continue;
                 if (p.Status != ProductStatus.OnSale)
                 {
                     item.IsActive = false;
-                    item.IsDeleted = true;
+                    //item.IsDeleted = true;
                     item.UpdateDate = DateTime.Now;
                 }
             }
@@ -466,26 +483,28 @@
             foreach (var item in result)
             {
                 item.IsActive = false;
-                item.IsDeleted = true;
+                //item.IsDeleted = true;
                 item.UpdateDate = DateTime.Now;
+
+                key = $"{CacheKey.ShoppingCart}_{item.MemberId}";
+                await RedisHelper.DelAsync(key);
             }
 
             await baseRepository.UpdateAsync(details);
             await baseRepository.UpdateAsync(result);
 
-            key = $"{CacheKey.ShoppingCart}_{CurrentUser.UserId}";
-            await RedisHelper.DelAsync(key);
         }
+
         public async Task<MallCartInfo> GetShoppingCartAsync()
         {
             var info = new MallCartInfo();
 
-            if (!CurrentUser.IsLogin) throw new BLException(Resources.Message.PleaseLogin);
+            if (!CurrentUser.IsLogin) throw new BLException(Message.PleaseLogin);
 
-            await DisableMallCartItem(Guid.Parse(CurrentUser.UserId));
+            await DisableMallCartItem(CurrentUser.Id);
             double taxRate = SettingBLL.GetSalePriceTaxRate();
 
-            var cartDetails = await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.IsActive && !x.IsDeleted && x.MemberId == Guid.Parse(CurrentUser.UserId));
+            var cartDetails = await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.IsActive && !x.IsDeleted && x.MemberId == CurrentUser.Id);
             info.EnableMallCart = await GenMallCartItem(cartDetails.ToList());
 
             info.IsShowAdult = info.EnableMallCart.Any(x => x.ProductList.Any(v => v.IsShowAdult));
@@ -503,7 +522,7 @@
 
             #region 处理失效购物车
 
-            var diableList = await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => !x.IsActive && !x.IsDeleted && x.MemberId == Guid.Parse(CurrentUser.UserId));
+            var diableList = await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => !x.IsActive && !x.IsDeleted && x.MemberId == CurrentUser.Id);
             if (diableList != null && diableList.Any())
             {
                 info.DisableProductList = diableList.OrderByDescending(o => o.CreateDate)
@@ -512,7 +531,7 @@
                 foreach (var item in info.DisableProductList)
                 {
                     var imgList = await RedisHelper.HGetAsync<List<HotProductImage>>($"{PreHotType.Hot_ProductImage}", item.ProductCode);
-                    var product = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_{CurrentUser.Lang}", item.ProductCode);
+                    var product = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_{CurrentUser.Language}", item.ProductCode);
                     item.ProductName = product.Name ?? "";
                     item.ProductImage = imgList?.FirstOrDefault(x => x.Type == ImageSizeType.S3)?.ImagePath ?? "";
                 }
@@ -565,20 +584,13 @@
                         mItem.ProductList.Add(prodItem);
                     }
 
-                    var mch = await RedisHelper.HGetAsync<HotMerchant>($"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}", mItem.MchId.ToString());
+                    var mch = await RedisHelper.HGetAsync<HotMerchant>($"{PreHotType.Hot_Merchants}_{CurrentUser.Language}", mItem.MchId.ToString());
                     mItem.MchName = mch?.Name ?? "";   //商家名称
                     mItem.ItemQty = mItem.ProductList.Sum(s => s.BuyQty);
                     mItem.ItemAmount = mItem.ProductList.Sum(s => s.ItemAmount);
 
                     info.Add(mItem);
-
-
-
                 }
-
-
-
-
             }
 
             return info;
@@ -598,13 +610,13 @@
             var attr3 = await ShoppingCartRepository.GenMallCartProductAttr(item.AttrId3, item.AttrValue3);
             prodItem.AttrList.Add(attr3);
 
-            var product = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_{CurrentUser.Lang}", item.ProductCode);
+            var product = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_{CurrentUser.Language}", item.ProductCode);
             var imgList = await RedisHelper.HGetAsync<List<HotProductImage>>($"{PreHotType.Hot_ProductImage}", item.ProductCode);
 
             prodItem.CatalogId = product?.CatalogId ?? Guid.Empty;
             prodItem.ProductName = product?.Name ?? "";
-            prodItem.SalePrice = product?.SalePrice ?? 0;
-            prodItem.RealPrice = prodItem.SalePrice + item.AttrValue1Price + item.AttrValue2Price + item.AttrValue3Price;
+            prodItem.RealPrice = product?.SalePrice ?? 0;
+            prodItem.SalePrice = prodItem.RealPrice + item.AttrValue1Price + item.AttrValue2Price + item.AttrValue3Price;
             prodItem.ProductImage = imgList?.Where(x => x.Type == ImageSizeType.S1 || x.Type == ImageSizeType.S3).Select(i => i.ImagePath)?.ToList();
 
             prodItem.CartItemStatus = GenCartItemStatus(product, item.SkuId, prodItem.BuyQty);
@@ -682,7 +694,40 @@
             return freeItem;
         }
 
-      
+        async Task<Tuple<List<ShoppingCartItemDetail>, ShoppingCartItemDetail>> GenShoppingCartItemDetail(ShoppingCartItem item, Guid AttrId1, Guid AttrId2, Guid AttrId3)
+        {
+            var detail = await ShoppingCartRepository.GetItemDetailAsync(item);
+            var deleteDetails = (await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.ShoppingCartItemId == item.Id)).ToList();
+
+            var dbDetails = detail.DeepClone<ShoppingCartItemDetail>();
+            dbDetails.Id = Guid.NewGuid();
+            dbDetails.ShoppingCartItemId = item.Id;
+            dbDetails.Qty = item.Qty;
+            dbDetails.MemberId = item.MemberId;
+            dbDetails.SkuId = item.SkuId;
+            dbDetails.ProductId = item.ProductId;
+            dbDetails.KolId = item.KolId;
+            dbDetails.CreateBy = CurrentUser.Id;
+            dbDetails.UpdateBy = CurrentUser.Id;
+            dbDetails.CreateDate = DateTime.Now;
+
+            dbDetails.AttrValue1Price = await GenAddPrice(item.ProductId, AttrId1);
+            dbDetails.AttrValue2Price = await GenAddPrice(item.ProductId, AttrId2);
+            dbDetails.AttrValue3Price = await GenAddPrice(item.ProductId, AttrId3);
+
+            return Tuple.Create(deleteDetails, dbDetails);
+        }
+
+        async Task<decimal> GenAddPrice(Guid ProductId, Guid AttrId)
+        {
+            decimal price = decimal.Zero;
+
+            var m = await ShoppingCartRepository.GetAddtionPrice(ProductId, AttrId);
+
+            if (m == null) return price;
+            price = m.AdditionalPrice;
+            return price;
+        }
 
         public async Task<SystemResult> RemoveFromCartAsyncV2(MallItem cartItem)
         {

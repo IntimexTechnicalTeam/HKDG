@@ -1,4 +1,6 @@
-﻿using Web.Jwt;
+﻿using Intimex.Utility;
+using System.Security.Cryptography;
+using Web.Jwt;
 
 namespace HKDG.WebSite.Areas
 {
@@ -23,69 +25,29 @@ namespace HKDG.WebSite.Areas
         [AllowAnonymous]
         [HttpPost("Login")]
         [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> Login([FromBody] LoginInput input)
+        public async Task<SystemResult> Login([FromForm]LoginInput input)
         {           
             var result = await loginBLL.Login(input);
 
             if (result.Succeeded)
             {
-                var userInfo = result.ReturnValue as MemberDto;
+                var mUser = result.ReturnValue as MemberDto;
 
-                var tokenInfo = AutoMapperExt.MapTo<TokenInfo>(userInfo);
-                tokenInfo.UserId = userInfo.Id.ToString();
-                tokenInfo.IsLogin = true;
-                tokenInfo.LoginType = LoginType.Member;
-                string ticket = jwtToken.CreateToken(tokenInfo);
+                var userInfo = AutoMapperExt.MapTo<CurrentUser>(mUser);
+                userInfo.Id = mUser.Id;
+                userInfo.IsLogin = true;
+                userInfo.LoginType = LoginType.Member;
+                userInfo.Currency = currencyBLL.GetSimpleCurrency(mUser.CurrencyCode);
+                userInfo.LoginSerialNO = HashUtil.Md5Encrypt(Guid.NewGuid().ToString());
+
+                string key = $"{CacheKey.CurrentUser}";
+                await RedisHelper.HSetAsync(key, userInfo.LoginSerialNO, userInfo);
 
                 result.Succeeded = true;
-                result.ReturnValue = ticket;
+                result.ReturnValue = userInfo.LoginSerialNO;
             }
 
             return result;
         }
-
-        /// <summary>
-        /// 会员登出
-        /// </summary>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("Logout")]
-        [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> Logout()
-        {
-            string ticket = jwtToken.CreateDefautToken();
-            var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = ticket;
-            return result;
-        }
-
-        /// <summary>
-        /// 修改语言
-        /// </summary>
-        /// <param name="Lang"></param>
-        /// <returns></returns>       
-        [HttpGet("ChangeLang")]
-        [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> ChangeLang(Language Lang)
-        {
-            var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = await memberBLL.ChangeLang(CurrentUser, Lang);
-            return result;
-        }
-
-        /// <summary>
-        /// 修改币种
-        /// </summary>
-        /// <param name="CurrencyCode"></param>
-        /// <returns></returns>       
-        [HttpGet("ChangeCurrencyCode")]
-        [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> ChangeCurrencyCode(string CurrencyCode)
-        {
-            var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = await memberBLL.ChangeCurrencyCode(CurrentUser, CurrencyCode);
-            return result;
-        }
-
     }
 }

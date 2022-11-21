@@ -1,45 +1,18 @@
-﻿namespace HKDG.WebApi.Controllers
+﻿using Web.Jwt;
+
+namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : BaseApiController
+    public class MemberController : BaseApiController
     {
         IMemberBLL memberBLL;
         IJwtToken jwtToken;
 
-        public AccountController(IComponentContext service) : base(service)
+        public MemberController(IComponentContext service) : base(service)
         {
             jwtToken = this.Services.Resolve<IJwtToken>();
             memberBLL = this.Services.Resolve<IMemberBLL>();
-        }
-
-        /// <summary>
-        /// 会员登录
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost("Login")]
-        [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> Login([FromBody] LoginInput input)
-        {           
-            var result = await loginBLL.Login(input);
-
-            if (result.Succeeded)
-            {
-                var userInfo = result.ReturnValue as MemberDto;
-
-                var tokenInfo = AutoMapperExt.MapTo<TokenInfo>(userInfo);
-                tokenInfo.Id = userInfo.Id;
-                tokenInfo.IsLogin = true;
-                tokenInfo.LoginType = LoginType.Member;
-                string ticket = jwtToken.CreateToken(tokenInfo);
-
-                result.Succeeded = true;
-                result.ReturnValue = ticket;
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -61,13 +34,14 @@
         /// 修改语言
         /// </summary>
         /// <param name="Lang"></param>
-        /// <returns></returns>       
+        /// <returns></returns>  
+        [AllowAnonymous]
         [HttpGet("ChangeLang")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> ChangeLang(Language Lang)
         {
             var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = await memberBLL.ChangeLang(CurrentUser, Lang);
+            result = await memberBLL.ChangeLang(CurrentUser, Lang);
             return result;
         }
 
@@ -76,6 +50,7 @@
         /// </summary>
         /// <param name="CurrencyCode"></param>
         /// <returns></returns>       
+        [AllowAnonymous]
         [HttpGet("ChangeCurrencyCode")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> ChangeCurrencyCode(string CurrencyCode)
@@ -84,6 +59,26 @@
             result.ReturnValue = await memberBLL.ChangeCurrencyCode(CurrentUser, CurrencyCode);
             return result;
         }
+
+        /// <summary>
+        /// 获取登录后的会员数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetMemberInfo")]
+        [ProducesResponseType(typeof(SystemResult<MemberItem>), 200)]
+        public async Task<SystemResult<MemberItem>> GetMemberInfo()
+        {
+            var mUser = await RedisHelper.HGetAsync<MemberItem>($"{CacheKey.Member}", CurrentUser.UserId);
+            if (mUser == null)
+            {
+                mUser = await memberBLL.GetMemberInfo();
+                await RedisHelper.HSetAsync($"{CacheKey.Member}", CurrentUser.UserId, mUser);
+            }
+
+            var result = new SystemResult<MemberItem> { ReturnValue = mUser ,Succeeded =true };
+            return result;
+        }
+
 
     }
 }

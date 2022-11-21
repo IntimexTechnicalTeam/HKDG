@@ -22,7 +22,7 @@ namespace HKDG.BLL
             if (currentUser.IsLogin)
                 await baseRepository.UpdateAsync(user);
 
-            var newToken = jwtToken.RefreshToken<string>(CurrentUser.Token, Lang, "");
+            var newToken = jwtToken.RefreshToken<string>(CurrentUser.Token,null ,Lang, "");
 
             result.ReturnValue = newToken;
             result.Succeeded = true;

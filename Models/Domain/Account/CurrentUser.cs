@@ -5,7 +5,11 @@ namespace Domain
     /// 当前用户信息实体
     /// </summary>
     public class CurrentUser: TokenInfo
-    { 
+    {
+        public bool Linkuped { get; set; }
+
+        public string HKPID { get; set; }
+
         public string Token { get; set; } = "";
 
         public List<RoleDto> Roles { get; set; } = new List<RoleDto>();

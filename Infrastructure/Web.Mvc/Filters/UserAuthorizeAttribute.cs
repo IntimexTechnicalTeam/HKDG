@@ -1,11 +1,13 @@
 ﻿using Domain;
 using Enums;
+using Intimex.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
@@ -41,11 +43,21 @@ namespace Web.Mvc
 
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             CurrentUser user = null;
-            //var access_token = string.Empty;
             if (authorization.IsEmpty())
             {
                 logger.LogInformation($"Headers中的Authorization为空了");
-                authorization = context.HttpContext.Request.Query["para2"].ToString() ?? "";
+
+                {   //这里是从摆档跳转过的的Token参数
+                    authorization = context.HttpContext.Request.Query["para2"].ToString() ?? "";    
+                    if (!authorization.IsEmpty())
+                    {
+                        user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
+
+                        if (user != null && user.ExpireDate >= DateTime.Now) authorization = user?.LoginSerialNO ?? "";
+                        else authorization = "";
+
+                    }
+                }
 
                 if (authorization.IsEmpty()) authorization = context.HttpContext.Request.Cookies["access_token"] ?? "";
                 if (authorization.IsEmpty())
@@ -58,39 +70,23 @@ namespace Web.Mvc
                     logger.LogInformation($"call {url}后生成token{authorization}");
                 }
 
-                var payload = jwtToken.DecodeJwt(authorization);               
-                if (bool.Parse(payload["IsLogin"]))
-                {
-                    user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}",payload["Id"]);
-                    if (user == null) throw new BLException("token isnot exists");
-                    authorization = user.Token;
-                }
                 context.HttpContext.Request.Headers.Remove("Authorization");
                 context.HttpContext.Request.Headers.Add("Authorization", $"Bearer {authorization}");
             }
 
+            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
             //if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
-            if (await BaseAuthority.CheckMemeberToken(context,next,authorization))
-            {              
-                var payload = jwtToken.DecodeJwt(authorization);
-                var language = payload["Language"];
-                var currencyCode = payload["CurrencyCode"];
-
-                //鉴权通过，当前站和buydong的会员token做刷新过期时间              
-                if (bool.Parse(payload["IsLogin"]))
-                {
-                    var result = jwtToken.RefreshToken(authorization, language.ToEnum<Language>(), currencyCode);
-                    logger.LogInformation($"call api 刷新token 并更新到redis中,token ={result?.Message ?? ""}");
-                    authorization = result.Message;
-                }
-                
-                context.HttpContext.Response.Headers.Remove("Authorization");
-                context.HttpContext.Response.Headers.Add("Authorization", $"Bearer {authorization}");
-
+            if (await BaseAuthority.CheckMemeberToken(context,next, mUser))
+            {
+                logger.LogInformation($"{mUser.UserId}鉴权通过");
                 var option = new CookieOptions { HttpOnly = true };
                 context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
 
-                //logger.LogInformation($"设置access_token={access_token}");
+                ////鉴权通过，当前站和buydong的会员token做刷新过期时间
+                mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
+                await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
+
+                logger.LogInformation($"{mUser.UserId}刷新过期时间");
                 await next();
             }
         }

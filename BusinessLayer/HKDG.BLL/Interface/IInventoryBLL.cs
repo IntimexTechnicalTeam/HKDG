@@ -67,5 +67,7 @@
         SystemResult CheckSalesQty(Guid SkuId, int AddQty, int HoldQty);
 
         List<string> GetSelloutSkus();
+
+        SystemResult CheckQty(Guid SkuId, int Qty);
     }
 }

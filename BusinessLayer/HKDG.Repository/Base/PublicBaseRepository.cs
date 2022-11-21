@@ -78,7 +78,11 @@
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
                 if (token.IsEmpty()) token = CurrentContext?.HttpContext?.Request?.Cookies["access_token"]?.ToString() ?? "";
 
-                _currentUser = jwtToken.BuildUser(token, _currentUser);
+                _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
+                //if (_currentUser.LoginType <= LoginType.Admin)
+                //{
+                //    loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) });
+                //}
 
                 return _currentUser;
             }

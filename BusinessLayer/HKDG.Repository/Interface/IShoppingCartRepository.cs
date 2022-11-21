@@ -10,5 +10,9 @@
         ShoppingCartItemDetailDto GetItemDetail(ShoppingCartItem item);
 
         Task<KeyValue> GenMallCartProductAttr(Guid AttrId, Guid AttrValueId);
+
+        Task<ProductAttrValue> GetAddtionPrice(Guid ProductId, Guid AttrValueId);
+
+        Task<ShoppingCartItemDetailView> GetItemDetailAsync(ShoppingCartItem item);
     }
 }

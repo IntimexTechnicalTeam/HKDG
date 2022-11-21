@@ -33,6 +33,8 @@
         ProductSku,
         Token,
         PageSizeSetting,
+
+        Member,
     }
 
     public enum CacheField

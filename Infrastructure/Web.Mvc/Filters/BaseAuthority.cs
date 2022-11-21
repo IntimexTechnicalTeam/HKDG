@@ -1,4 +1,5 @@
-﻿using Enums;
+﻿using Domain;
+using Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -109,7 +110,7 @@ namespace Web.Mvc
         /// <param name="next"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next, string token)
+        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next, CurrentUser mUser)
         {
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             var Configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
@@ -124,29 +125,27 @@ namespace Web.Mvc
                 return flag;
             }
 
-            if (token.IsEmpty()) token = context.HttpContext.Request.Cookies["access_token"];
-            token = token.Substring("Bearer ".Length).Trim();
-
-            var payload = jwtToken.DecodeJwt(token);
-            if (!bool.Parse(payload["IsLogin"]))
+            if (mUser == null)
             {
-                //临时用户，不处理
-                flag = true;
-                return flag;
-            }
-           
-            //会员登录
-            string userId = "";
-            //检查token
-            TokenType tokenType = jwtToken.ValidatePlus(token, a => a["iss"] == Configuration["Jwt:Issuer"] && a["aud"] == Configuration["Jwt:Audience"], action => { userId = action["UserId"]; });
-            if (tokenType != TokenType.Ok)
-            {
-                //这里可能会有问题
-                context.HttpContext.Response.Cookies.Delete("access_token");
-                context.HttpContext.Response.Redirect("/");
+                await next();
                 flag = false;
                 return flag;
             }
+            
+            if (mUser.LoginType < LoginType.Member)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            if (mUser.ExpireDate < DateTime.Now)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
 
             return flag;
         }

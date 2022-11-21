@@ -18,9 +18,9 @@ namespace Web.Jwt
 {
     public class JwtToken:IJwtToken
     {
-       public IServiceProvider service;
-        IConfiguration configuration;
-
+       IServiceProvider service;
+       IConfiguration configuration;
+      
         public JwtToken(IServiceProvider services) 
         {
             this.service = services;
@@ -82,14 +82,8 @@ namespace Web.Jwt
         /// <param name="token"></param>
         /// <returns></returns>
         public SystemResult<string> RefreshToken(string token, Language? Lang = null, string CurrencyCode = "")
-        {
-            //var tmpUser = CreateCurrentUser(token);
-            //tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
-            //tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
-            //var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
-            //var ticket = CreateToken(loginInput);
-
-            //就算可以访问redis,但还是通过摆档的主Token中心去刷新token,毕竟此站的token实体是简化过的
+        {         
+            //这里可以改为直接更新redis
             //call buydong Account/RefreshToken api
             string url = $"{configuration["BuyDongWeb"]}/api/account/RefreshToken";
 
@@ -98,11 +92,12 @@ namespace Web.Jwt
             return result;
         }
 
-        public string RefreshToken<T>(string token, Language? Lang = null, string CurrencyCode = "")
+        public string RefreshToken<T>(string token, SimpleCurrency currency, Language? Lang = null,  string CurrencyCode = "")
         {
             var tmpUser = CreateCurrentUser(token);
             tmpUser.Lang = Lang != null ? Lang.Value : tmpUser.Lang;
             tmpUser.CurrencyCode = !CurrencyCode.IsEmpty() ? CurrencyCode : tmpUser.CurrencyCode;
+            tmpUser.Currency = currency;
             var loginInput = AutoMapperExt.MapTo<TokenInfo>(tmpUser);
             var ticket = CreateToken(loginInput);
             return ticket;
@@ -116,7 +111,7 @@ namespace Web.Jwt
         {
             var tempUser = new TokenInfo
             {
-                UserId = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Account = "AnonymousUser",
                 IsLogin = false,
                 LoginType = LoginType.TempUser,

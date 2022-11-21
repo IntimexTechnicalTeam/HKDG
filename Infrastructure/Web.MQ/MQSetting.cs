@@ -11,29 +11,29 @@ namespace Web.MQ
 		 /// <summary>
         /// 更新ProductQty队列
         /// </summary>
-        public const string UpdateQtyQueue = "HKDG.Update.Qty.Queue";
-        public const string UpdateQtyExchange = "HKDG.Update.Qty.Exchange";
+        public const string UpdateQtyQueue = "Update.Qty.Queue";
+        public const string UpdateQtyExchange = "Update.Qty.Exchange";
      
-        /// <summary>
-        /// 支付超时队列
-        /// </summary>
-        public const string WeChatPayTimeOutQueue = "HKDG.PayTimeOut.Queue";
-        public const string WeChatPayTimeOutExchange = "HKDG.PayTimeOut.Exchange";
-        public const string DelayPayTimeOutQueue = "Delay.PayTimeOut.Queue";
+        ///// <summary>
+        ///// 支付超时队列
+        ///// </summary>
+        //public const string WeChatPayTimeOutQueue = "HKDG.PayTimeOut.Queue";
+        //public const string WeChatPayTimeOutExchange = "HKDG.PayTimeOut.Exchange";
+        //public const string DelayPayTimeOutQueue = "Delay.PayTimeOut.Queue";
 
 
-        public const string ProxyCommissionQueue = "HKDG.Proxy.Commission.Queue";
-        public const string ProxyCommissionExchange = "HKDG.Proxy.Commission.Exchange";
+        public const string ProxyCommissionQueue = "Proxy.Commission.Queue";
+        public const string ProxyCommissionExchange = "Proxy.Commission.Exchange";
 
         /// <summary>
         /// 更新库存队列
         /// </summary>
-        public const string CalculateQtyQueue = "HKDG.Calculate.Qty.Queue";
+        public const string CalculateQtyQueue = "Calculate.Qty.Queue";
 
         /// <summary>
         /// 
         /// </summary>
-        public const string CalculateQtyExchange = "HKDG.Calculate.Qty.Exchange";
+        public const string CalculateQtyExchange = "Calculate.Qty.Exchange";
 
     }
 }

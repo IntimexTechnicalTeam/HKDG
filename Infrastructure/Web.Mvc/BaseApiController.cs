@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Domain;
+using Enums;
 using HKDG.BLL;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -124,6 +125,19 @@ namespace Web.Mvc
             }
         }
 
+        public ICurrencyBLL _currencyBLL;
+        public ICurrencyBLL currencyBLL {
+            get
+            {
+                if (_currencyBLL == null)
+                {
+                    _currencyBLL = Services.Resolve<ICurrencyBLL>();
+                }
+                return this._currencyBLL;
+            }
+
+        }
+
         IHostEnvironment _hostEnvironment;
         public IHostEnvironment hostEnvironment
         {
@@ -145,7 +159,9 @@ namespace Web.Mvc
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
                 if (token.IsEmpty()) token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
 
-                _currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
+                //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
+
+                _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
 
                 return _currentUser;
             }

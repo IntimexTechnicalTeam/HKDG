@@ -33,6 +33,8 @@ namespace HKDG.WebSite.Controllers
             result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
             SetViewData("Category", result);
 
+            SetViewData("User", CurrentUser);
+
             return GetActionResult("Index");
         }
 

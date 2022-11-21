@@ -27,7 +27,7 @@
 
         Task<PageData<MicroProduct>> MyFavProduct(FavoriteCond cond);
 
-        Task<CurrentUser<MemberUser>> GetMemberInfo();
+        Task<MemberItem> GetMemberInfo();
 
         Task<PageData<MicroProduct>> MyProductTrack(TrackCond cond);
 

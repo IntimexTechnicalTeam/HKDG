@@ -56,5 +56,58 @@
             return data?.FirstOrDefault() ?? null;
         }
 
+        public async Task<ProductAttrValue> GetAddtionPrice(Guid ProductId, Guid AttrValueId)
+        {
+            var sb = new StringBuilder();
+            sb.Append($@" select c.* from ProductAttributeValues a inner join ProductAttrs b on a.AttrId = b.AttrId
+                                    inner join ProductAttrValues c on c.ProdAttrId = b.Id and c.AttrValueId = @AttrValueId
+                                    where b.ProductId = @ProductId and b.IsInv = 1 and a.Id = @AttrValueId");
+
+            var param = new List<SqlParameter>();
+            param.Add(new SqlParameter { ParameterName = "@ProductId", Value = ProductId });
+            param.Add(new SqlParameter { ParameterName = "@AttrValueId", Value = AttrValueId });
+
+            var data = (await baseRepository.GetListAsync<ProductAttrValue>(sb.ToString(), param.ToArray())).FirstOrDefault();
+            return data;
+        }
+
+        public async Task<ShoppingCartItemDetailView> GetItemDetailAsync(ShoppingCartItem item)
+        {
+            var strSql = @"select distinct ps.ClientId,ps.Id as SkuId,p.Id as ProductId ,ps.ProductCode,p.MerchantId
+                            ,ps.Attr1 as AttrId1,ps.Attr2 as AttrId2,ps.Attr3 as AttrId3,ps.AttrValue1,ps.AttrValue2,ps.AttrValue3
+                            ,ISNULL(ma.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrValueName1
+							,ISNULL(mb.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrValueName2
+							,ISNULL(mc.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrValueName3
+                            ,ISNULL(at1.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrName1
+							,ISNULL(at2.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrName2
+							,ISNULL(at3.DescTransId,'00000000-0000-0000-0000-000000000000') as AttrName3
+                            --,ISNULL(ap1.AdditionalPrice,0) as AttrValue1Price
+							--,ISNULL(ap2.AdditionalPrice,0) as AttrValue2Price
+							--,ISNULL(ap3.AdditionalPrice,0) as AttrValue3Price
+                            ,0.00 as AttrValue1Price
+							,0.00 as AttrValue2Price
+							,0.00 as AttrValue3Price
+                            from ProductSkus ps 
+                            LEFT join Products p on  p.Code = ps.ProductCode and p.Status=4 and p.IsActive=1 and p.IsDeleted=0
+                            left join ProductAttributeValues ma on ma.Id = ps.AttrValue1
+                            left join ProductAttributeValues mb on mb.Id = ps.AttrValue2
+                            left join ProductAttributeValues mc on mc.Id = ps.AttrValue3
+                            left join ProductAttributes at1 on at1.Id = ps.Attr1
+                            left join ProductAttributes at2 on at2.Id = ps.Attr2
+                            left join ProductAttributes at3 on at3.Id = ps.Attr3
+                            left join ProductAttrs pa on pa.ProductId = p.Id and pa.IsInv=1 and pa.IsDeleted=0 
+                            --left join ProductAttrValues ap1 on ap1.AttrValueId = ps.AttrValue1 and pa.Id = ap1.ProdAttrId
+                            --left join ProductAttrValues ap2 on ap2.AttrValueId = ps.AttrValue2 and pa.Id = ap2.ProdAttrId
+                            --left join ProductAttrValues ap3 on ap3.AttrValueId = ps.AttrValue3 and pa.Id = ap3.ProdAttrId  
+                            where ps.ID=@Id";
+
+            var param = new List<SqlParameter>();
+            param.Add(new SqlParameter { ParameterName = "@Id", Value = item.SkuId });
+
+            var data = (await baseRepository.GetListAsync<ShoppingCartItemDetailView>(strSql, new SqlParameter("@Id", item.SkuId))).FirstOrDefault();
+
+            return data;
+        }
+
     }
 }

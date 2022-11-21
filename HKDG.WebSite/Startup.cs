@@ -1,6 +1,8 @@
 using Autofac.Core;
+using HKDG.Repository;
 using Intimex.Runtime;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Model;
 using NETCoreViewLocationExpander.ViewLocationExtend;
 using System.Xml.Linq;
 using Web.Swagger;
@@ -134,9 +136,10 @@ namespace HKDG.WebSite
         }
 
         public static void RegisterSetting()
-        {
-            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
-            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "MemTokenExpire")?.Value ?? "";
+        {            
+            var baseRepository = Globals.Services.Resolve<IBaseRepository>();
+            var master = baseRepository.GetModel<CodeMaster>(x => x.Module == CodeMasterModule.Setting.ToString() 
+                         && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "MemTokenExpire")?.Value ?? "";
 
             if (!string.IsNullOrEmpty(master))
             {

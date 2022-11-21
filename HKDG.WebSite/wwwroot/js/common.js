@@ -118,7 +118,7 @@ function WSPost(url, data, success, error) {
         type: "post",
         url: url,
         data: data,
-        contentType: 'application/json',
+        //contentType: 'application/json',
         beforeSend: function (request) {
             //  request.setRequestHeader("Authorization", "Bearer " + accessToken);
             var userLanguage = getUILanguage();

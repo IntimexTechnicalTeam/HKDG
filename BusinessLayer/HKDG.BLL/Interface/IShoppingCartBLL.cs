@@ -12,7 +12,7 @@
 
         Task<SystemResult> CheckPurchasePermissionAsyncV2(CartItem item, int HoldQty);
 
-        Task DisableMallCartItem(Guid memberId);
+        Task DisableMallCartItem(Guid memberId, int top = 10);
 
         decimal CalculateFreeQty(Guid MchId, string ProductCode, int CartItemQty);
 

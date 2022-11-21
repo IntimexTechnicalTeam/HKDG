@@ -81,6 +81,10 @@ namespace Domain
             ConfigMap<SystemAnnouncement, SystemAnnouncementDto>();
             ConfigMap<SystemAnnouncement, SysAnnounceFrontView>();
             ConfigMap<SystemAnnouncementDto, SysAnnounceFrontView>();
+
+            ConfigMap<CurrentUser, MemberDto>();
+
+            ConfigMap<MemberItem, Member>();
         }
 
         void ConfigMap<TSource, TDestination>()
