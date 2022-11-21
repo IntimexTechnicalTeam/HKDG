@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using Microsoft.IdentityModel.Tokens;
+
+namespace HKDG.BLL
 {
     public class OrderBLL : BaseBLL, IOrderBLL
     {
@@ -84,14 +86,26 @@
             {
                 if (checkout.PaymentMethodId == Guid.Empty) throw new BLException(Resources.Message.PaymentTypeRequire);
                 foreach (var item in checkout.Items)
-                {
-                    if (item.DeliveryType == DeliveryType.D)
-                    {
-                        if (item.AddressId == Guid.Empty) throw new BLException(Resources.Message.DeliveryAddressRequire);
-                    }
+                {                   
+                    if (item.DeliveryType == DeliveryType.D && item.AddressId == Guid.Empty) throw new BLException(Resources.Message.DeliveryAddressRequire);
 
                     if (item.DeliveryType == DeliveryType.D && item.ChargeId == Guid.Empty) throw new BLException(Resources.Message.CourierRequire);
-                    if (item.ChargeInfo == null) throw new BLException("express ChargeInfo is null");
+
+                    //只有在快递的时候才运行这里，跳过Vcode
+                    if (item.DeliveryType == DeliveryType.D)
+                    {
+                        string md5Formate = "{0}{1}{2}{3}";
+                        var express = item.ChargeInfo;
+                        md5Formate = string.Format(md5Formate, express.Id, express.Price.ToString("N4"), express.Discount.ToString("N4"), StoreConst.DeliveryPriceSalt);
+                        var vcode = HashUtil.MD5(md5Formate);
+                        if (vcode != item.ChargeInfo.Vcode)
+                        {
+                            //SaveInfo("express,Vcode1=" + vcode + ",Vcode2=" + express.Vcode);
+                            throw new BLException(Resources.Message.SelectAddressAgain);
+                        }
+                    }
+
+                    if (item.DeliveryType == DeliveryType.ST && item.AddressId == Guid.Empty) throw new BLException(Resources.Message.DeliveryAddressRequire);
 
                     //string md5Formate = "{0}{1}{2}{3}";
                     //var express = item.ChargeInfo;
@@ -914,6 +928,16 @@
                 Product p = await baseRepository.GetModelByIdAsync<Product>(item.ProductId);
                 var productSpecifications = await baseRepository.GetModelAsync<ProductSpecification>(x => x.Id == item.ProductId);
                 if (p.Status != ProductStatus.OnSale || p.IsDeleted) throw new BLException(Resources.Message.ProductExpired + p.Code);
+
+                #region CHECK SaleQty
+
+                var cartItem = new CartItem { Sku = item.SkuId, ProductId = p.Id, ProdCode = p.Code, Qty = item.Qty };
+                cartItem.AddQty = cartItem.Qty;
+                int holdQty = item.Qty + (int)shoppingCartBLL.CalculateFreeQty(p.MerchantId, p.Code, cartItem.Qty);
+                result = await shoppingCartBLL.CheckPurchasePermissionAsyncV2(cartItem, holdQty);
+                if (!result.Succeeded) throw new BLException(result.Message);
+
+                #endregion
 
                 #region 处理订单明细
                 var addPrices = await productRepository.GetProductAddPriceBySku(item.ProductId, item.SkuId);
