@@ -36,27 +36,30 @@ namespace Web.Mvc
         {
             var authorization = context.HttpContext.Request.Cookies["access_token"] ?? "";
             var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
-            if (await BaseAuthority.CheckUserToken(context, next, mUser))
+            if (!await BaseAuthority.CheckUserToken(context, next, mUser))
             {
-                var flag = await this.CheckActionAsync(context);
-                if (!flag)
-                {
-                    if (IsAjaxRequest(context.HttpContext.Request)) // AJAX请求，返回status标识未登录
-                    {
-                        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
-                        context.HttpContext.Response.StatusCode = 403;
-                        return;
-                    }
-                    else
-                    {
-                        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
-                        context.HttpContext.Response.StatusCode = 403;
-                        return;
-                    }
-                }
-
-                await next();
+                context.HttpContext.Response.Cookies.Delete("access_token");
+                context.HttpContext.Response.Redirect("/Accont/Login");
             }
+
+            var flag = await this.CheckActionAsync(context);
+            if (!flag)
+            {
+                if (IsAjaxRequest(context.HttpContext.Request)) // AJAX请求，返回status标识未登录
+                {
+                    context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
+                    context.HttpContext.Response.StatusCode = 403;
+                    return;
+                }
+                else
+                {
+                    context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
+                    context.HttpContext.Response.StatusCode = 403;
+                    return;
+                }
+            }
+
+            await next();
         }
 
         /// <summary>

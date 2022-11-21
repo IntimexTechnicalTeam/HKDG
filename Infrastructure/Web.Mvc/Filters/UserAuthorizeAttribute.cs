@@ -48,7 +48,7 @@ namespace Web.Mvc
                 logger.LogInformation($"Headers中的Authorization为空了");
 
                 {   //这里是从摆档跳转过的的Token参数
-                    authorization = context.HttpContext.Request.Query["para2"].ToString() ?? "";    
+                    authorization = context.HttpContext.Request.Query["para2"].ToString() ?? "";
                     if (!authorization.IsEmpty())
                     {
                         user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
@@ -75,20 +75,24 @@ namespace Web.Mvc
             }
 
             var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
-            //if (await BaseAuthority.CheckTokenAuthorize(context, next, IsLogin))
-            if (await BaseAuthority.CheckMemeberToken(context,next, mUser))
+
+            if (!await BaseAuthority.CheckMemeberToken(context, next, mUser))
             {
-                logger.LogInformation($"{mUser.UserId}鉴权通过");
-                var option = new CookieOptions { HttpOnly = true };
-                context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
-
-                ////鉴权通过，当前站和buydong的会员token做刷新过期时间
-                mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
-                await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
-
-                logger.LogInformation($"{mUser.UserId}刷新过期时间");
-                await next();
+                context.HttpContext.Response.Cookies.Delete("access_token");
+                context.HttpContext.Response.Redirect("/");
             }
+
+            logger.LogInformation($"{mUser.UserId}鉴权通过");
+            var option = new CookieOptions { HttpOnly = true };
+            context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
+
+            ////鉴权通过，当前站和buydong的会员token做刷新过期时间
+            mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
+
+            logger.LogInformation($"{mUser.UserId}刷新过期时间");
+            await next();
+
         }
     }
 }

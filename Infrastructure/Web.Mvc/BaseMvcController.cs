@@ -152,7 +152,7 @@ namespace Web.Mvc
             get
             {
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
-                if (token.IsEmpty()) token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
+                if (token.IsEmpty() || token == "undefined") token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
 
                 //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
 
