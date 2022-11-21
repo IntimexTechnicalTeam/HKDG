@@ -16,15 +16,18 @@ namespace HKDG.BLL
         {
             var result = new SystemResult() { Succeeded = false };
 
-            var user = await baseRepository.GetModelByIdAsync<User>(Guid.Parse(currentUser.UserId));
+            var user = await baseRepository.GetModelByIdAsync<User>(currentUser.Id);
             user.Language = Lang;
 
             if (currentUser.IsLogin)
                 await baseRepository.UpdateAsync(user);
 
-            var newToken = jwtToken.RefreshToken<string>(CurrentUser.Token,null ,Lang, "");
+            var cacheUser = await RedisHelper.HGetAsync<User>($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO);
+            if (cacheUser != null) { cacheUser.Language = Lang; };
 
-            result.ReturnValue = newToken;
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, cacheUser);
+
+            result.ReturnValue = "";
             result.Succeeded = true;
             return result;
         }

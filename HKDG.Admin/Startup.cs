@@ -1,3 +1,4 @@
+using HKDG.Repository;
 using Intimex.Runtime;
 
 namespace HKDG.Admin
@@ -141,9 +142,11 @@ namespace HKDG.Admin
         }
 
         public static void RegisterSetting()
-        {
-            var codeMasterBLL = Globals.Services.Resolve<ICodeMasterBLL>();
-            var master = codeMasterBLL.GetCodeMaster(CodeMasterModule.Setting, CodeMasterFunction.Time, "UserTokenExpire")?.Value ?? "";
+        {          
+            var baseRepository = Globals.Services.Resolve<IBaseRepository>();
+            var master = baseRepository.GetModel<CodeMaster>(x => x.Module == CodeMasterModule.Setting.ToString()
+                         && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "UserTokenExpire")?.Value ?? "";
+
             if (!string.IsNullOrEmpty(master))
             {
                 if (int.TryParse(master, out var time))

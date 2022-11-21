@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
@@ -33,7 +34,9 @@ namespace Web.Mvc
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (await BaseAuthority.CheckTokenAuthorize(context, next))
+            var authorization = context.HttpContext.Request.Cookies["access_token"] ?? "";
+            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
+            if (await BaseAuthority.CheckUserToken(context, next, mUser))
             {
                 var flag = await this.CheckActionAsync(context);
                 if (!flag)
@@ -62,20 +65,11 @@ namespace Web.Mvc
         /// <returns></returns>
         async Task<bool> CheckActionAsync(ActionExecutingContext context)
         {
-            string token = string.Empty;bool flag = false;
-            var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
+            bool flag = false;           
+            var token = context.HttpContext.Request.Cookies["access_token"];
 
-            var authorization = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-            if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                token = authorization.Substring("Bearer ".Length).Trim();
-            }
-
-            var payload = jwtToken.DecodeJwt(token);
-            var uid = payload["UserId"];
-            
             string key = $"{CacheKey.CurrentUser}";
-            var cacheUser = await RedisHelper.HGetAsync<UserDto>(key, uid);
+            var cacheUser = await RedisHelper.HGetAsync<CurrentUser>(key, token);
             if (cacheUser ==null) return false;
 
             flag = CheckRolePermission(cacheUser.Roles);

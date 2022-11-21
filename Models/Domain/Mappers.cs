@@ -83,6 +83,7 @@ namespace Domain
             ConfigMap<SystemAnnouncementDto, SysAnnounceFrontView>();
 
             ConfigMap<CurrentUser, MemberDto>();
+            ConfigMap<CurrentUser, UserDto>();
 
             ConfigMap<MemberItem, Member>();
         }

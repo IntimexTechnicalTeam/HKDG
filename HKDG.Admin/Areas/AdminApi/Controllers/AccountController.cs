@@ -1,4 +1,5 @@
-﻿
+﻿using System.Net;
+
 namespace HKDG.Admin.Areas.AdminApi.Controllers
 {
     [Area("AdminApi")]
@@ -27,19 +28,24 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
             {
                 var userInfo = result.ReturnValue as UserDto;
 
-                var tokenInfo = AutoMapperExt.MapTo<TokenInfo>(userInfo);
+                var tokenInfo = AutoMapperExt.MapTo<CurrentUser>(userInfo);
                 tokenInfo.Id = userInfo.Id;
                 tokenInfo.IsLogin = true;
+                tokenInfo.Type = AccountType.User;                
                 tokenInfo.IspType = input.IspType ?? "DG";
-                userInfo.Token = jwtToken.CreateToken(tokenInfo);
+                tokenInfo.ExpireDate = DateTime.Now.AddSeconds(Setting.UserAccessTokenExpire);
+                tokenInfo.LoginSerialNO = HashUtil.Md5Encrypt(Guid.NewGuid().ToString());
 
                 //把登录信息：token,权限，菜单，角色放进redis中
                 string key = $"{CacheKey.CurrentUser}";
-                await RedisHelper.HSetAsync(key, userInfo.Id.ToString(), userInfo);
+                await RedisHelper.HSetAsync(key, tokenInfo.LoginSerialNO, tokenInfo);
 
                 result.Succeeded = true;
-                result.ReturnValue = userInfo.Token;
-                HttpContext.Response.Cookies.Append("access_token", userInfo.Token);              
+                result.ReturnValue = tokenInfo.LoginSerialNO;
+               
+                var option = new CookieOptions { HttpOnly = true };
+                HttpContext.Response.Cookies.Append("access_token", tokenInfo.LoginSerialNO, option);
+
             }
 
             return result;

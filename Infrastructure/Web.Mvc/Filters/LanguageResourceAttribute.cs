@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Enums;
 using Intimex.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -35,9 +36,9 @@ namespace Web.Mvc
             var token = context.HttpContext.Request.Cookies["access_token"];
             string langCode = "C";
             if (!token.IsEmpty())
-            {
-                var payload = jwtToken.DecodeJwt(token);
-                langCode = payload["Lang"] ?? "C";
+            {               
+                var user = RedisHelper.HGet<UserDto>($"{CacheKey.CurrentUser}", token);
+                if (user != null)  langCode = user.Language.ToString(); 
             }
 
             if (context.Result is ViewResult)

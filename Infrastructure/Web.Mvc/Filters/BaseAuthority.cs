@@ -149,5 +149,50 @@ namespace Web.Mvc
 
             return flag;
         }
+
+        /// <summary>
+        /// 检查后台用户 Token
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="next"></param>
+        /// <param name="mUser"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckUserToken(ActionExecutingContext context, ActionExecutionDelegate next, CurrentUser mUser)
+        {
+           
+            bool flag = true;
+            var attributes = context.ActionDescriptor.FilterDescriptors;
+            bool isAnonymous = attributes.Any(p => p.Filter is AllowAnonymousFilter);//匿名标识 无需验证
+            if (isAnonymous)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            if (mUser == null)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            if (mUser.LoginType >= LoginType.Member)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+            if (mUser.ExpireDate < DateTime.Now)
+            {
+                await next();
+                flag = false;
+                return flag;
+            }
+
+
+            return flag;
+        }
     }
 }

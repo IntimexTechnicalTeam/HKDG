@@ -157,12 +157,12 @@
             get
             {
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
-                if (token.IsEmpty()) token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
+                if (token.IsEmpty() || token == "undefined") token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
                 _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
-                if (_currentUser.LoginType <= LoginType.Admin)
-                {
-                    loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) });
-                }
+                //if (_currentUser.LoginType <= LoginType.Admin)
+                //{
+                //    loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) });
+                //}
                 return _currentUser;
             }
         }

@@ -11,8 +11,9 @@
         {
             ViewBag.Lang = Language.C;
             ViewBag.UserName = CurrentUser?.Email;
-            //這里還要加入IspType
-            return View();
+            ViewBag.IspType = CurrentUser.IspType;
+            
+            return View("Index");
         }
     }
 }
