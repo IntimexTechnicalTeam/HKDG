@@ -27,7 +27,12 @@ namespace HKDG.Admin.Controllers
         }
 
         public async Task<IActionResult> LogOff()
-        {           
+        {
+            var access_token = HttpContext.Request?.Cookies["access_token"];
+
+            HttpContext.Response.Cookies.Delete("access_token");
+            await RedisHelper.HDelAsync($"{CacheKey.CurrentUser}", access_token);
+
             return RedirectToAction("Login", "Account");
         }
 

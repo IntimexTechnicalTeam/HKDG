@@ -24,9 +24,11 @@ namespace HKDG.WebSite.Areas
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> Logout()
         {
-            string ticket = jwtToken.CreateDefautToken();
-            var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = ticket;
+            HttpContext.Response.Cookies.Delete("access_token");
+
+            var result = new SystemResult() { Succeeded = true };           
+            await RedisHelper.HDelAsync($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO);
+
             return result;
         }
 

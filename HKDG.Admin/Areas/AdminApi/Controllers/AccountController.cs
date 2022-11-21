@@ -60,9 +60,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
         public async Task<SystemResult> ChangeLang(Language Lang)
         {
             var result = new SystemResult() { Succeeded = true };
-            result = await userBLL.ChangeLang(CurrentUser, Lang);
-            CurrentContext.HttpContext.Response.Cookies.Delete("access_token");
-            CurrentContext.HttpContext.Response.Cookies.Append("access_token", result.ReturnValue.ToString());
+            result = await userBLL.ChangeLang(CurrentUser, Lang);           
             return result;
         }
 
