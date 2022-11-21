@@ -204,6 +204,7 @@ namespace Web.Mvc
         {
             ViewBag.IsMobile = IsMobile;
             ViewBag.Lang = CurrentUser.Lang;
+            ViewBag.CurrencyCode = CurrentUser.CurrencyCode;
             ViewBag.BuyDong = Configuration["BuyDongWeb"];
             if (IsMobile)
             {

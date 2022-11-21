@@ -99,15 +99,11 @@
                 var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
                 member.Language = Lang;
                 await baseRepository.UpdateAsync(member);
+            }
 
-                var newToken = jwtToken.RefreshToken(CurrentUser.Token, Lang, "");
-                message = newToken.Message;
-            }
-            else {                
-                message = jwtToken.RefreshToken<string>(CurrentUser.Token, null,Lang, "");
-            }
- 
-            result.ReturnValue = message;
+            currentUser.Lang = Lang;
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, currentUser);
+            
             result.Succeeded = true;
             return result;
         }
@@ -120,19 +116,13 @@
             {
                 var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
                 member.CurrencyCode = CurrencyCode;
-
-                await baseRepository.UpdateAsync(member);
-                var newToken = jwtToken.RefreshToken(CurrentUser.Token, null, CurrencyCode);
-
-                message = newToken.Message;
-            }
-            else
-            {
-                var currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
-                message = jwtToken.RefreshToken<string>(CurrentUser.Token, currency, null, CurrencyCode);
+                await baseRepository.UpdateAsync(member);                
             }
 
-            result.ReturnValue = message;
+            currentUser.CurrencyCode = CurrencyCode;
+            currentUser.Currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, currentUser);
+
             result.Succeeded = true;
             return result;
         }

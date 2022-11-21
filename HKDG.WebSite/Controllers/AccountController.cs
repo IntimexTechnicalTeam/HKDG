@@ -1,4 +1,6 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using Castle.Core.Internal;
+
+namespace HKDG.WebSite.Controllers
 {
 
     public class AccountController : BaseMvcController
@@ -25,7 +27,17 @@
         [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
-            
+            if (CurrentUser.IsLogin && !CurrentUser.IsTempUser)
+            {
+                return Redirect("/");
+            }
+
+            var returnUrl = HttpContext.Request.Query["returnUrl"];
+            if (!returnUrl.IsNullOrEmpty() && !returnUrl.Contains("login"))
+            {
+                ViewBag.ReturnUrl = returnUrl;
+            }
+
             return GetActionResult("Login");
         }
 

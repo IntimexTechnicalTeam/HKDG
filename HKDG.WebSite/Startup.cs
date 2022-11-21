@@ -1,6 +1,7 @@
 using Autofac.Core;
 using HKDG.Repository;
 using Intimex.Runtime;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Model;
 using NETCoreViewLocationExpander.ViewLocationExtend;
@@ -119,6 +120,11 @@ namespace HKDG.WebSite
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
+
+                    var parmList = actionContext.ActionDescriptor.Parameters;
+
+                    //(ControllerParameterDescriptor)
+
                     //获取验证失败的模型字段 
                     var errors = actionContext.ModelState
                      .Where(e => e.Value.Errors.Count > 0)

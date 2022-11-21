@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using WebCache;
+
+namespace HKDG.BLL
 {
     public class ProductBLL : BaseBLL, IProductBLL
     {
@@ -14,7 +16,7 @@
         public IProductSkuRepository productSkuRepository;
         public IProductDetailRepository productDetailRepository;
         public ICodeMasterBLL codeMasterBLL;
-
+        
         public PreHeatProductService productService;
         public PreHeatProductImageService productImageService;
         public PreHeatProductStaticsService productStatisticsService;
@@ -39,7 +41,7 @@
             settingBLL = Services.Resolve<ISettingBLL>();
             productDetailRepository = Services.Resolve<IProductDetailRepository>();
             codeMasterBLL = Services.Resolve<ICodeMasterBLL>();
-
+            
             productService = (PreHeatProductService)Services.GetService(typeof(PreHeatProductService));
             productImageService = (PreHeatProductImageService)Services.GetService(typeof(PreHeatProductImageService));
             productStatisticsService = (PreHeatProductStaticsService)Services.GetService(typeof(PreHeatProductStaticsService));
@@ -1099,17 +1101,85 @@
         /// <returns></returns>
         public async Task<SystemResult<ProductCheck>> CheckSkuStateAsync(string code, Guid attr1, Guid attr2, Guid attr3, string saleTime)
         {
-            var result = new SystemResult<ProductCheck> { Succeeded = false };
-            result.ReturnValue = new ProductCheck { IsSelling = false, IsOnSale = false, IsSaleOut = true };
+            var result = new SystemResult<ProductCheck>() {  ReturnValue = new ProductCheck()};
 
-            var sku = await baseRepository.GetModelAsync<ProductSku>(d => d.ProductCode == code && d.AttrValue1 == attr1 && d.AttrValue2 == attr2 && d.AttrValue3 == attr3 && d.IsActive && d.IsDeleted == false);
-            result.ReturnValue.IsSaleOut = (await GetSelloutSkus()).Any(x => x == sku.Id.ToString());
             result.ReturnValue.IsOnSale = (await CheckOnSaleAsync(code)).Succeeded;
+            result.ReturnValue.IsSaleOut = (await CheckSaleOut(code, attr1, attr2, attr3)).Succeeded;
+            result.ReturnValue.IsSelling = false;
 
-            if (!saleTime.IsEmpty() && DateTime.Now >= DateUtil.ConvertoDateTime(saleTime, "yyyy-M-d H:m:s"))
+            if ((!saleTime.IsEmpty() && DateTime.Now >= DateUtil.ConvertoDateTime(saleTime, "yyyy-M-d H:m:s"))
+               || saleTime.IsEmpty())
                 result.ReturnValue.IsSelling = true;
 
+            //if (string.IsNullOrEmpty(saleTime))
+            //{
+            //    result.ReturnValue.IsSelling = true;
+            //}
+            //else
+            //{
+            //    //var time = DateTime.Parse(saleTime);
+            //    var time = DateUtil.ConvertoDateTime(saleTime, "yyyy-M-d H:m:s");
+            //    if (DateTime.Now >= time)
+            //    {
+            //        result.ReturnValue.IsSelling = true;
+            //    }
+            //    else
+            //    {
+            //        result.ReturnValue.IsSelling = false;
+            //    }
+            //}
+
+
             return result;
+        }
+
+        public async Task<SystemResult> CheckSaleOut(string code, Guid attr1, Guid attr2, Guid attr3)
+        {
+            SystemResult result = new SystemResult();
+
+            #region find sku
+            var cacheKey = "skus_" + code;
+
+            var skus = await RedisHelper.GetAsync<List<ProductSku>>(cacheKey);
+            if (!skus?.Any() ?? true)
+            {
+                skus = (await baseRepository.GetListAsync<ProductSku>(d => d.ProductCode == code && d.IsActive && !d.IsDeleted)).ToList();
+                await RedisHelper.SetAsync(cacheKey, skus, 120);
+            }
+
+            var sku = skus.FirstOrDefault(d => d.ProductCode == code && d.AttrValue1 == attr1 && d.AttrValue2 == attr2 && d.AttrValue3 == attr3 && d.IsActive && !d.IsDeleted);
+            if (sku == null)
+            {
+                skus = (await baseRepository.GetListAsync<ProductSku>(d => d.ProductCode == code && d.IsActive && !d.IsDeleted)).ToList();
+                await RedisHelper.SetAsync(cacheKey, skus, 120); 
+                
+            }
+
+            var flag = await baseRepository.AnyAsync<Inventory>(x => x.Sku == (sku == null ? Guid.Empty : sku.Id));
+            if (!flag)
+            {
+                SetSelloutResult(result);
+                return result;
+            }
+            #endregion
+
+            if (sku != null)
+            {
+
+                var saleOutList =await GetSelloutSkus();
+                if (saleOutList.Any(d => d == sku.Id.ToString()))
+                {
+                    SetSelloutResult(result);
+                }
+
+            }
+            else
+            {
+                SetSelloutResult(result);
+            }
+
+            return result;
+
         }
 
         public List<List<string>> GetProductAdditionalImages(Guid prodID)
@@ -3306,6 +3376,18 @@
 
             return returnData;
 
+        }
+
+        private void SetSelloutResult(SystemResult result)
+        {
+            result.Succeeded = true;
+            var error = new SystemError()
+            {
+                Code = (int)OrderErrorEnum.Sellout,
+                Description = GetErrorDesription((int)OrderErrorEnum.Sellout,CurrentUser.Lang)
+            };
+            result.Message = error.Message;
+            result.ReturnValue = error;
         }
     }
 }
