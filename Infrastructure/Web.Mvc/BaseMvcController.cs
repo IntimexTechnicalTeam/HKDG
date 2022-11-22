@@ -22,6 +22,7 @@ namespace Web.Mvc
 
         ICustomMenuBLL customMenuBLL;
         IIspProviderBLL ispProviderBLL;
+        IInteractMessageBLL interactMessageBLL;
 
         /// <summary>
         /// 默认注入AutoFac的IComponentContext
@@ -32,6 +33,7 @@ namespace Web.Mvc
             this.Services = service;
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
             customMenuBLL = Services.Resolve<ICustomMenuBLL>();
+            interactMessageBLL = Services.Resolve<IInteractMessageBLL>();
         }
 
         IConfiguration _configuration;
@@ -239,10 +241,12 @@ namespace Web.Mvc
         {
             await InitIspType(IspType);
             await InitMenusAsync(ViewBag.IspType);
+            await InitLastNotice();
         }
 
         public virtual void SetViewData<T>(string key, T t)
         {
+            if (t == null) t = default(T);
             var json = JsonUtil.ToJson(t);
             //TempData[key] = json;
             ViewData[key] = json;
@@ -270,6 +274,12 @@ namespace Web.Mvc
 
             SetViewData("MenuBarDatas", menus);
 
+        }
+
+        async Task InitLastNotice()
+        {
+            var data = await interactMessageBLL.GetLatesNoticeAsync();
+            SetViewData("LatesNotice", data);
         }
     }
 }

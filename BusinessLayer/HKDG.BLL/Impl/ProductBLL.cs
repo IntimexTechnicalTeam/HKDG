@@ -847,7 +847,7 @@ namespace HKDG.BLL
                     item.Currency = currencyBLL.GetSimpleCurrency(item.CurrencyCode);
                     item.Score = NumberUtil.ConvertToRounded(item.Score);
                     item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
-                    item.ImagePath = (await GetProductImages(item.ProductId, item.Code)).FirstOrDefault();
+                    item.ImagePath = (await GetProductImages(item.ProductId, item.Code))?.FirstOrDefault() ?? "";
                 }
 
                 CurrencyMoneyConversion(list);

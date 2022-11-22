@@ -17,8 +17,7 @@ namespace HKDG.WebSite.Controllers
         {
             await InitViewPage(IspType);
 
-            var data = await interactMessageBLL.GetLatesNoticeAsync();
-            SetViewData("LatesNotice", data);
+            
 
             return GetActionResult("MyMessage");
         }
