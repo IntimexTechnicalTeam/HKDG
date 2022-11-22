@@ -47,7 +47,9 @@ namespace HKDG.WebSite.Controllers
 
             var mchDetail = await merchantBLL.GetMerchantInfoAsync(details.MerchantId);            
             SetViewData("MerchantDetail", mchDetail);
-           
+
+            var relateProdList = productBLL.GetRelatedProduct(details.Id);
+            SetViewData("RelateProd", relateProdList);
 
             return GetActionResult("Detail");
         }
