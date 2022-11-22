@@ -82,7 +82,7 @@ namespace HKDG.WebSite.Controllers
             CatProdPager pager = new CatProdPager() { CatId = catId };                      
             if (!IsMobile)pager.PageSize = 9;
             var catProduct = await productBLL.GetCatProdPageData(pager);
-            SetViewData("CatalogProducts", catalog);
+            SetViewData("CatalogProducts", catProduct);
 
             return GetActionResult("CatProduct");
 

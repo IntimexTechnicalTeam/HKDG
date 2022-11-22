@@ -25,7 +25,11 @@ namespace HKDG.WebSite.Controllers
         {
             await InitViewPage(IspType);
 
-            var cond = new PromotionCond { IspType = IspType, ShowBanner = true, ShowProduct = true, ShowMerchant = false };
+            var cond = new PromotionCond { 
+                IspType = ViewBag.IspType, ShowBanner = true, ShowProduct = true, ShowMerchant = false,
+                From = !IsMobile ?  ClientSideType.Desktop : ClientSideType.Mobile,PageStr="home"
+            };
+     
             var promotionList = await promotionBLL.ShowPromotionList(cond);
             SetViewData("PromotionList", promotionList);
 

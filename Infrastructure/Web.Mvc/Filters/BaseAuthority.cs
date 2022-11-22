@@ -121,7 +121,7 @@ namespace Web.Mvc
             if (isAnonymous)
             {
                 await next();
-                flag = false;
+                flag = true;
                 return flag;
             }
 
@@ -166,7 +166,7 @@ namespace Web.Mvc
             if (isAnonymous)
             {
                 await next();
-                flag = false;
+                flag = true;
                 return flag;
             }
 

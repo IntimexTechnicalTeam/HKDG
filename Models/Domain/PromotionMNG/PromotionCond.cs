@@ -26,7 +26,7 @@ namespace Domain
 
         public string PageStr { get; set; }
 
-        public int Position { get; set; }
+        public int Position { get; set; } = -1;
 
         public bool ShowBanner { get; set; }
         public bool ShowProduct { get; set; }

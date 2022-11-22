@@ -77,6 +77,11 @@
 
         Task CountClick(string code, bool isSearch);
 
+        /// <summary>
+        /// 获取Catalog下的产品
+        /// </summary>
+        /// <param name="pager"></param>
+        /// <returns></returns>
         Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager);
     }
 }
