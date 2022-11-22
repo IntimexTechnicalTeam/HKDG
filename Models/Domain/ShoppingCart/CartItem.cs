@@ -4,7 +4,7 @@ namespace Domain
 {
     public class CartItem
     {
-        public Guid Sku { get; set; }
+        public Guid? Sku { get; set; } = Guid.Empty;
 
         /// <summary>
         /// ///商品Id
@@ -41,13 +41,6 @@ namespace Domain
         public string AttrTypeName3 { get; set; }
 
         /// <summary>
-        /// 非必填字段
-        /// </summary>
-        public Guid MemberId { get; set; }
-
-        public DateTime CreateAt { get; set; }
-
-        /// <summary>
         /// 购物数量
         /// </summary>
         [DataMember]
@@ -57,8 +50,8 @@ namespace Domain
         /// <summary>
         /// 增量
         /// </summary>
-        public int AddQty { get; set; }
+        public int? AddQty { get; set; } = 0;
 
-        public Guid KolId { get; set; }
+        public Guid? KolId { get; set; } = Guid.Empty;
     }
 }

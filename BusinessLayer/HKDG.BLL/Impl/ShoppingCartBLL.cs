@@ -108,11 +108,11 @@ namespace HKDG.BLL
                 item = new ShoppingCartItem
                 {
                     Id = Guid.NewGuid(),
-                    SkuId = cartItem.Sku,
+                    SkuId = cartItem.Sku.Value,
                     MemberId = CurrentUser.Id,
                     Qty = cartItem.Qty,
                     ProductId = cartItem.ProductId,
-                    KolId = cartItem.KolId,
+                    KolId = cartItem.KolId.Value,
                     CreateBy = CurrentUser.Id,
                     UpdateBy = CurrentUser.Id,
                 };
@@ -437,7 +437,7 @@ namespace HKDG.BLL
 
             #region 判斷是否有庫存
 
-            result = InventoryBLL.CheckQty(item.Sku, HoldQty);
+            result = InventoryBLL.CheckQty(item.Sku.Value, HoldQty);
             #endregion
 
             return result;

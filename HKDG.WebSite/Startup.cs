@@ -38,7 +38,6 @@ namespace HKDG.WebSite
                 var viewEngines = configureOptions.ViewEngines; //视图引擎
                 //可在此处扩展视图引擎
             });
-
             builder.Services.Configure<RazorViewEngineOptions>(configureOptions =>
             {
                 configureOptions.ViewLocationExpanders.Add(new TemplateViewLocationExpander(() => {
@@ -147,7 +146,7 @@ namespace HKDG.WebSite
             var master = baseRepository.GetModel<CodeMaster>(x => x.Module == CodeMasterModule.Setting.ToString() 
                          && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "MemTokenExpire")?.Value ?? "";
 
-            if (!string.IsNullOrEmpty(master))
+            if (!master.IsEmpty())
             {
                 if (int.TryParse(master, out var time))
                     Setting.MemberAccessTokenExpire = time;
