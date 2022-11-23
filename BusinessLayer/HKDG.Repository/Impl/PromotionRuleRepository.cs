@@ -1,4 +1,6 @@
-﻿namespace HKDG.Repository
+﻿using Model;
+
+namespace HKDG.Repository
 {
     public class PromotionRuleRepository : PublicBaseRepository, IPromotionRuleRepository
     {
@@ -31,6 +33,21 @@
                             }).FirstOrDefault();
 
             return discount;
+        }
+
+        public string GetPromotionRuleTitle(string prodCode)
+        {
+            var nowDate = DateUtil.ConvertoDateTime(DateTime.Now.ToString("yyyy-MM-dd"), "yyyy-MM-dd");
+
+            var title = (from r in baseRepository.GetList<PromotionRule>()
+                         join rp in baseRepository.GetList<PromotionRuleProduct>() on r.Id equals rp.PromotionRuleId
+                         join t in baseRepository.GetList<Translation>() on new { a1 = r.TitleTransId, a2 = CurrentUser.Language } equals new { a1 = t.TransId, a2 = t.Lang } into tc
+                         from tt in tc.DefaultIfEmpty()
+                         where r.EffectDateFrom <= nowDate && r.EffectDateTo >= nowDate && r.IsActive && !r.IsDeleted && rp.ProductCode == prodCode
+                         select tt == null ? "" : tt.Value ?? ""
+                         ).FirstOrDefault();
+
+            return title;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using WebCache;
+﻿using Model;
+using WebCache;
 
 namespace HKDG.BLL
 {
@@ -11,6 +12,7 @@ namespace HKDG.BLL
         public IProductImageRepository productImageRepository;
         public IProductAttrBLL productAttrBLL;
         public IMerchantShipMethodMappingRepository merchantShipMethodMappingRepository;
+        IPromotionRuleRepository promotionRuleRepository;
         public IProductImageBLL productImageBLL;
         public ISettingBLL settingBLL;
         public IProductSkuRepository productSkuRepository;
@@ -899,30 +901,31 @@ namespace HKDG.BLL
         {
             ProductDetailView view = null;
 
-            string pKey = $"{PreHotType.Hot_Products}_{CurrentUser.Lang}";
-            var ProductId = Guid.Empty;
-            var dbProduct = baseRepository.GetModel<Product>(x => x.Code == Code && x.IsActive && !x.IsDeleted && x.Status == ProductStatus.OnSale);
-            if (dbProduct != null) ProductId = dbProduct.Id;
+            string pKey = $"{PreHotType.Hot_Products}_{CurrentUser.Language}";
 
             var product = await RedisHelper.HGetAsync<HotProduct>(pKey, Code);
             if (product == null)
             {
                 //读数据库，回写缓存            
-                var pList = await productService.GetDataSourceAsync(ProductId);
+                var pList = await productService.GetDataSourceAsync(product.ProductId);
                 if (pList != null && pList.Any())
                 {
                     //重新刷新缓存
-                    await productService.SetDataToHashCache(pList, CurrentUser.Lang);
+                    await productService.SetDataToHashCache(pList, CurrentUser.Language);
                     product = pList.FirstOrDefault();
                 }
             }
+
+            pKey = $"{CacheKey.System}";
+            string field = $"{CacheField.Info}_{CurrentUser.Language}";
+            var currcencyCache = await RedisHelper.HGetAsync<SystemInfoDto>(pKey, field);
 
             pKey = $"{PreHotType.Hot_PreProductStatistics}";
             var proStatistics = await RedisHelper.HGetAsync<HotPreProductStatistics>(pKey, Code);
             //读数据库，回写缓存
             if (proStatistics == null)
             {
-                var statitsView = await  this.productStatisticsService.GetDataSourceAsync(Guid.Empty, Code); //这里是用Code作为查询条件的
+                var statitsView = await productStatisticsService.GetDataSourceAsync(Guid.Empty, Code); //这里是用Code作为查询条件的
                 if (statitsView != null && statitsView.Any())
                 {
                     await productStatisticsService.SetDataToHashCache(statitsView);
@@ -930,21 +933,21 @@ namespace HKDG.BLL
                 }
             }
 
-            var extension = await baseRepository.GetModelByIdAsync<ProductExtension>(ProductId);
-            var detail = await baseRepository.GetModelAsync<ProductDetail>(x => x.ProductId == ProductId && x.Lang == CurrentUser.Lang);
-            var specification = await baseRepository.GetModelByIdAsync<ProductSpecification>(ProductId);
+            var extension = await baseRepository.GetModelByIdAsync<ProductExtension>(product.ProductId);
+            var detail = await baseRepository.GetModelAsync<ProductDetail>(x => x.ProductId == product.ProductId && x.Lang == CurrentUser.Language);
+            var specification = await baseRepository.GetModelByIdAsync<ProductSpecification>(product.ProductId);
 
             view = AutoMapperExt.MapTo<ProductDetailView>(product);
 
             view.Id = product.ProductId;
             view.MerchantId = product.MchId;
 
-            view.Currency =  currencyBLL.GetDefaultCurrency();
+            view.Currency = currcencyCache?.simpleCurrencies?.FirstOrDefault() ?? currencyBLL.GetDefaultCurrency();
             view.CatTreeNodes = productCatalogBLL.GetCatalogListById(view.CatalogId);
-            view.AttrList = attributeBLL.GetInvAttributeByProductWithMapForFront(ProductId);
+            view.AttrList = attributeBLL.GetInvAttributeByProductWithMapForFront(product.ProductId);
             //view.Images = GetProductImages(ProductId);
-            view.AdditionalImages = GetProductAdditionalImages(ProductId);
-            //view.PromotionRuleTitle = PromotionRuleRepository.GetPromotionRuleTitle(Code) ?? "";
+            view.AdditionalImages = GetProductAdditionalImages(product.ProductId);
+            view.PromotionRuleTitle = promotionRuleRepository.GetPromotionRuleTitle(Code) ?? "";
 
             view.YoutubeUrl = extension?.YoutubeLink ?? "";
             view.YoukuUrl = extension?.YoukuLink ?? "";
@@ -967,12 +970,12 @@ namespace HKDG.BLL
 
             #region 处理拒送国家，可配送国家
 
-            var deliveryCountries = await GenProductDeliveryArea(ProductId, Code);
-            view.RefuseCountry = deliveryCountries.Item1.Select(s => 
-                NameUtil.GetCountryName(CurrentUser.Lang.ToString(), 
-                new CountryDto {  Name_c =s.Country.Name_c ,Name_s= s.Country.Name_s,Name_e = s.Country.Name_s  })).ToList();
+            var deliveryCountries = await GenProductDeliveryArea(product.ProductId, Code);
+            view.RefuseCountry = deliveryCountries.Item1.Select(s =>
+                NameUtil.GetCountryName(CurrentUser.Lang.ToString(),
+                new CountryDto { Name_c = s.Country.Name_c, Name_s = s.Country.Name_s, Name_e = s.Country.Name_s })).ToList();
             view.SupportCountry = deliveryCountries.Item2.Select(s =>
-                NameUtil.GetCountryName(CurrentUser.Lang.ToString(), 
+                NameUtil.GetCountryName(CurrentUser.Lang.ToString(),
                 new CountryDto { Name_c = s.Country.Name_c, Name_s = s.Country.Name_s, Name_e = s.Country.Name_s })).ToList();
 
             #endregion
@@ -980,7 +983,7 @@ namespace HKDG.BLL
             //商家条款
             if (view != null)
             {
-                var mchkey = $"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}";
+                var mchkey = $"{PreHotType.Hot_Merchants}_{CurrentUser.Language}";
                 var mchInfo = await RedisHelper.HGetAsync<HotMerchant>(mchkey, view.MerchantId.ToString());
                 //读数据库,回写缓存
                 if (mchInfo == null)
@@ -989,12 +992,22 @@ namespace HKDG.BLL
                     if (result != null && result.Any())
                     {
                         //重新刷新缓存
-                        await merchantService.SetDataToHashCache(result, CurrentUser.Lang);
+                        await merchantService.SetDataToHashCache(result, CurrentUser.Language);
 
                         mchInfo = result.FirstOrDefault();
                         var mp = await baseRepository.GetModelAsync<MerchantPromotion>(x => x.MerchantId == view.MerchantId && x.IsActive && !x.IsDeleted && x.ApproveStatus == ApproveType.Pass);
-                        var mRecord = await merchantService.DicCollection(mp, CurrentUser.Lang);
+                        var mRecord = await merchantService.DicCollection(mp, CurrentUser.Language);
                         var banners = await merchantService.GetMerchantBannerList(mp);
+
+                        //mchInfo.Notice = mRecord["NoticeTranId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.Cover = mRecord["CoverId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.ExpCompleteDays = mRecord["OrderTransId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "2~4";
+                        //mchInfo.Logo = mRecord["SmallLogoId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.PromIntroduction = mRecord["CoverId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.PromName = mRecord["NameTranId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.TandC = mRecord["TAndCTranId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.ReturnTerms = mRecord["ReturnTermsTranId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
+                        //mchInfo.Description = mRecord["DescTransId"]?.FirstOrDefault(x => x.Lang == CurrentUser.Language)?.Value ?? "";
 
                         mchInfo.Notice = mRecord["NoticeTranId"]?.Value ?? "";
                         mchInfo.Cover = mRecord["CoverId"]?.Value ?? "";
@@ -1005,16 +1018,15 @@ namespace HKDG.BLL
                         mchInfo.TandC = mRecord["TAndCTranId"]?.Value ?? "";
                         mchInfo.ReturnTerms = mRecord["ReturnTermsTranId"]?.Value ?? "";
                         mchInfo.Description = mRecord["DescTransId"]?.Value ?? "";
-                        mchInfo.Banners = banners.Where(x => x.Lang == CurrentUser.Lang).ToList();
+
+                        mchInfo.Banners = banners.Where(x => x.Lang == CurrentUser.Language).ToList();
+
                     }
                 }
 
                 view.MerchantInfo = new MerchantSummary();
                 view.MerchantInfo.MerchantTerms = mchInfo.TandC;
                 view.MerchantInfo.ReturnTerms = mchInfo.ReturnTerms;
-                view.MerchantInfo.Name = mchInfo.Name;
-                view.MerchantInfo.Code = mchInfo.Code;
-
                 view.IsGS1 = mchInfo.MerchantType == MerchantType.GS1 ? true : false;
 
                 if (view.IsGS1)
@@ -1025,7 +1037,7 @@ namespace HKDG.BLL
                     {
                         gs1Link = gs1Link.Replace("[GTIN]", extension.Gtin ?? "");
 
-                        switch (CurrentUser.Lang)
+                        switch (CurrentUser.Language)
                         {
                             case Language.E:
                                 gs1Link = gs1Link.Replace("[LANG]", "en");
@@ -1045,23 +1057,26 @@ namespace HKDG.BLL
             if (CurrentUser.IsLogin)
             {
                 string favKey = CacheKey.Favorite.ToString();
-                string favField = CurrentUser.UserId.ToString();
+                string favField = CurrentUser.Id.ToString();
                 var favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
                 //读数据库,回写缓存
                 if (favoriteData == null)
                 {
-                    favoriteData = await this.productFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
+                    favoriteData = await productFavoriteService.GetDataSourceAsync(CurrentUser.Id);
                     if (favoriteData != null && (favoriteData.MchList.Any() || favoriteData.ProductList.Any()))
                     {
-                        await productFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                        await productFavoriteService.SetDataToHashCache(CurrentUser.Id, favoriteData);
                     }
                 }
 
                 view.IsFavorite = favoriteData?.ProductList?.Any(x => x == Code) ?? false;
             }
 
-            view.ProdAttrImgs = await GetProductAdditionalImagesV2(view.Id, product.DefaultImageId, product.Code);
+            view.IconType = product.IconType;
+            view.CreateDate = product.CreateDate;
+            GetCornermarkerV3(view);
 
+            view.ProdAttrImgs = await GetProductAdditionalImagesV2(view.Id, product.DefaultImageId, product.Code);
             return view;
         }
 
@@ -3283,6 +3298,9 @@ namespace HKDG.BLL
                 }
             }
 
+            var pKey = $"{CacheKey.ProductIcon}";
+            var currcencyCaches =await RedisHelper.HGetAllAsync<List<string>>(pKey);
+
             var query = from a in productList.Values.AsQueryable()
                         join b in productStatists.Values.AsQueryable() on a.Code equals b.Code
                         where a.Status == ProductStatus.OnSale
@@ -3350,8 +3368,10 @@ namespace HKDG.BLL
             foreach (var item in returnData.Data)
             {
                 item.MerchantName = mchList.Values.FirstOrDefault(x => x.MchId == item.MerchantId)?.MerchantName ?? "";
-
-                //GetCornermarker(item);
+                item.Imgs = GetProductImages(item.ProductId);
+                //item.ImgPath = item.Imgs.FirstOrDefault() ?? "";
+                item.ProductIcons = currcencyCaches?.FirstOrDefault(p => p.Key == item.Code).Value ?? null;
+                GetCornermarker(item);
             }
 
             if (CurrentUser.IsLogin)
@@ -3375,7 +3395,6 @@ namespace HKDG.BLL
                 }
             }
 
-
             CurrencyMoneyConversion(returnData.Data);
 
             return returnData;
@@ -3394,16 +3413,127 @@ namespace HKDG.BLL
             result.ReturnValue = error;
         }
 
-        void MatchEventCode(List<ProductSummary> products)
+        public void GetCornermarker(ProductSummary item)
         {
-            var pKey = $"{CacheKey.ProductIcon}";
-            var currcencyCaches =RedisHelper.HGetAll<List<string>>(pKey);
-            foreach (var item in products)
-            {
-                var cachProductIcons = currcencyCaches.FirstOrDefault(p => p.Key == item.Code).Value;
-                if (cachProductIcons != null && cachProductIcons.Any())  item.ProductIcons = cachProductIcons;
-                
-            }
+
+
+            var currency = currencyBLL.GetDefaultCurrency();
+
+            var iconLogicSettings = codeMasterBLL.GetCodeMasters(CodeMasterModule.Setting, CodeMasterFunction.ProductIconLogic);
+
+            var newProductDay = int.Parse(iconLogicSettings.FirstOrDefault(p => p.Key == "NewProductDay")?.Value ?? "7");//新產品天數
+
+            var hotProductTop = int.Parse(iconLogicSettings.FirstOrDefault(p => p.Key == "HotProductTop")?.Value ?? "10");//熱門前幾
+
+            var hotTopProducts = baseRepository.GetList<ProductStatistics>().OrderByDescending(o => o.PurchaseCounter).Select(d => d.Code).Take(hotProductTop).ToList();
+
+            var iconIsSet = false;
+            item.Imgs = GetProductImages(item.ProductId);
+            item.IconRUrl = PathUtil.GetProductIconUrl(item.IconRType,  CurrentUser.Language);
+            item.Currency = currency;
+            var statistic = baseRepository.GetModel<ProductStatistics>(x => x.Code == item.Code);
+            item.PurchaseCounter = statistic?.PurchaseCounter ?? 0;
+            item.Score = statistic?.Score ?? NumberUtil.ConvertToRounded(statistic?.Score ?? 0);
+
+            var hotTopProductFlag = hotTopProducts.Any(x => x.IndexOf(item.Code) > -1);
+            var freeProFlag = baseRepository.Any<MerchantFreeCharge>(p => p.ProductCode == item.Code && p.MerchantId == item.MerchantId && p.IsActive && !p.IsDeleted);
+            var CornerMark = GetBaseMark(item.Code, item.IconType, item.SalePrice, item.OriginalPrice, item.PromotionRuleTitle, item.CreateDate.Value, newProductDay, hotTopProductFlag, freeProFlag);
+
+            item.IconType = CornerMark.IconType;
+            item.IconString = CornerMark.IconString;
+            iconIsSet = CornerMark.iconIsSet;
+
         }
+
+        public void GetCornermarkerV3(ProductDetailView item)
+        {
+            var iconLogicSettings = codeMasterBLL.GetCodeMasters(CodeMasterModule.Setting, CodeMasterFunction.ProductIconLogic);
+
+            var newProductDay = int.Parse(iconLogicSettings.FirstOrDefault(p => p.Key == "NewProductDay")?.Value ?? "7");//新產品天數
+
+            var hotProductTop = int.Parse(iconLogicSettings.FirstOrDefault(p => p.Key == "HotProductTop")?.Value ?? "10");//熱門前幾
+
+            var hotTopProducts = baseRepository.GetList<ProductStatistics>().OrderByDescending(o => o.PurchaseCounter).Select(d => d.Code).Take(hotProductTop).ToList();
+
+            var iconIsSet = false;
+            var statistic = baseRepository.GetModel<ProductStatistics>(x => x.Code == item.Code);
+            //item.PurchaseCounter = statistic?.PurchaseCounter ?? 0;
+            item.Score = statistic?.Score ?? NumberUtil.ConvertToRounded(statistic.Score);
+
+            var hotTopProductFlag = hotTopProducts.Any(x => x.IndexOf(item.Code) > -1);
+            var freeProFlag = baseRepository.Any<MerchantFreeCharge>(p => p.ProductCode == item.Code && p.MerchantId == item.MerchantId && p.IsActive && !p.IsDeleted);
+            var CornerMark = GetBaseMark(item.Code, item.IconType, item.SalePrice, item.OriginalPrice, item.PromotionRuleTitle, item.CreateDate, newProductDay, hotTopProductFlag, freeProFlag);
+
+            item.IconType = CornerMark.IconType;
+            item.IconString = CornerMark.IconString;
+            iconIsSet = CornerMark.iconIsSet;
+
+        }
+
+        public CornerMark GetBaseMark(string Code, ProductType IconType, decimal SalePrice, decimal OriginalPrice, string RuleTitle, DateTime CreateDate,
+                                                           int newProductDay, bool hotProductTopFlag, bool feeProFlag)
+        {
+            var mark = new CornerMark { iconIsSet = false, IconType = IconType, IconString = "" };
+
+            var iconIsSet = false;
+            //角标不等于基本时不计算
+            if (IconType != ProductType.Basic)
+            {
+                mark.iconIsSet = true;
+                iconIsSet = mark.iconIsSet;
+            }
+
+            if (hotProductTopFlag && !iconIsSet)
+            {
+                mark.IconType = ProductType.HotSale;
+                mark.IconString = "";
+                mark.iconIsSet = true;
+                iconIsSet = mark.iconIsSet;
+            }
+
+            if (OriginalPrice != SalePrice && !iconIsSet)
+            {
+                mark.IconType = ProductType.Preferential;
+                decimal discount = Math.Ceiling((SalePrice / OriginalPrice) * 100);
+                if (CurrentUser.Language == Language.E)
+                {
+                    mark.IconString = (100 - discount).ToString() + "% Off";
+                }
+                else
+                {
+                    mark.IconString = discount + Resources.Label.Fold;
+                }
+                mark.iconIsSet = true;
+                iconIsSet = true;
+            }
+
+            if (!string.IsNullOrEmpty(RuleTitle) && !iconIsSet)
+            {
+                mark.IconType = ProductType.Preferential;
+                mark.IconString = Resources.Label.Preferential;
+                mark.iconIsSet = true;
+                iconIsSet = mark.iconIsSet;
+            }
+
+            //var freePro = MerchantFreeChargeRepository.Entities.FirstOrDefault(p => p.ProductCode == item.Code && p.MerchantId == item.MerchantId && p.IsActive && !p.IsDeleted);
+            if (feeProFlag && !iconIsSet)
+            {
+                mark.IconType = ProductType.FreeShip;
+                mark.IconString = "";
+                mark.iconIsSet = true;
+                iconIsSet = mark.iconIsSet;
+            }
+
+            if (CreateDate >= DateTime.Now.AddDays(-newProductDay) && !iconIsSet)
+            {
+                mark.IconType = ProductType.New;
+                mark.IconString = "";
+                mark.iconIsSet = true;
+                iconIsSet = mark.iconIsSet;
+            }
+
+            return mark;
+        }
+
     }
 }

@@ -28,22 +28,7 @@
             return result;
         }
 
-        /// <summary>
-        /// 获取商品
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <returns></returns>
-        [HttpPost("GetProducts")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(SystemResult<PageData<MicroProduct>>), 200)]
-        public async Task<SystemResult<PageData<MicroProduct>>> GetProducts([FromBody] ProductCond cond)
-        {
-            var result = new SystemResult<PageData<MicroProduct>>();
-            result.ReturnValue = await productBLL.GetProductListAsync(cond);
-            result.Succeeded = true;
-            return result;
-        }
-
+     
         /// <summary>
         /// 获取商品明细
         /// </summary>

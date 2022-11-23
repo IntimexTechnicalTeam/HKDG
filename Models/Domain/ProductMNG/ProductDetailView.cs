@@ -46,5 +46,11 @@
             set
             { }
         }
+
+        public ProductType IconType { get; set; }
+
+        public DateTime CreateDate { get; set; }
+
+        public string IconString { get; set; }
     }
 }

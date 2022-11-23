@@ -44,22 +44,6 @@
             return result;
         }
 
-        /// <summary>
-        /// 获取商家所属商品
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost("GetProducts")]
-        [ProducesResponseType(typeof(SystemResult<PageData<MicroProduct>>), 200)]
-        public async Task<SystemResult<PageData<MicroProduct>>> GetProducts([FromBody] ProductCond cond)
-        {
-            var result = new SystemResult<PageData<MicroProduct>>() { Succeeded = true };
-
-            if (cond ==null || cond.MerchantId == Guid.Empty) throw new BLException();
-
-            result.ReturnValue = await merchantBLL.GetMchProductListAsync(cond);
-            return result;
-        }
+       
     }
 }
