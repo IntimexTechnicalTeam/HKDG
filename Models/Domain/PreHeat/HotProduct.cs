@@ -62,6 +62,8 @@
 
         public decimal ListPrice => this.OriginalPrice;
 
+        public List<string> ProductIcons { get; set; }
+
         public SimpleCurrency Currency { get; set; }
         public SimpleCurrency Currency2 { get; set; }
 

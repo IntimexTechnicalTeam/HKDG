@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using HKDG.Repository;
+using Model;
 using WebCache;
 
 namespace HKDG.BLL
@@ -43,7 +44,8 @@ namespace HKDG.BLL
             settingBLL = Services.Resolve<ISettingBLL>();
             productDetailRepository = Services.Resolve<IProductDetailRepository>();
             codeMasterBLL = Services.Resolve<ICodeMasterBLL>();
-            
+            promotionRuleRepository = Services.Resolve<IPromotionRuleRepository>();
+
             productService = (PreHeatProductService)Services.GetService(typeof(PreHeatProductService));
             productImageService = (PreHeatProductImageService)Services.GetService(typeof(PreHeatProductImageService));
             productStatisticsService = (PreHeatProductStaticsService)Services.GetService(typeof(PreHeatProductStaticsService));
@@ -768,8 +770,8 @@ namespace HKDG.BLL
                 }
             }
 
-            var pKey = $"{CacheKey.ProductIcon}";
-            var currcencyCaches =await RedisHelper.HGetAllAsync<List<string>>(pKey);
+            //var pKey = $"{CacheKey.ProductIcon}";
+            //var currcencyCaches =await RedisHelper.HGetAllAsync<List<string>>(pKey);
 
             var mchInfo = await RedisHelper.HGetAsync<HotMerchant>($"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}", cond.MerchantId.ToString());
 
@@ -840,7 +842,8 @@ namespace HKDG.BLL
                 MerchantId = s.a.MchId,
                 OriginalPrice = s.a.OriginalPrice,
                 IconType = s.a.IconType,
-
+                ProductIcons = s.a.ProductIcons ,
+                
             }).ToList();
 
             if (list != null && list.Any())
@@ -849,9 +852,7 @@ namespace HKDG.BLL
                 {
                     item.Currency = currencyBLL.GetSimpleCurrency(item.CurrencyCode);
                     item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
-                    item.Imgs = GetProductImages(item.ProductId);
-                    //item.ImgPath = item.Imgs.FirstOrDefault() ?? "";
-                    item.ProductIcons = currcencyCaches?.FirstOrDefault(p => p.Key == item.Code).Value ?? null;
+                    item.Imgs = GetProductImages(item.ProductId);                    
                     item.MerchantName = mchInfo?.MerchantName ?? "";
                 }
 
@@ -3298,9 +3299,6 @@ namespace HKDG.BLL
                 }
             }
 
-            var pKey = $"{CacheKey.ProductIcon}";
-            var currcencyCaches =await RedisHelper.HGetAllAsync<List<string>>(pKey);
-
             var query = from a in productList.Values.AsQueryable()
                         join b in productStatists.Values.AsQueryable() on a.Code equals b.Code
                         where a.Status == ProductStatus.OnSale
@@ -3321,6 +3319,7 @@ namespace HKDG.BLL
                             ApproveType = a.Status,
                             CatalogId = a.CatalogId,
                             IconType = a.IconType,
+                            ProductIcons= a.ProductIcons,
                         };
 
             var subCatQuery = this.baseRepository.GetList<ProductCatalog>(d => d.ParentId == pager.CatId && d.IsActive && !d.IsDeleted).Select(d => d.Id).ToList();
@@ -3368,9 +3367,7 @@ namespace HKDG.BLL
             foreach (var item in returnData.Data)
             {
                 item.MerchantName = mchList.Values.FirstOrDefault(x => x.MchId == item.MerchantId)?.MerchantName ?? "";
-                item.Imgs = GetProductImages(item.ProductId);
-                //item.ImgPath = item.Imgs.FirstOrDefault() ?? "";
-                item.ProductIcons = currcencyCaches?.FirstOrDefault(p => p.Key == item.Code).Value ?? null;
+                item.Imgs = GetProductImages(item.ProductId);               
                 GetCornermarker(item);
             }
 
