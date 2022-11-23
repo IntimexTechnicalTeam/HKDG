@@ -163,6 +163,8 @@ namespace Web.Mvc
 
                 _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
 
+                if (_currentUser == null) _currentUser = new CurrentUser();
+
                 return _currentUser;
             }
         }

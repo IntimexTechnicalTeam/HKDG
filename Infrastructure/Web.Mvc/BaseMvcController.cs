@@ -162,6 +162,8 @@ namespace Web.Mvc
 
                 //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
 
+                if (_currentUser == null) _currentUser = new CurrentUser();
+
                 return _currentUser;
             }
         }

@@ -2,10 +2,12 @@
 using Enums;
 using Intimex.Runtime;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Security.Policy;
 using System.Threading.Tasks;
@@ -81,18 +83,19 @@ namespace Web.Mvc
                 context.HttpContext.Response.Cookies.Delete("access_token");
                 context.HttpContext.Response.Redirect("/");
             }
+            else
+            {
+                logger.LogInformation($"{mUser.UserId}鉴权通过");
+                var option = new CookieOptions { HttpOnly = true };
+                context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
 
-            logger.LogInformation($"{mUser.UserId}鉴权通过");
-            var option = new CookieOptions { HttpOnly = true };
-            context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
+                ////鉴权通过刷新过期时间
+                mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
+                await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
 
-            ////鉴权通过，当前站和buydong的会员token做刷新过期时间
-            mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
-            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
-
-            logger.LogInformation($"{mUser.UserId}刷新过期时间");
-            await next();
-
+                logger.LogInformation($"{mUser.UserId}刷新过期时间");
+                await next();
+            }
         }
     }
 }

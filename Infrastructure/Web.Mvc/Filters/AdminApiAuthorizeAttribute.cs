@@ -41,25 +41,26 @@ namespace Web.Mvc
                 context.HttpContext.Response.Cookies.Delete("access_token");
                 context.HttpContext.Response.Redirect("/Accont/Login");
             }
-
-            var flag = await this.CheckActionAsync(context);
-            if (!flag)
+            else
             {
-                if (IsAjaxRequest(context.HttpContext.Request)) // AJAX请求，返回status标识未登录
+                var flag = await this.CheckActionAsync(context);
+                if (!flag)
                 {
-                    context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
-                    context.HttpContext.Response.StatusCode = 403;
-                    return;
+                    if (IsAjaxRequest(context.HttpContext.Request)) // AJAX请求，返回status标识未登录
+                    {
+                        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
+                        context.HttpContext.Response.StatusCode = 403;
+                        return;
+                    }
+                    else
+                    {
+                        context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
+                        context.HttpContext.Response.StatusCode = 403;
+                        return;
+                    }
                 }
-                else
-                {
-                    context.Result = new JsonResult(new SystemResult { Succeeded = false, Message = "未授权访问" });
-                    context.HttpContext.Response.StatusCode = 403;
-                    return;
-                }
+                await next();
             }
-
-            await next();
         }
 
         /// <summary>
