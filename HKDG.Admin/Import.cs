@@ -31,3 +31,4 @@ global using System.Reflection;
 global using Intimex.Common;
 global using Intimex.Utility;
 global using Intimex.Runtime;
+global using Microsoft.AspNetCore.Routing;

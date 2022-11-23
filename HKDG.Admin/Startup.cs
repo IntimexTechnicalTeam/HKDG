@@ -87,19 +87,21 @@ namespace HKDG.Admin
 
             app.UseRouting();
             app.UseAuthorization();         //这个必须在UseRouting 和 UseEndpoints 之间
-            app.UseEndpoints(endpoints =>
-            {             
-                endpoints.MapControllerRoute(
-                   name: "default",
-                   //pattern: "{controller=Home}/{action=Index}/{id?}");
-                   pattern: "{controller=Account}/{action=Login}/{id?}/{para2?}/{para3?}");             //让MVC Controller支持无参或一个参数以上
+            //app.UseEndpoints(endpoints =>
+            //{             
+            //    endpoints.MapControllerRoute(
+            //       name: "default",
+            //       //pattern: "{controller=Home}/{action=Index}/{id?}");
+            //       pattern: "{controller=Account}/{action=Login}/{id?}/{para2?}/{para3?}");             //让MVC Controller支持无参或一个参数以上
 
-                endpoints.MapAreaControllerRoute(
-                         name: "areas",
-                         areaName: "AdminApi",
-                         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}/{para2?}");      //让Api Controller支持无参或一个参数以上
+            //    endpoints.MapAreaControllerRoute(
+            //             name: "areas",
+            //             areaName: "AdminApi",
+            //             pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}/{para2?}");      //让Api Controller支持无参或一个参数以上
 
-            });
+            //});
+
+            app.UseEndpoints(endpoints => { endpoints = endpoints.BindEndPoints(); });
 
         }
 
