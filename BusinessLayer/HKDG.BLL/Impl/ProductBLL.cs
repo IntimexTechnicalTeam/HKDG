@@ -144,6 +144,7 @@ namespace HKDG.BLL
                 //item.IconRUrl = PathUtil.GetProductIconUrl(item.IconRType, CurrentUser.ComeFrom, CurrentUser.Language);
                 //item.Currency = currency;
             }
+
             return result;
         }
 
@@ -731,12 +732,12 @@ namespace HKDG.BLL
 
         }
 
-        public async Task<PageData<MicroProduct>> GetProductListAsync(ProductCond cond)
+        public async Task<PageData<ProductSummary>> GetProductListAsync(ProductCond cond)
         {
-            var result = new PageData<MicroProduct>();
+            var result = new PageData<ProductSummary>();
 
             Favorite favoriteData = null;
-           
+
             var proKey = $"{PreHotType.Hot_Products}_{CurrentUser.Lang}";
             var productList = await RedisHelper.HGetAllAsync<HotProduct>(proKey);
             //读数据库，并回写缓存           
@@ -765,6 +766,11 @@ namespace HKDG.BLL
                 }
             }
 
+            var pKey = $"{CacheKey.ProductIcon}";
+            var currcencyCaches =await RedisHelper.HGetAllAsync<List<string>>(pKey);
+
+            var mchInfo = await RedisHelper.HGetAsync<HotMerchant>($"{PreHotType.Hot_Merchants}_{CurrentUser.Lang}", cond.MerchantId.ToString());
+
             if (CurrentUser.IsLogin)
             {
                 string favKey = CacheKey.Favorite.ToString();
@@ -782,41 +788,31 @@ namespace HKDG.BLL
             }
 
             var query = from a in productList.Values.AsQueryable()
-                        join b in productStatists.Values.AsQueryable() on a.Code equals b.Code                  
-                        select new 
+                        join b in productStatists.Values.AsQueryable() on a.Code equals b.Code
+                        select new
                         {
-                            MerchantId = a.MchId,
-                            ProductId = a.ProductId,
-                            Code = a.Code,
-                            Name = a.Name,
-                            SalePrice = a.SalePrice,                          
-                            Score = NumberUtil.ConvertToRounded(b.Score),
-                            CurrencyCode = a.CurrencyCode,    
-                            CreateDate = a.CreateDate,
-                            UpdateDate= a.UpdateDate,
-                            PurchaseCounter = b.PurchaseCounter,
-                            ProductStatus = a.Status,                            
+                            a,
+                            b
                         };
 
             #region 组装条件
 
             if (cond.MerchantId != Guid.Empty)
-                query = query.Where(x => x.MerchantId == cond.MerchantId);
+                query = query.Where(x => x.a.MchId == cond.MerchantId);
 
             if (!cond.KeyWord.IsEmpty())
-            { 
+            {
             }
 
             if (!cond.ProductCode.IsEmpty())
-                query = query.Where(x => x.Code.Contains(cond.ProductCode));
+                query = query.Where(x => x.a.ProductCode.Contains(cond.ProductCode));
 
             if (!cond.ProductName.IsEmpty())
-                query = query.Where(x => x.Name.Contains(cond.ProductName));
+                query = query.Where(x => x.a.Name.Contains(cond.ProductName));
 
             if (cond.ProductStatus.HasValue)
-                query = query.Where(x => x.ProductStatus == cond.ProductStatus);
+                query = query.Where(x => x.a.Status == cond.ProductStatus);
             #endregion
-
 
             result.TotalRecord = query.Count();
 
@@ -826,17 +822,22 @@ namespace HKDG.BLL
             var sortBy = (SortType)Enum.Parse(typeof(SortType), cond.SortOrder.ToUpper());
             query = query.AsQueryable().SortBy(cond.SortName, sortBy).Skip(cond.Offset).Take(cond.PageSize);
 
-            var list = query.Select(s => new MicroProduct
+            var list = query.Select(s => new ProductSummary
             {
-                ProductId = s.ProductId,
-                Code = s.Code,
-                Name = s.Name,
-                SalePrice = s.SalePrice,
-                CurrencyCode = s.CurrencyCode,
-                Score = s.Score,             
-                CreateDate = s.CreateDate,
-                UpdateDate = s.UpdateDate,
-                PurchaseCounter = s.PurchaseCounter,
+                ProductId = s.a.ProductId,
+                Code = s.a.Code,
+                Name = s.a.Name,
+                SalePrice = s.a.SalePrice,
+                CurrencyCode = s.a.CurrencyCode,
+                Score = NumberUtil.ConvertToRounded(s.a.Score),
+                CreateDate = s.a.CreateDate,
+                UpdateDate = s.a.UpdateDate,
+                PurchaseCounter = s.b.PurchaseCounter,
+                ApproveType = s.a.Status,
+                CatalogId = s.a.CatalogId,
+                MerchantId = s.a.MchId,
+                OriginalPrice = s.a.OriginalPrice,
+                IconType = s.a.IconType,
 
             }).ToList();
 
@@ -845,12 +846,15 @@ namespace HKDG.BLL
                 foreach (var item in list)
                 {
                     item.Currency = currencyBLL.GetSimpleCurrency(item.CurrencyCode);
-                    item.Score = NumberUtil.ConvertToRounded(item.Score);
                     item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
-                    item.ImagePath = (await GetProductImages(item.ProductId, item.Code))?.FirstOrDefault() ?? "";
+                    item.Imgs = GetProductImages(item.ProductId);
+                    //item.ImgPath = item.Imgs.FirstOrDefault() ?? "";
+                    item.ProductIcons = currcencyCaches?.FirstOrDefault(p => p.Key == item.Code).Value ?? null;
+                    item.MerchantName = mchInfo?.MerchantName ?? "";
                 }
 
                 CurrencyMoneyConversion(list);
+
                 result.Data = list;
             }
 
@@ -3388,6 +3392,18 @@ namespace HKDG.BLL
             };
             result.Message = error.Message;
             result.ReturnValue = error;
+        }
+
+        void MatchEventCode(List<ProductSummary> products)
+        {
+            var pKey = $"{CacheKey.ProductIcon}";
+            var currcencyCaches =RedisHelper.HGetAll<List<string>>(pKey);
+            foreach (var item in products)
+            {
+                var cachProductIcons = currcencyCaches.FirstOrDefault(p => p.Key == item.Code).Value;
+                if (cachProductIcons != null && cachProductIcons.Any())  item.ProductIcons = cachProductIcons;
+                
+            }
         }
     }
 }

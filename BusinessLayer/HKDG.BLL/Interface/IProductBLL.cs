@@ -67,7 +67,7 @@
         /// <returns></returns>
         Task<List<string>> GetSelloutSkus();
 
-        Task<PageData<MicroProduct>> GetProductListAsync(ProductCond cond);
+        Task<PageData<ProductSummary>> GetProductListAsync(ProductCond cond);
 
         Task<ProductDetailView> GetProductDetailAsync(string Code);
 

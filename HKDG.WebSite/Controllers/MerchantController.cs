@@ -51,7 +51,7 @@ namespace HKDG.WebSite.Controllers
         /// </summary>
         /// <param name="MchId"></param>
         /// <returns></returns>
-        async Task<PageData<MicroProduct>> GetMchProduct(Guid MchId)
+        async Task<PageData<ProductSummary>> GetMchProduct(Guid MchId)
         {
             var cond = new ProductCond { MerchantId = MchId , Page =1 ,PageSize =12, OrderBy="New" };
             var result = await merchantBLL.GetMchProductListAsync(cond);

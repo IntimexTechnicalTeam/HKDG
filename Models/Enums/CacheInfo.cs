@@ -35,6 +35,8 @@
         PageSizeSetting,
 
         Member,
+
+        ProductIcon,
     }
 
     public enum CacheField

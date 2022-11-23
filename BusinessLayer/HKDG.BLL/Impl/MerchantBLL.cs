@@ -632,7 +632,7 @@ namespace HKDG.BLL
             return view;
         }
 
-        public async Task<PageData<MicroProduct>> GetMchProductListAsync(ProductCond cond)
+        public async Task<PageData<ProductSummary>> GetMchProductListAsync(ProductCond cond)
         {
             switch (cond.OrderBy)
             {

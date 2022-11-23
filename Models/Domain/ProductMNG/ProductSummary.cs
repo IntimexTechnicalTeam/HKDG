@@ -258,5 +258,12 @@
         /// </summary>
         public ProductType? IconLType { get; set; }
 
+        /// <summary>
+        /// 活动Code,有机会有多个活动
+        /// </summary>
+        public List<string> EventCodes { get; set; } = new List<string>();
+
+        public List<string> ProductIcons { get; set; } = new List<string>();
+
     }
 }
