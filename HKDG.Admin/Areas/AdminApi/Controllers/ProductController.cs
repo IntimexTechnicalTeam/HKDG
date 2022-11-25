@@ -157,10 +157,9 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
 
         [HttpPost]
         [AdminApiAuthorize(Module = ModuleConst.ProductModule, Function = new string[] { FunctionConst.Prod_Search })]
-        public PageData<ProductSummary> SearchData([FromBody]ProdSearchCond condition)
+        public async Task<PageData<ProductSummary>> SearchData([FromBody]ProdSearchCond condition)
         {
-            PageData<ProductSummary> result = productBLL.SearchBackEndProductSummary(condition);
-
+            PageData<ProductSummary> result =await productBLL.SearchBackEndProductSummary(condition);
             return result;
         }
 
@@ -372,9 +371,9 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [AdminApiAuthorize(Module = ModuleConst.ProductModule, Function = new string[] { FunctionConst.Prod_Search })]
-        public PageData<ProductSummary> SearchProductList([FromBody]ProdSearchCond condition)
-        {
-            PageData<ProductSummary> data =productBLL.SearchProductList(condition);
+        public async Task<PageData<ProductSummary>> SearchProductList([FromBody]ProdSearchCond condition)
+        {          
+            var data = await productBLL.SearchBackEndProductSummary(condition);
             return data;
         }
 

@@ -6,7 +6,7 @@
 
         Dictionary<string, ClickRateSummaryView> GetSearchRateView(int topMonthQty, int topWeekQty, int topDayQty);
 
-        PageData<ProductSummary> SearchBackEndProductSummary(ProdSearchCond cond);
+        Task<PageData<ProductSummary>> SearchBackEndProductSummary(ProdSearchCond cond);
 
         ProductEditModel GetProductInfo(Guid id);
 
@@ -36,8 +36,6 @@
         Task CreateDefaultImage(ProductEditModel product);
 
         PageData<ProductSummary> SearchRelatedProduct(RelatedProductCond cond);
-
-        PageData<ProductSummary> SearchProductList(ProdSearchCond cond);
 
         List<ProductSummary> GetRelatedProduct(Guid id);
 
@@ -83,8 +81,6 @@
         /// <param name="pager"></param>
         /// <returns></returns>
         Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager);
-
-        PageData<ProductSummary> SearchFrontProductSummary(ProdSearchCond cond);
 
         Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond);
     }

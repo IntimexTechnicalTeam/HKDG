@@ -614,6 +614,9 @@
                 else
                     vm.condition.AttributeValue = $("#cboAttributeValue").val();
 
+                if ($("#cbo-2").val()=="-1" || $("#cbo-2").val() ==null)
+                    vm.condition.Category=WS.GuidEmpty;
+
                 vm.condition.PermissionLevel = $("#cboPermission").val();
                 vm.condition.ApproveStatus = vm.statusSelect.join(",");// $("#cboStatus").val();
                 vm.condition.MerchantId = $("#cboMerchant").val() == "-1" ? WS.GuidEmpty : $("#cboMerchant").val();

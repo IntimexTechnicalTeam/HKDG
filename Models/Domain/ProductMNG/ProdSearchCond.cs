@@ -31,5 +31,7 @@
         /// 价格范围
         /// </summary>
         public List<decimal> Prices { get; set; }
+
+        
     }
 }

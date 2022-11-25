@@ -432,7 +432,7 @@ namespace HKDG.Repository
                 paramList.Add(new SqlParameter("@CatalogId", cond.Category));
             }
 
-            if (CurrentUser.IsMerchant)
+            if (CurrentUser.IsMerchant)     //根据用户IspType取对应IspType商品
             {
                 sb.Append("and left(p.Code, 2)=@IspType");
                 paramList.Add(new SqlParameter("@IspType", CurrentUser.IspType));

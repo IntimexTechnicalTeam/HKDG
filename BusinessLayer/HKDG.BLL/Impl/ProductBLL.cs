@@ -131,44 +131,30 @@
             return dic;
         }
 
-        public PageData<ProductSummary> SearchBackEndProductSummary(ProdSearchCond cond)
+        /// <summary>
+        /// 后台产品列表查询
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        public async Task<PageData<ProductSummary>> SearchBackEndProductSummary(ProdSearchCond cond)
         {
             PageData<ProductSummary> result = new PageData<ProductSummary>();
 
-            result = productRepository.Search(cond);
-            //var currency = CurrencyBLL.GetDefaultCurrency();
+            result =await productRepository.SearchAsync(cond);          
             foreach (var item in result.Data)
             {
                 item.Imgs = GetProductImages(item.ProductId);
-                item.ImgPath = item.Imgs.FirstOrDefault() ?? "";  
-                //item.IconRUrl = PathUtil.GetProductIconUrl(item.IconRType, CurrentUser.ComeFrom, CurrentUser.Language);
-                //item.Currency = currency;
+                item.ImgPath = item.Imgs.FirstOrDefault() ?? "";                
             }
 
             return result;
         }
 
-        public PageData<ProductSummary> SearchProductList(ProdSearchCond cond)
-        { 
-            var result  = SearchBackEndProductSummary(cond);
-            return result;
-        }
-
-        public PageData<ProductSummary> SearchFrontProductSummary(ProdSearchCond cond)
-        {
-            var result = SearchBackEndProductSummary(cond);
-
-            foreach (var item in result.Data)
-            {
-                GetCornermarker(item);
-            }
-
-            CurrencyMoneyConversion(result.Data);
-            MatchEventCode(result.Data);
-
-            return result;
-        }
-
+        /// <summary>
+        /// 前端产品显示
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
         public async Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond)
         {
             var result = await productRepository.SearchAsync(cond);
