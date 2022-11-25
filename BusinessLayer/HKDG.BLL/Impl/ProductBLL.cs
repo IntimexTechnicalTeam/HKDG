@@ -2190,6 +2190,7 @@
             summary.Code = product.Code;
             summary.Currency = currencyBLL.GetSimpleCurrency(product.CurrencyCode);
             summary.Imgs = GetProductImages(product.Id);
+            summary.ImgPath = summary.Imgs?.FirstOrDefault() ?? "";
             summary.Name = translationRepository.GetDescForLang(product.NameTransId, CurrentUser.Lang);
             summary.Introduction = translationRepository.GetDescForLang(product.IntroductionTransId, CurrentUser.Lang);
             summary.OriginalPrice = product.OriginalPrice + product.MarkUpPrice;

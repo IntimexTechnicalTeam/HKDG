@@ -20,6 +20,14 @@
         public string ImagePath { get; set; }
 
         public bool IsFavorite { get; set; }
+
+        public decimal Score { get; set; }
+
+        public DateTime CreateDate { get; set; }    
+
+        public string LogoB { get; set; }
+
+        public string LogoS { get; set; }
     }
 
     

@@ -25,7 +25,7 @@
 
         Task<PageData<MicroMerchant>> MyFavMerchant(FavoriteCond cond);
 
-        Task<PageData<MicroProduct>> MyFavProduct(FavoriteCond cond);
+        Task<PageData<ProductSummary>> MyFavProduct(FavoriteCond cond);
 
         Task<MemberItem> GetMemberInfo();
 
@@ -99,5 +99,7 @@
         /// <param name="condition">搜尋條件</param>
         /// <returns>會員信息列表</returns>
         PageData<MemberDto> Search(MbrSearchCond condition);
+
+        Task<SystemResult> UpdatePassword(string oldpwd, string newpwd);
     }
 }

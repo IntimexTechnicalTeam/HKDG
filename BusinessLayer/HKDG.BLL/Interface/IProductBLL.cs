@@ -83,5 +83,7 @@
         Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager);
 
         Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond);
+
+        ProductSummary GenProductSummary(Product product);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using log4net;
+
+namespace HKDG.BLL
 {
     public class MemberBLL : BaseBLL, IMemberBLL
     {
@@ -267,12 +269,11 @@
         public async Task<PageData<MicroMerchant>> MyFavMerchant(FavoriteCond cond)
         {
             var result = new PageData<MicroMerchant>();
-            //cond.FavoriteType = FavoriteType.Merchant;
             string key = CacheKey.Favorite.ToString();
             string field = CurrentUser.UserId;
 
             var favData = await RedisHelper.HGetAsync<Favorite>(key, field);
-            if (favData == null || (favData.ProductList?.Any() ?? false))
+            if (favData == null || (favData.MchList?.Any() ?? false))
             {
                 //重新读取喜欢商家数据
                 favData = await this.preHeatFavoriteService.GetDataSourceAsync(Guid.Parse(field));
@@ -308,7 +309,9 @@
                 Code = s.Code,
                 Name = s.Name,
                 IsFavorite = true,
-
+                Score = s.Score,
+                LogoB = s.LogoB,
+                LogoS = s.Logo,
             }).ToList();
 
             foreach (var item in list)
@@ -321,10 +324,9 @@
             return result;
         }
 
-        public async Task<PageData<MicroProduct>> MyFavProduct(FavoriteCond cond)
+        public async Task<PageData<ProductSummary>> MyFavProduct(FavoriteCond cond)
         {
-            var result = new PageData<MicroProduct>();
-            //cond.FavoriteType = FavoriteType.Product;
+            var result = new PageData<ProductSummary>();
             string key = CacheKey.Favorite.ToString();
             string field = CurrentUser.UserId;
 
@@ -359,25 +361,9 @@
             result.TotalRecord = query.Count();
             query = query.Skip(cond.Offset).Take(cond.PageSize);
 
-            var list = query.Select(s => new MicroProduct
-            {
-                ProductId = s.ProductId,
-                Code = s.Code,
-                Name = s.Name,
-                SalePrice = s.SalePrice,
-                CurrencyCode = s.CurrencyCode,
-                Score = s.Score,
-                CreateDate = s.CreateDate,
-                UpdateDate = s.UpdateDate,
-                IsFavorite = true
+            var list = AutoMapperExt.MapToList<HotProduct, Product>(query.ToList());
 
-            }).ToList();
-
-            foreach (var item in list)
-            {
-                item.ImagePath = (await productBLL.GetProductImages(item.ProductId, item.Code)).FirstOrDefault();
-            }
-            result.Data = list;
+            result.Data = list.Select(s => productBLL.GenProductSummary(s)).ToList();
 
             return result;
         }
@@ -753,6 +739,30 @@
         {
             var a = memberRepo.SearchMember(condition);
             return a;
+        }
+
+        public async Task<SystemResult> UpdatePassword(string oldpwd, string newpwd)
+        {
+            SystemResult result = new SystemResult();
+
+            var member = await baseRepository.GetModelByIdAsync<Member>(CurrentUser.Id);
+
+            if (member == null)  throw new BLException(Resources.Message.NoMember);
+            
+            string pwdBase = PwdUtil.GenPwdBase(member.Email, newpwd);
+            string oldpwdBase = PwdUtil.GenPwdBase(member.Email, oldpwd);
+            oldpwd = HashUtil.MD5(oldpwdBase);
+
+            if (member.Password != oldpwd)  throw new BLException(Resources.Message.OldPwdIncorrect);
+            
+            member.Password = HashUtil.MD5(pwdBase);
+            //member.Password = _memberRepository.Encrypt(newpwd);
+            await baseRepository.UpdateAsync(member);
+
+            result.Succeeded = true;
+            result.Message = Resources.Message.UpdatePwdSuccess;
+
+            return result;
         }
     }
 }

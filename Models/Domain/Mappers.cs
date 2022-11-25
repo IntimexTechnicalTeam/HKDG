@@ -90,6 +90,8 @@ namespace Domain
 
             ConfigMap<ProductComment, ProductCommentDto>();
             ConfigMap<ProductCommentImage, ProductCommentImageDto>();
+
+            ConfigMap<HotProduct, Product>();
         }
 
         void ConfigMap<TSource, TDestination>()

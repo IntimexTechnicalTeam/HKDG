@@ -87,20 +87,7 @@
             return result;
         }
 
-        /// <summary>
-        /// 我收藏的商品列表
-        /// </summary>
-        /// <param name="cond"></param>
-        /// <returns></returns>
-        [HttpPost("MyFavProduct")]
-        [ProducesResponseType(typeof(SystemResult<PageData<MicroProduct>>), 200)]
-        public async Task<SystemResult<PageData<MicroProduct>>> MyFavProduct([FromBody] FavoriteCond cond)
-        {
-            var result = new SystemResult<PageData<MicroProduct>>() { Succeeded = true };
-            result.ReturnValue = await memberBll.MyFavProduct(cond);
-            return result;
-        }
-
+       
 
         /// <summary>
         /// 我的足迹

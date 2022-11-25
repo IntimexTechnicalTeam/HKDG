@@ -1,4 +1,5 @@
 ﻿using HKDG.BLL;
+using Microsoft.AspNetCore.Authorization;
 using Model;
 using Web.Jwt;
 using WebCache;
@@ -157,33 +158,47 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
-        ///// <summary>
-        ///// 我收藏的商家列表
-        ///// </summary>
-        ///// <param name="cond"></param>
-        ///// <returns></returns>
-        //[HttpPost("MyFavMerchant")]
-        //[ProducesResponseType(typeof(SystemResult<PageData<MicroMerchant>>), 200)]
-        //public async Task<SystemResult<PageData<MicroMerchant>>> MyFavMerchant([FromBody] FavoriteCond cond)
-        //{
-        //    var result = new SystemResult<PageData<MicroMerchant>>() { Succeeded = true };
-        //    result.ReturnValue = await memberBLL.MyFavMerchant(cond);
-        //    return result;
-        //}
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="oldpwd">旧密码</param>
+        /// <param name="newpwd">新密码</param>
+        /// <returns></returns>
+        [HttpGet("UpdatePassword")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task<SystemResult> UpdatePassword(string oldpwd, string newpwd)
+        {
+            SystemResult result =await memberBLL.UpdatePassword(oldpwd, newpwd);          
+            return result;
+        }
 
-        ///// <summary>
-        ///// 我收藏的商品列表
-        ///// </summary>
-        ///// <param name="cond"></param>
-        ///// <returns></returns>
-        //[HttpPost("MyFavProduct")]
-        //[ProducesResponseType(typeof(SystemResult<PageData<MicroProduct>>), 200)]
-        //public async Task<SystemResult<PageData<MicroProduct>>> MyFavProduct([FromBody] FavoriteCond cond)
-        //{
-        //    var result = new SystemResult<PageData<MicroProduct>>() { Succeeded = true };
-        //    result.ReturnValue = await memberBLL.MyFavProduct(cond);
-        //    return result;
-        //}
+        /// <summary>
+        /// 我收藏的商家列表
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        [HttpPost("GetFavMerchants")]
+        [ProducesResponseType(typeof(SystemResult<PageData<MicroMerchant>>), 200)]
+        public async Task<SystemResult<PageData<MicroMerchant>>> MyFavMerchant([FromForm] FavoriteCond cond)
+        {
+            var result = new SystemResult<PageData<MicroMerchant>>() { Succeeded = true };
+            result.ReturnValue = await memberBLL.MyFavMerchant(cond);
+            return result;
+        }
+
+        /// <summary>
+        /// 我收藏的商品列表
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        [HttpPost("GetFavorite")]
+        [ProducesResponseType(typeof(SystemResult<PageData<ProductSummary>>), 200)]
+        public async Task<SystemResult<PageData<ProductSummary>>> MyFavProduct([FromForm] FavoriteCond cond)
+        {
+            var result = new SystemResult<PageData<ProductSummary>>() { Succeeded = true };
+            result.ReturnValue = await memberBLL.MyFavProduct(cond);
+            return result;
+        }
 
     }
 }
