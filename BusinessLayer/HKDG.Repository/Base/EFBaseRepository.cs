@@ -390,14 +390,13 @@
         /// <param name="sql"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public override async Task<PageData<T>> GetPageListAsync<T>(string sql, params SqlParameter[] parameters)
+        public override async Task<PageData<T>> GetPageListAsync<T>(string sql, params SqlParameter[] parameters) 
         {   var result = new PageData<T>();
             var sqlCount = $"select count(1) from ({sql}) as t";
             result.TotalRecord = await UnitWork.DataContext.Database.IntFromSqlAsync(sqlCount, parameters);
 
             var pList = parameters.Select(s => new SqlParameter { Value = s.Value, ParameterName = s.ParameterName }).ToArray();
-            result.Data = (await GetListAsync<T>(sql, pList)).ToList();
-
+            result.Data = await UnitWork.DataContext.Database.SqlQueryAsync<T>(sql, pList.ToArray());
             return result;
         }
 

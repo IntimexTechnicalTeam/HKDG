@@ -1,4 +1,5 @@
 ﻿using Castle.Core.Internal;
+using Enums;
 
 namespace HKDG.WebSite.Controllers
 {
@@ -12,7 +13,6 @@ namespace HKDG.WebSite.Controllers
             interactMessageBLL = Services.Resolve<IInteractMessageBLL>();
         }
 
-        [AllowAnonymous]
         public async Task<IActionResult> MyMessage(string IspType)
         {
             await InitViewPage(IspType);
@@ -22,10 +22,9 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("MyMessage");
         }
 
-
-        [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
+            await InitLastNotice();
             if (CurrentUser.IsLogin && !CurrentUser.IsTempUser)
             {
                 return Redirect("/");
@@ -40,20 +39,22 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("Login");
         }
 
-        [AllowAnonymous]
         public async Task<IActionResult> MyCoupon()
         {
-
+            await InitLastNotice();
             return GetActionResult("MyCoupon");
         }
 
-        [AllowAnonymous]
         public async Task<IActionResult> MemberInfo()
         {
-
+            await InitLastNotice();
             return GetActionResult("MemberInfo");
         }
 
-
+        public async Task<IActionResult> MyFavorite(string IspType)
+        {
+            await InitViewPage(IspType);
+            return GetActionResult("MyFavorite");
+        }
     }
 }

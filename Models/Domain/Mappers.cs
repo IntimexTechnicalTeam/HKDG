@@ -84,8 +84,12 @@ namespace Domain
 
             ConfigMap<CurrentUser, MemberDto>();
             ConfigMap<CurrentUser, UserDto>();
-
             ConfigMap<MemberItem, Member>();
+
+            ConfigMap<MemberItem, RegInfoView>();
+
+            ConfigMap<ProductComment, ProductCommentDto>();
+            ConfigMap<ProductCommentImage, ProductCommentImageDto>();
         }
 
         void ConfigMap<TSource, TDestination>()

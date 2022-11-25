@@ -83,5 +83,9 @@
         /// <param name="pager"></param>
         /// <returns></returns>
         Task<PageData<ProductSummary>> GetCatProdPageData(CatProdPager pager);
+
+        PageData<ProductSummary> SearchFrontProductSummary(ProdSearchCond cond);
+
+        Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond);
     }
 }

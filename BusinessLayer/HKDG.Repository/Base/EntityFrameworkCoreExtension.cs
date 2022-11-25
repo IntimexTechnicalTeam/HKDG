@@ -1,13 +1,14 @@
-﻿namespace HKDG.Repository
+﻿using System.Linq;
+
+namespace HKDG.Repository
 {
     public static class EntityFrameworkCoreExtension
     {
         private static DbCommand CreateCommand(DatabaseFacade facade, string sql, out DbConnection connection, params object[] parameters)
-        {
-            var conn = facade.GetDbConnection();
-            connection = conn;
-            conn.Open();
-            var cmd = conn.CreateCommand();
+        {        
+            connection =facade.GetDbConnection();
+            connection.Open();
+            using var cmd = connection.CreateCommand();
             if (facade.IsSqlServer())
             {
                 cmd.Parameters.Clear();
@@ -75,5 +76,24 @@
             conn.Close();
             return count;
         }
+
+        public static async Task<List<T>> SqlQueryAsync<T>(this DatabaseFacade facade, string sql, params object[] parameters) where T : class, new()
+        {
+            var dt =await SqlQueryAsync(facade, sql, parameters);
+            return dt.DataTableToList<T>().ToList();
+
+        }
+
+        static async Task<DataTable> SqlQueryAsync(this DatabaseFacade facade, string sql, params object[] parameters)
+        {
+            var command = CreateCommand(facade, sql, out DbConnection conn, parameters);
+            var reader =await command.ExecuteReaderAsync();
+            var dt = new DataTable();
+            dt.Load(reader);
+            reader.Close();
+            conn.Close();
+            return dt;
+        }
+
     }
 }

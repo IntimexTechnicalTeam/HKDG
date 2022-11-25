@@ -1,4 +1,6 @@
-﻿namespace HKDG.Repository
+﻿using Model;
+
+namespace HKDG.Repository
 {
     public class ProductRepository : PublicBaseRepository ,IProductRepository
     {
@@ -92,6 +94,53 @@
 
             data.Data = result;
             return data;
+        }
+
+        public async Task<PageData<ProductSummary>> SearchAsync(ProdSearchCond cond)
+        {
+            //PageData<ProductSummary> data = new PageData<ProductSummary>();
+
+            StringBuilder sb = new StringBuilder();
+
+            var baseQuery = GenBaseQuery(cond);
+            //data.TotalRecord = GetProductCount(baseQuery);
+
+            var fromIndex = ((cond.PageInfo.Page - 1) * cond.PageInfo.PageSize) + 1;
+            var toIndex = cond.PageInfo.Page * cond.PageInfo.PageSize;
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+            sb.AppendLine("select ProductId, Name, ApproveType, CatalogId, CatalogName, Code, CreateDate, CurrencyCode, GrossWeight, IconType, IconUrl, IsActive, IsApprove, ");
+            sb.AppendLine("IsGS1, MerchantId, MerchantName, MerchantNameId, SalePrice, OriginalPrice,MarkupPrice, Seq, UpdateDate, WeightUnit, Score, ''as PromotionRuleTitle,IsLimit,IsSalesReturn,NameTransId,PurchaseCounter,IsDeleted,GS1Status");
+            sb.AppendLine(" from(");
+
+            if (!cond.PageInfo.SortName.IsEmpty())
+            {
+                if (cond.PageInfo.SortName == "ApproveTypeString") cond.PageInfo.SortName = "ApproveType";
+
+                sb.AppendLine($"select ROW_NUMBER() OVER(order by {cond.PageInfo.SortName} {cond.PageInfo.SortOrder}) as rowNum");
+            }
+            else
+            {
+                sb.AppendLine("select ROW_NUMBER() OVER(order by Code) as rowNum");
+            }
+            sb.AppendLine(" ,*from(");
+
+            sb.AppendLine($"{baseQuery.strSql}");
+
+            sb.AppendLine(") a");
+            sb.AppendLine(")b where rowNum between @StartIndex and @EndIndex");
+
+            foreach (var item in baseQuery.ParamList)
+            {
+                SqlParameter p = (SqlParameter)item;
+                paramList.Add(new SqlParameter { ParameterName = p.ParameterName, Value = p.Value });
+            }
+
+            paramList.Add(new SqlParameter("@StartIndex", fromIndex));
+            paramList.Add(new SqlParameter("@EndIndex", toIndex));
+
+            var result = await baseRepository.GetPageListAsync<ProductSummary>(sb.ToString(), paramList.ToArray());
+            return result;
         }
 
         public PageData<Product> SearchRelatedProduct(RelatedProductCond cond)
@@ -287,17 +336,21 @@
 
         }
 
-
-
         private QueryParam GenBaseQuery(ProdSearchCond cond)
         {
             StringBuilder sb = new StringBuilder();           
             List<SqlParameter> paramList = new List<SqlParameter>();
 
-            string tranIdSql = "";
+            var nameList = string.Empty;          
+            var keywordList = string.Empty;
+
             if (!string.IsNullOrEmpty(cond.Key))
             {
-                tranIdSql = GetProductTranIdSQL(cond, paramList);
+                var tranIds = GetFrontProductTranIds(cond);
+                var keywordTranIds = GetFrontProductSeoTranIds(cond);
+              
+                nameList = string.Join("','", tranIds);
+                keywordList = string.Join("','", keywordTranIds);
             }
 
             sb.AppendLine(" select  p.Id as ProductId, p.Status as ApproveType, p.CatalogId as CatalogId, ISNULL(ct.Value, '') as CatalogName, p.Code,p.CreateDate, p.CurrencyCode");
@@ -315,26 +368,17 @@
             {
                 sb.AppendLine(" left join ProductAttrValues v on v.ProdAttrId = a.Id");
             }
-            sb.AppendLine(" left join Translations t on t.TransId = p.NameTransId and t.Lang = @lang");
-            //if (!string.IsNullOrEmpty(cond.Key))
-            //{
-            //    sb.AppendLine(" left join Translations t on t.TransId = p.NameTransId");
-            //}
+            sb.AppendLine(" left join Translations t on t.TransId = p.NameTransId and t.Lang = @lang");        
             sb.AppendLine(" join ProductCatalogs c on c.Id = p.CatalogId");
             sb.AppendLine(" left join Translations ct on ct.TransId = c.NameTransId and ct.Lang = @lang");
             sb.AppendLine(" join ProductExtensions  e on e.Id = p.Id");
             sb.AppendLine(" join ProductSpecifications ps on ps.Id = p.Id");
             sb.AppendLine(" join Merchants m on m.Id = p.MerchantId");
             sb.AppendLine(" left join Translations mt on mt.TransId = m.NameTransId and mt.Lang = @lang");
-            if (!string.IsNullOrEmpty(cond.Key))
-            {
-                sb.AppendLine(" inner join (");
-                sb.AppendLine(tranIdSql);
-                sb.AppendLine(" ) pt  on pt.NameTransId = p.NameTransId");
-            }
+    
             sb.AppendLine(" where 1 = 1");
-            //sb.AppendLine(" and p.IsDeleted = 0 and p.IsActive=1");
-            //sb.AppendLine(" and p.ClientId = @client");
+
+            #region 
 
             if (cond.IsActive != -1)
             {
@@ -394,6 +438,43 @@
                 paramList.Add(new SqlParameter("@IspType", CurrentUser.IspType));
             }
 
+            #endregion
+
+            #region 关键字查
+
+            if (!string.IsNullOrEmpty(cond.Key))
+            {
+                if (!string.IsNullOrEmpty(nameList) && !string.IsNullOrEmpty(keywordList))
+                {
+                    sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.KeyWordTransId in ('{1}') or p.Code like @Key)", nameList, keywordList);
+                }
+                else if (!string.IsNullOrEmpty(nameList))
+                {
+                    sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.Code like @Key)", nameList);
+                }
+                else if (!string.IsNullOrEmpty(keywordList))
+                {
+                    sb.AppendFormat(" and (p.KeyWordTransId in ('{0}') or p.Code like @Key)", keywordList);
+                }
+                else
+                {
+                    sb.AppendLine(" and p.Code like @Key");
+                }
+                paramList.Add(new SqlParameter("@Key", "%" + cond.Key.Trim() + "%"));
+
+            }
+
+            #endregion
+
+            #region 价格范围区间
+            if (cond.Prices?.Count == 2)
+            {
+                sb.AppendLine(" and ((p.SalePrice >=@price1 and p.SalePrice<=@price2))");
+                paramList.Add(new SqlParameter("@price1", cond.Prices[0]));
+                paramList.Add(new SqlParameter("@price2", cond.Prices[1]));
+            }
+            #endregion
+
             switch (cond.ProductSearchType)
             {
                 case ProductSearchType.AllProduct:
@@ -419,57 +500,121 @@
             return result;
         }
 
-        private string GetProductTranIdSQL(ProdSearchCond cond, List<SqlParameter> paramList)
+        private List<Guid> GetFrontProductTranIds(ProdSearchCond cond)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(" select distinct ap.NameTransId from Products ap");
-            sb.Append(" left join Translations pt on pt.TransId = ap.NameTransId");
-            sb.Append(" where 1=1");
+            var query = (from p in baseRepository.GetList<Product>()
+                         join t in baseRepository.GetList<Translation>() on p.NameTransId equals t.TransId into tc
+                         //join m in baseRepository.GetList<Merchant>() on p.MerchantId equals m.Id
+                         from tt in tc.DefaultIfEmpty()
+                         where p.Status == ProductStatus.OnSale
+                        // && m.IsActive && m.IsDeleted == false
+                         select new
+                         {
+                             Product = p,
+                             Trans = tt
+                         });
             if (cond.IsActive != -1)
             {
-                sb.AppendLine(" and ap.IsActive=@IsActive ");
-            }
-            if (cond.IsDeleted != -1)
-            {
-                sb.AppendLine(" and ap.IsDeleted = @IsDeleted ");
+                var isActive = cond.IsActive == 1 ? true : false;
+                query = query.Where(p => p.Product.IsActive == isActive);
             }
 
-            if (CurrentUser.IsMerchant)
+            if (cond.IsDeleted != -1)
             {
-                sb.AppendLine(" and ap.MerchantId = @MerchId");
+                var isDeleted = cond.IsDeleted == 1 ? true : false;
+                query = query.Where(p => p.Product.IsDeleted == isDeleted);
+            }
+
+            if (CurrentUser.IsMerchant == true)
+            {
+                query = query.Where(p => p.Product.MerchantId == CurrentUser.MerchantId);
             }
 
             if (cond.MerchantId != Guid.Empty)
             {
-                sb.AppendLine(" and ap.MerchantId = @MerchId");
+                query = query.Where(p => p.Product.MerchantId == cond.MerchantId);
             }
             if (!string.IsNullOrEmpty(cond.ProductCode))
             {
-                sb.AppendLine(" and ap.Code like @ProductCode ");
+                query = query.Where(p => p.Product.Code.Contains(cond.ProductCode.Trim()));
             }
 
             if (!string.IsNullOrEmpty(cond.KeyWordType) && cond.KeyWordType != "-1")
             {
                 if (cond.KeyWordType == "0")
                 {
-                    //query = query.Where(p => p.Trans.Value == cond.Key.Trim());
-                    sb.AppendLine(" and pt.Value = @Key");
-                    paramList.Add(new SqlParameter("@Key", cond.Key.Trim()));
+                    query = query.Where(p => p.Trans.Value == cond.Key.Trim());
                 }
                 else
                 {
-                    sb.AppendLine(" and pt.Value  like @Key");
-                    paramList.Add(new SqlParameter("@Key", "%" + cond.Key.Trim() + "%"));
+                    query = query.Where(p => p.Trans.Value.Contains(cond.Key.Trim()));
 
                 }
             }
             else
             {
-                sb.AppendLine(" and pt.Value  like @Key");
-                paramList.Add(new SqlParameter("@Key", "%" + cond.Key.Trim() + "%"));
+                query = query.Where(p => p.Trans.Value.Contains(cond.Key.Trim()));
             }
 
-            return sb.ToString();
+            return query.Select(d => d.Product.NameTransId).Distinct().ToList();
+        }
+        private List<Guid> GetFrontProductSeoTranIds(ProdSearchCond cond)
+        {
+            var query = (from p in baseRepository.GetList<Product>()
+                         join t in baseRepository.GetList<Translation>() on p.KeyWordTransId equals t.TransId into tc
+                         //join m in baseRepository.GetList<Merchant>() on p.MerchantId equals m.Id
+                         from tt in tc.DefaultIfEmpty()
+                         where p.Status == ProductStatus.OnSale
+                         //&& m.IsActive && m.IsDeleted == false
+                         select new
+                         {
+                             Product = p,
+                             Trans = tt
+                         });
+            if (cond.IsActive != -1)
+            {
+                var isActive = cond.IsActive == 1 ? true : false;
+                query = query.Where(p => p.Product.IsActive == isActive);
+            }
+
+            if (cond.IsDeleted != -1)
+            {
+                var isDeleted = cond.IsDeleted == 1 ? true : false;
+                query = query.Where(p => p.Product.IsDeleted == isDeleted);
+            }
+
+            if (CurrentUser.IsMerchant == true)
+            {
+                query = query.Where(p => p.Product.MerchantId == CurrentUser.MerchantId);
+            }
+
+            if (cond.MerchantId != Guid.Empty)
+            {
+                query = query.Where(p => p.Product.MerchantId == cond.MerchantId);
+            }
+            if (!string.IsNullOrEmpty(cond.ProductCode))
+            {
+                query = query.Where(p => p.Product.Code.Contains(cond.ProductCode.Trim()));
+            }
+
+            if (!string.IsNullOrEmpty(cond.KeyWordType) && cond.KeyWordType != "-1")
+            {
+                if (cond.KeyWordType == "0")
+                {
+                    query = query.Where(p => p.Trans.Value == cond.Key.Trim());
+                }
+                else
+                {
+                    query = query.Where(p => p.Trans.Value.Contains(cond.Key.Trim()));
+
+                }
+            }
+            else
+            {
+                query = query.Where(p => p.Trans.Value.Contains(cond.Key.Trim()));
+            }
+
+            return query.Select(d => d.Product.KeyWordTransId).Distinct().ToList();
         }
 
         private int GetProductCount(QueryParam baseQuery)

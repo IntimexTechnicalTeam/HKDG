@@ -246,5 +246,24 @@
         public DbSet<IspProvider> IspProviders { get; set; }
 
         public DbSet<SystemAnnouncement> SystemAnnouncements { get; set; }
+
+        public DbSet<ProductComment> ProductComments { get; set; }
+
+        public DbSet<ProductCommentImage> ProductCommentImages { get; set; }
+
+
+        public virtual DbSet<Emailer> Emailers { get; set; }
+        public virtual DbSet<EmailerMember> EmailerMembers { get; set; }
+        //public virtual DbSet<EmailerProduct> EmailerProducts { get; set; }
+
+        //public virtual DbSet<EmailerMailBox> EmailerMailBoxs { get; set; }
+
+        public virtual DbSet<EmailContent> EmailContents { get; set; }
+
+
+
+
+
+
     }
 }

@@ -10,6 +10,8 @@
 
         PageData<ProductSummary> Search(ProdSearchCond cond);
 
+        Task<PageData<ProductSummary>> SearchAsync(ProdSearchCond cond);
+
         PageData<Product> SearchRelatedProduct(RelatedProductCond cond);
 
         List<Product> GetRelatedProduct(Guid id);

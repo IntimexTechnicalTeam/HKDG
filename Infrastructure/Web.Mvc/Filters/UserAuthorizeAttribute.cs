@@ -56,7 +56,10 @@ namespace Web.Mvc
                         user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
 
                         if (user != null && user.ExpireDate >= DateTime.Now) authorization = user?.LoginSerialNO ?? "";
-                        else authorization = "";
+                        else  {
+                            context.HttpContext.Response.Cookies.Delete("access_token");
+                            context.HttpContext.Response.Redirect("/");
+                        }
 
                     }
                 }

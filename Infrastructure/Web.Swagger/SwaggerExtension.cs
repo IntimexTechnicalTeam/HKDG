@@ -60,7 +60,7 @@ namespace Web.Swagger
 
                 c.DocumentFilter<MvcControllerDescription>();//接口说明
 
-                c.SchemaFilter<SchemaFilter>();   //保证可以自定义实体参数的默认值
+               c.SchemaFilter<SchemaFilter>();   //保证可以自定义实体参数的默认值
             });
 
             return services;

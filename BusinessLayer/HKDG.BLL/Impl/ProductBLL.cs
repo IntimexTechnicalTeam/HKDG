@@ -1,8 +1,4 @@
-﻿using HKDG.Repository;
-using Model;
-using WebCache;
-
-namespace HKDG.BLL
+﻿namespace HKDG.BLL
 {
     public class ProductBLL : BaseBLL, IProductBLL
     {
@@ -155,6 +151,36 @@ namespace HKDG.BLL
         public PageData<ProductSummary> SearchProductList(ProdSearchCond cond)
         { 
             var result  = SearchBackEndProductSummary(cond);
+            return result;
+        }
+
+        public PageData<ProductSummary> SearchFrontProductSummary(ProdSearchCond cond)
+        {
+            var result = SearchBackEndProductSummary(cond);
+
+            foreach (var item in result.Data)
+            {
+                GetCornermarker(item);
+            }
+
+            CurrencyMoneyConversion(result.Data);
+            MatchEventCode(result.Data);
+
+            return result;
+        }
+
+        public async Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond)
+        {
+            var result = await productRepository.SearchAsync(cond);
+
+            foreach (var item in result.Data)
+            {
+                GetCornermarker(item);
+            }
+
+            CurrencyMoneyConversion(result.Data);
+            MatchEventCode(result.Data);
+
             return result;
         }
 
@@ -3532,5 +3558,14 @@ namespace HKDG.BLL
             return mark;
         }
 
+        protected void MatchEventCode(List<ProductSummary> products)
+        {
+        
+            var pKey = $"{PreHotType.Hot_Products}_{CurrentUser.Language}";
+            foreach (var item in products)
+            {
+                item.ProductIcons = RedisHelper.HGet<HotProduct>(pKey, item.Code)?.ProductIcons?.ToList();
+            }
+        }
     }
 }

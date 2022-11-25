@@ -278,7 +278,7 @@ namespace Web.Mvc
 
         }
 
-        async Task InitLastNotice()
+       public async Task InitLastNotice()
         {
             var data = await interactMessageBLL.GetLatesNoticeAsync();
             SetViewData("LatesNotice", data);

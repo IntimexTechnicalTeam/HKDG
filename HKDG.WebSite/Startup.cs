@@ -88,7 +88,7 @@ namespace HKDG.WebSite
             app.ConfigureSwagger();
 
             app.UseMiddleware<GlobalErrorHandlingMiddleware>();         //全局异常处理
-            //app.UseMiddleware<JwtAuthenticationMiddleware>();
+            //app.UseMiddleware<RequestMiddleWare>();
 
             app.UseHttpsRedirection();      //开启HTTPS重定向
 

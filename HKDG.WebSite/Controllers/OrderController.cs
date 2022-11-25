@@ -10,9 +10,9 @@ namespace HKDG.WebSite.Controllers
 
         }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> List()
-        {            
+        public async Task<IActionResult> List(string IspType)
+        {
+            await InitViewPage(IspType);
             return GetActionResult("List");
         }
     }
