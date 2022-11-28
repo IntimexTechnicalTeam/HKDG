@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using Web.Framework;
@@ -79,26 +80,38 @@ namespace Web.Mvc
                 context.HttpContext.Request.Headers.Add("Authorization", $"Bearer {authorization}");
             }
 
-            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
-
-            if (!await BaseAuthority.CheckMemeberToken(context, next, mUser))
+            authorization = authorization.Replace("Bearer", "").Trim();
+            
+            if (!await BaseAuthority.CheckMemeberToken(context, next, authorization))
             {
                 context.HttpContext.Response.Cookies.Delete("access_token");
                 context.HttpContext.Response.Redirect("/");
+                return;
             }
-            else
+            //else
             {
-                logger.LogInformation($"{mUser.UserId}鉴权通过");
-                var option = new CookieOptions { HttpOnly = true };
-                context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
-
-                ////鉴权通过刷新过期时间
-                mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
-                await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
-
-                logger.LogInformation($"{mUser.UserId}刷新过期时间");
+                await RefreashToken(context, authorization);
                 await next();
             }
         }
+
+        /// <summary>
+        /// 鉴权通过，刷新会员token过期时间
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="authorization"></param>
+        /// <returns></returns>
+        async Task RefreashToken(ActionExecutingContext context,string authorization)
+        {
+            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
+            logger.LogInformation($"{mUser.UserId}鉴权通过");
+            var option = new CookieOptions { HttpOnly = true, Secure = true };
+            context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
+
+            ////鉴权通过刷新过期时间
+            mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
+            logger.LogInformation($"{mUser.UserId}刷新过期时间");
+        }     
     }
 }

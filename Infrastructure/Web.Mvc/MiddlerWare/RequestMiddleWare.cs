@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Web.Framework;
 
 namespace Web.Mvc
 {
@@ -32,7 +33,7 @@ namespace Web.Mvc
             var ispType = context.Request.Query["IspType"];
             var access_token = context.Request.Query["para2"];
             if (!ispType.IsNullOrEmpty())
-            {               
+            {
                 //var option = new CookieOptions { HttpOnly = true };
                 //context.Response.Cookies.Delete("access_token");
                 //context.Response.Cookies.Append("access_token", access_token, option);
@@ -40,6 +41,11 @@ namespace Web.Mvc
                 //                .Replace("&para2=","").Replace(access_token,"");
 
                 //context.Response.Redirect(returnUrl);
+
+                if (ispType != Globals.Configuration["IspType"])
+                {
+                    throw new BLException($"IspType参数错误{ispType}");
+                }
             }
 
             await this._next(context);

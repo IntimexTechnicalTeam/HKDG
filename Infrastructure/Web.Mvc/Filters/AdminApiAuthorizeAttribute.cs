@@ -40,8 +40,10 @@ namespace Web.Mvc
             {
                 context.HttpContext.Response.Cookies.Delete("access_token");
                 context.HttpContext.Response.Redirect("/Accont/Login");
+                return;
             }
-            else
+
+            //else
             {
                 var flag = await this.CheckActionAsync(context);
                 if (!flag)

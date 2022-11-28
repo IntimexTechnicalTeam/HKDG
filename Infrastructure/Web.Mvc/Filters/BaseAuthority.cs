@@ -110,7 +110,7 @@ namespace Web.Mvc
         /// <param name="next"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next, CurrentUser mUser)
+        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next,string token)
         {
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             var Configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
@@ -120,28 +120,29 @@ namespace Web.Mvc
             bool isAnonymous = attributes.Any(p => p.Filter is AllowAnonymousFilter);//匿名标识 无需验证
             if (isAnonymous)
             {
-                await next();
+                //await next();
                 flag = true;
                 return flag;
             }
 
+            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", token);
             if (mUser == null)
             {
-                await next();
+                //await next();
                 flag = false;
                 return flag;
             }
             
             if (mUser.LoginType < LoginType.Member)
             {
-                await next();
+               /// await next();
                 flag = false;
                 return flag;
             }
 
             if (mUser.ExpireDate < DateTime.Now)
             {
-                await next();
+                //await next();
                 flag = false;
                 return flag;
             }
