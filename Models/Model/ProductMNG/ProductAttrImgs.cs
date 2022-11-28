@@ -40,7 +40,7 @@
         /// <summary>
         /// 图片集合
         /// </summary>
-        public List<string> ImageItems { get; set; }
+        public List<string> ImageItems { get; set; } = new List<string>();
 
     }
 }

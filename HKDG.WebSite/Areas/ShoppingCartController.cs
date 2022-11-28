@@ -1,7 +1,9 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using Web.Mvc.Filters;
+
+namespace HKDG.WebSite.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [LoginAuthorize]
     public class ShoppingCartController : BaseApiController
     {
         public IShoppingCartBLL shoppingCartBLL;

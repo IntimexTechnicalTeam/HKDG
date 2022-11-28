@@ -3,6 +3,7 @@ using Intimex.Utility;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using Web.Jwt;
+using Web.Mvc.Filters;
 
 namespace HKDG.WebSite.Areas
 {
@@ -22,7 +23,7 @@ namespace HKDG.WebSite.Areas
         /// </summary>
         /// <param name="pager"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [LoginAuthorizeAttribute]
         [HttpPost("GetProductComments")]
         public async Task<SystemResult<List<ProductCommentDto>>> GetProductComments ([FromForm] SearchCommentsInfo cond)
         {

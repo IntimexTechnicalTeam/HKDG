@@ -170,6 +170,9 @@ namespace HKDG.BLL
             string key = CacheKey.Favorite.ToString();
             string field = CurrentUser.UserId;
             var cacheData = await RedisHelper.HGetAsync<Favorite>(key, field);
+
+            if (cacheData == null) cacheData = new Favorite();
+
             cacheData.MchList.Add(mch.Id);
             await RedisHelper.HSetAsync(key, field, cacheData);
 
@@ -230,6 +233,9 @@ namespace HKDG.BLL
             string key = CacheKey.Favorite.ToString();
             string field = CurrentUser.UserId;
             var cacheData = await RedisHelper.HGetAsync<Favorite>(key, field);
+
+            if (cacheData == null)  cacheData = new Favorite();
+
             cacheData.ProductList.Add(product.Code);
             await RedisHelper.HSetAsync(key, field, cacheData);
 

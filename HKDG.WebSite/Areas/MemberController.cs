@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Model;
 using Web.Jwt;
+using Web.Mvc.Filters;
 using WebCache;
 
 namespace HKDG.WebSite.Areas
@@ -70,6 +71,7 @@ namespace HKDG.WebSite.Areas
         /// 获取登录后的会员数据
         /// </summary>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpGet("GetMemberInfo")]
         [ProducesResponseType(typeof(SystemResult<MemberItem>), 200)]
         public async Task<SystemResult<MemberItem>> GetMemberInfo()
@@ -89,6 +91,7 @@ namespace HKDG.WebSite.Areas
         /// 获取登录后的会员数据
         /// </summary>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpGet("getProfile")]
         [ProducesResponseType(typeof(SystemResult<RegInfoView>), 200)]
         public async Task<SystemResult<RegInfoView>> GetProfile()
@@ -114,6 +117,7 @@ namespace HKDG.WebSite.Areas
         /// 添加商家到收藏列表
         /// </summary>
         /// <param name="merchCode">商家編號</param>
+        [LoginAuthorize]
         [HttpGet("AddFavMerchant")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> AddFavMerchant(string merchCode)
@@ -126,6 +130,7 @@ namespace HKDG.WebSite.Areas
         /// 從收藏列表移除商家
         /// </summary>
         /// <param name="merchCode">商家編號</param>
+        [LoginAuthorize]
         [HttpGet("RemoveFavMerchant")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> RemoveFavMerchant(string merchCode)
@@ -138,6 +143,7 @@ namespace HKDG.WebSite.Areas
         /// 添加产品到收藏列表
         /// </summary>
         /// <param name="productId">產品ID</param>
+        [LoginAuthorize]
         [HttpGet("AddFavorite")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> AddFavProduct(Guid productId)
@@ -150,6 +156,7 @@ namespace HKDG.WebSite.Areas
         /// 從收藏列表移除产品
         /// </summary>
         /// <param name="productId">產品ID</param>
+        [LoginAuthorize]
         [HttpGet("RemoveFavorite")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> RemoveFavProduct(Guid productId)
@@ -164,6 +171,7 @@ namespace HKDG.WebSite.Areas
         /// <param name="oldpwd">旧密码</param>
         /// <param name="newpwd">新密码</param>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpGet("UpdatePassword")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> UpdatePassword(string oldpwd, string newpwd)
@@ -177,6 +185,7 @@ namespace HKDG.WebSite.Areas
         /// </summary>
         /// <param name="cond"></param>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpPost("GetFavMerchants")]
         [ProducesResponseType(typeof(SystemResult<PageData<MicroMerchant>>), 200)]
         public async Task<SystemResult<PageData<MicroMerchant>>> MyFavMerchant([FromForm] FavoriteCond cond)
@@ -191,6 +200,7 @@ namespace HKDG.WebSite.Areas
         /// </summary>
         /// <param name="cond"></param>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpPost("GetFavorite")]
         [ProducesResponseType(typeof(SystemResult<PageData<ProductSummary>>), 200)]
         public async Task<SystemResult<PageData<ProductSummary>>> MyFavProduct([FromForm] FavoriteCond cond)

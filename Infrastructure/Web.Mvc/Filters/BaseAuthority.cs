@@ -135,7 +135,7 @@ namespace Web.Mvc
             
             if (mUser.LoginType < LoginType.Member)
             {
-               /// await next();
+               //await next();
                 flag = false;
                 return flag;
             }
@@ -166,28 +166,28 @@ namespace Web.Mvc
             bool isAnonymous = attributes.Any(p => p.Filter is AllowAnonymousFilter);//匿名标识 无需验证
             if (isAnonymous)
             {
-                await next();
+                //await next();
                 flag = true;
                 return flag;
             }
 
             if (mUser == null)
             {
-                await next();
+                //await next();
                 flag = false;
                 return flag;
             }
 
             if (mUser.LoginType >= LoginType.Member)
             {
-                await next();
+                //await next();
                 flag = false;
                 return flag;
             }
 
             if (mUser.ExpireDate < DateTime.Now)
             {
-                await next();
+                //await next();
                 flag = false;
                 return flag;
             }

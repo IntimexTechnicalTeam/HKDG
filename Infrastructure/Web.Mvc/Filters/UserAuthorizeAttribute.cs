@@ -42,9 +42,8 @@ namespace Web.Mvc
         {
             logger = context.HttpContext.RequestServices.GetService<ILoggerFactory>().CreateLogger(typeof(UserAuthorizeAttribute));
             var configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
-            var authorization = context.HttpContext.Request.Headers["Authorization"].ToString();
+            var authorization = context.HttpContext.GetRequestHeader("Authorization");
 
-            var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             CurrentUser user = null;
             if (authorization.IsEmpty())
             {
@@ -58,7 +57,7 @@ namespace Web.Mvc
 
                         if (user != null && user.ExpireDate >= DateTime.Now) authorization = user?.LoginSerialNO ?? "";
                         else  {
-                            context.HttpContext.Response.Cookies.Delete("access_token");
+                            context.HttpContext.DeleteCookie("access_token");
                             context.HttpContext.Response.Redirect("/");
                         }
 
@@ -73,25 +72,24 @@ namespace Web.Mvc
                     logger.LogInformation($"call {url}前");
                     var tokenResult = await RestClientHelper.HttpGetAsync<SystemResult<ClientToken>>(url, null, AuthorizationType.Bearer);
                     authorization = tokenResult.ReturnValue.Token;
-                    logger.LogInformation($"call {url}后生成token{authorization}");
+                    logger.LogInformation($"call {url}后生成token:{authorization}");
                 }
 
-                context.HttpContext.Request.Headers.Remove("Authorization");
-                context.HttpContext.Request.Headers.Add("Authorization", $"Bearer {authorization}");
+                context.HttpContext.SetRequestHeader("Authorization", $"Bearer {authorization}");               
             }
 
-            authorization = authorization.Replace("Bearer", "").Trim();
-            
+            authorization = authorization.Replace("Bearer", "").Trim();           
             if (!await BaseAuthority.CheckMemeberToken(context, next, authorization))
             {
-                context.HttpContext.Response.Cookies.Delete("access_token");
+                logger.LogInformation($"token:{ authorization }过期，重定向到首页");
+                context.HttpContext.DeleteCookie("access_token");
                 context.HttpContext.Response.Redirect("/");
                 return;
             }
             //else
             {
                 await RefreashToken(context, authorization);
-                await next();
+                await next();                
             }
         }
 
@@ -104,14 +102,14 @@ namespace Web.Mvc
         async Task RefreashToken(ActionExecutingContext context,string authorization)
         {
             var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
-            logger.LogInformation($"{mUser.UserId}鉴权通过");
-            var option = new CookieOptions { HttpOnly = true, Secure = true };
-            context.HttpContext.Response.Cookies.Append("access_token", authorization, option);
+            logger.LogInformation($"{mUser.LoginSerialNO}鉴权通过");
+         
+            context.HttpContext.SetCookie("access_token", authorization);
 
             ////鉴权通过刷新过期时间
             mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
             await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
-            logger.LogInformation($"{mUser.UserId}刷新过期时间");
+            logger.LogInformation($"{mUser.LoginSerialNO}刷新过期时间");
         }     
     }
 }

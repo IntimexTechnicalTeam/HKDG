@@ -38,7 +38,7 @@ namespace Web.Mvc
             var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
             if (!await BaseAuthority.CheckUserToken(context, next, mUser))
             {
-                context.HttpContext.Response.Cookies.Delete("access_token");
+                context.HttpContext.DeleteCookie("access_token");
                 context.HttpContext.Response.Redirect("/Accont/Login");
                 return;
             }

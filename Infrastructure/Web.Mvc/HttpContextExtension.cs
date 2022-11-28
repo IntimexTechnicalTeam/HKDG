@@ -169,6 +169,49 @@ namespace Microsoft.AspNetCore.Http
             httpContext.Response.Body.Flush();
         }
 
-       
+        /// <summary>
+        /// 设置Cookie
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="key"></param>
+        /// <param name="name"></param>
+        /// <param name="httpOnly"></param>
+        public static void SetCookie(this HttpContext httpContext, string key, string name ,bool httpOnly =true)
+        {
+            var option = new CookieOptions { HttpOnly = httpOnly };
+            httpContext.DeleteCookie(key);
+            httpContext.Response.Cookies.Append(key,name,option);
+        }
+
+        /// <summary>
+        /// 删除Cookie
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="key"></param>
+        public static void DeleteCookie(this HttpContext httpContext, string key)
+        {
+            httpContext.Response.Cookies.Delete(key);
+        }
+
+        /// <summary>
+        /// 设置请求头
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void SetRequestHeader(this HttpContext httpContext, string key, string value)
+        {
+            httpContext.Request.Headers.Remove(key);
+            httpContext.Request.Headers.Add(key, value);    
+        }
+
+        /// <summary>
+        /// 获取请求头
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static string GetRequestHeader(this HttpContext httpContext, string key) => httpContext.Request.Headers[key].ToString() ?? "";
+     
     }
 }

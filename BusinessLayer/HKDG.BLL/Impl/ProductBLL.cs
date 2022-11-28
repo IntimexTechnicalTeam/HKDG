@@ -1089,7 +1089,7 @@
             view.CreateDate = product.CreateDate;
             GetCornermarkerV3(view);
 
-            view.ProdAttrImgs = await GetProductAdditionalImagesV2(view.Id, product.DefaultImageId, product.Code);
+            view.ProdAttrImgs = await GetProductAdditionalImagesV2(view.Id, product.DefaultImageId, product.Code);          
             return view;
         }
 
@@ -1278,7 +1278,7 @@
 
                             foreach (var item in dbAdditionImages)
                             {
-                                var addiImageItems = item.ImageItems.OrderBy(o => o.Type).ToList();
+                                var addiImageItems =baseRepository.GetList<ProductImageList>(x=>x.ImageID == item.Id).OrderBy(o => o.Type).ToList();
 
                                 if (addiImageItems != null)
                                 {
@@ -3137,8 +3137,6 @@
             List<ProductAttrImgs> result = new List<ProductAttrImgs>();
             try
             {
-
-
                 var cacheKey = $"{CacheKey.ProductSku}";
                 var ProductSkuLists = await RedisHelper.HGetAsync<List<ProductSku>>(cacheKey, ProductCode);
                 if (!ProductSkuLists?.Any() ?? true)
@@ -3237,10 +3235,8 @@
                     attrImg.ProductId = Img.ProductId;
                     attrImg.ProductCode = ProductCode;
 
-                    attrImg.ImageItems = new List<string>();
-
-                    var addiImageItems = Img.ImageItems.OrderBy(d => d.Type).ToList();
-
+                    //var addiImageItems = Img.ImageItems?.OrderBy(d => d.Type).ToList() ?? new List<ProductImageList>();
+                    var addiImageItems = baseRepository.GetList<ProductImageList>(x=>x.ImageID == Img.Id)?.OrderBy(d => d.Type)?.ToList() ?? new List<ProductImageList>();
                     foreach (var item2 in addiImageItems)
                     {
                         attrImg.ImageItems.Add(fileServer + item2.Path);
@@ -3554,5 +3550,6 @@
                 item.ProductIcons = RedisHelper.HGet<HotProduct>(pKey, item.Code)?.ProductIcons?.ToList();
             }
         }
+
     }
 }

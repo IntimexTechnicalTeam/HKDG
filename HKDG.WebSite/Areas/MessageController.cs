@@ -1,4 +1,6 @@
-﻿namespace HKDG.WebSite.Areas
+﻿using Web.Mvc.Filters;
+
+namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,6 +16,7 @@
         /// 獲取當前會員的消息列表
         /// </summary>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpPost("GetMessage")]
         public async Task<SystemResult<PageData<MessageFrontView>>> GetMessage([FromForm]PageInfo pager)
         {

@@ -1,4 +1,6 @@
-﻿namespace HKDG.WebSite.Areas
+﻿using Web.Mvc.Filters;
+
+namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,6 +16,7 @@
         /// 獲取mallfun
         /// </summary>
         /// <returns></returns>
+        [LoginAuthorize]
         [HttpPost("GetMessage")]
         public async Task<SystemResult<PageData<CouponInfo>>> GetMemberCoupon([FromForm] CouponPager pager)
         {

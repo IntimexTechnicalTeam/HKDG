@@ -38,8 +38,7 @@
                 string key = $"{CacheKey.CurrentUser}";
                 await RedisHelper.HSetAsync(key, userInfo.LoginSerialNO, userInfo);
 
-                var option = new CookieOptions { HttpOnly=true, Secure = true };
-                HttpContext.Response.Cookies.Append("access_token",userInfo.LoginSerialNO,option);
+                HttpContext.SetCookie("access_token", userInfo.LoginSerialNO);
 
                 result.Succeeded = true;
                 result.ReturnValue = userInfo.LoginSerialNO;

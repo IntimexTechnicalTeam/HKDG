@@ -1,4 +1,5 @@
-﻿using WebCache;
+﻿using Web.Mvc.Filters;
+using WebCache;
 
 namespace HKDG.WebSite.Areas
 {
@@ -19,6 +20,7 @@ namespace HKDG.WebSite.Areas
         /// <param name="checkout"></param>
         /// <returns></returns>
         /// <exception cref="BLException"></exception>
+        [LoginAuthorize]
         [HttpPost("Create")]
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> Create([FromForm] NewOrder checkout)
