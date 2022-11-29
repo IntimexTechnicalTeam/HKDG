@@ -77,3 +77,4 @@
 /HKDG/bin
 /HKDG.WebApi/bin
 
+/BusinessLayer/HKDG.BLL/Impl/ArrivalNotifyBLL.cs
