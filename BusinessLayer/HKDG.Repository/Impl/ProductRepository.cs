@@ -116,6 +116,7 @@ namespace HKDG.Repository
             if (!cond.PageInfo.SortName.IsEmpty())
             {
                 if (cond.PageInfo.SortName == "ApproveTypeString") cond.PageInfo.SortName = "ApproveType";
+                if (cond.PageInfo.SortName == "UpdateDateString") cond.PageInfo.SortName = "UpdateDate";
 
                 sb.AppendLine($"select ROW_NUMBER() OVER(order by {cond.PageInfo.SortName} {cond.PageInfo.SortOrder}) as rowNum");
             }
@@ -349,8 +350,8 @@ namespace HKDG.Repository
                 var tranIds = GetFrontProductTranIds(cond);
                 var keywordTranIds = GetFrontProductSeoTranIds(cond);
               
-                nameList = string.Join("','", tranIds);
-                keywordList = string.Join("','", keywordTranIds);
+                nameList = string.Join(",", tranIds);
+                keywordList = string.Join(",", keywordTranIds);
             }
 
             sb.AppendLine(" select  p.Id as ProductId, p.Status as ApproveType, p.CatalogId as CatalogId, ISNULL(ct.Value, '') as CatalogName, p.Code,p.CreateDate, p.CurrencyCode");
@@ -446,15 +447,18 @@ namespace HKDG.Repository
             {
                 if (!string.IsNullOrEmpty(nameList) && !string.IsNullOrEmpty(keywordList))
                 {
-                    sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.KeyWordTransId in ('{1}') or p.Code like @Key)", nameList, keywordList);
+                    //sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.KeyWordTransId in ('{1}') or p.Code like @Key)", nameList, keywordList);
+                    sb.AppendFormat(" and ( charindex(CONVERT(varchar(50),p.NameTransId),'{0}') >0 ",nameList);
+                    sb.AppendFormat("  or charindex(CONVERT(varchar(50),p.KeyWordTransId),'{0}') >0 ", keywordList);
+                    sb.Append("or p.Code like @Key )");
                 }
                 else if (!string.IsNullOrEmpty(nameList))
                 {
-                    sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.Code like @Key)", nameList);
+                    //sb.AppendFormat(" and (p.NameTransId in ('{0}') or p.Code like @Key)", nameList);
                 }
                 else if (!string.IsNullOrEmpty(keywordList))
                 {
-                    sb.AppendFormat(" and (p.KeyWordTransId in ('{0}') or p.Code like @Key)", keywordList);
+                    //sb.AppendFormat(" and (p.KeyWordTransId in ('{0}') or p.Code like @Key)", keywordList);
                 }
                 else
                 {

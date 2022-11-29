@@ -38,7 +38,7 @@ namespace HKDG.WebSite.Controllers
         /// <param name="Id">ProductCode</param>
         /// <returns></returns>
         [AllowAnonymous]
-        [ProductViewTrackFilter]
+        //[ProductViewTrackFilter]
         public async Task<IActionResult> Detail(string IspType, string Id)
         {
             await InitViewPage(IspType);

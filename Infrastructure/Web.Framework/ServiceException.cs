@@ -63,4 +63,17 @@
 
         }
     }
+
+    /// <summary>
+    /// 登录异常
+    /// </summary>
+    public class LoginException : Exception
+    {
+        public LoginException() { }
+
+        public LoginException(string message,string statecode) : base(message)
+        {
+
+        }
+    }
 }

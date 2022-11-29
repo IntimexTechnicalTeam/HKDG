@@ -32,5 +32,31 @@ namespace HKDG.WebSite.Areas
             result = await orderBLL.BuildOrder(checkout);            
             return result;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pager"></param>
+        /// <returns></returns>
+        [LoginAuthorize]
+        [HttpPost("SearchOrder")]
+        [ProducesResponseType(typeof(SystemResult<PageData<OrderSummaryView>>), 200)]
+        public async Task<SystemResult<PageData<OrderSummaryView>>> SearchOrder([FromForm]OrderPager pager)
+        {
+            var result = new SystemResult<PageData<OrderSummaryView>>();
+            var cond = new OrderCondition
+            {
+                PageInfo = pager,
+                MemberId = CurrentUser.Id,
+                StatusCode = pager.Status,
+                OrderBy = pager.OrderBy,
+                IsFront = true,
+            };
+
+            result.ReturnValue = await orderBLL.GetOrders(cond);
+            result.Succeeded = true;
+            return result;
+        }
+
     }
 }

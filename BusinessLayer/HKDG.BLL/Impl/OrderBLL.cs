@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using Model;
 
 namespace HKDG.BLL
 {
@@ -1299,7 +1301,7 @@ namespace HKDG.BLL
             var pm = paymentBLL.GetPaymentMenthod(order.PaymentMethodId);
             OrderSummaryView view = new OrderSummaryView();
             view.Id = order.Id;
-            view.OrderNo = order.OrderNO;
+            view.OrderNO = order.OrderNO;
             view.IsPay = order.IsPaid;       
             view.Currency = currencyBLL.GetSimpleCurrency(order.CurrencyCode);
             view.Status = order.Status;
@@ -2830,5 +2832,44 @@ namespace HKDG.BLL
             return result;
         }
 
+        public async Task<PageData<OrderSummaryView>> GetOrders(OrderCondition cond)
+        {
+            PageData<OrderSummaryView> result = new PageData<OrderSummaryView>();
+
+            var orders = orderRepository.GetOrderByPage(cond);
+
+            var orderStatusList = codeMasterBLL.GetCodeMasters(CodeMasterModule.System, CodeMasterFunction.OrderStatus);
+
+            foreach (var view in orders.Data)
+            {
+                var pm = paymentBLL.GetPaymentMenthod(view.PaymentMethodId);
+
+                view.PaymentMethod = pm?.Name ?? "";
+                view.PMCode = pm?.Code ?? "";
+                view.PMRate = pm?.ServRate ?? decimal.Zero;                
+                view.UpdateDateString = DateUtil.DateTimeToString(view.UpdateDate, "yyyy-MM-dd HH:mm:ss");
+                //view.StatusName = codeMasterBLL.GetCodeMaster(CodeMasterModule.System, CodeMasterFunction.OrderStatus, view.Status.ToString())?.Description ?? "";
+                view.Currency = currencyBLL.GetSimpleCurrency(view.CurrencyCode);
+
+                if (view.Status == OrderStatus.Processing)
+                {
+                    view.Status = OrderStatus.PaymentConfirmed;                   
+                }
+                else if (view.Status == OrderStatus.DeliveryArranged)
+                {
+                    view.Status = OrderStatus.PaymentConfirmed;               
+                }
+                else if (view.Status == OrderStatus.SCancelled || view.Status == OrderStatus.SRCancelled || view.Status == OrderStatus.ECancelled)
+                {
+                    view.Status = view.Status;                  
+                }
+                view.StatusName = orderStatusList.FirstOrDefault(x => x.Key == view.Status.ToString()).Description ?? "";
+            }
+
+            result.Data = orders.Data.OrderByDescending(d => d.CreateDate).ToList();
+            result.TotalRecord = orders.TotalRecord;
+            return result;
+
+        }
     }
 }

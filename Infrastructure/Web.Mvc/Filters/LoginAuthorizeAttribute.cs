@@ -36,8 +36,10 @@ namespace Web.Mvc.Filters
 
             if (!mUser.IsLogin)
             {
-                throw new BLException(HKDG.Resources.Message.PleaseLogin);
+                throw new LoginException(HKDG.Resources.Message.PleaseLogin,"403");
             }
+
+            await next();
         }
     }
 }

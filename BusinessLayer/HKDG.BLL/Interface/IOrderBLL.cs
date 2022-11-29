@@ -48,5 +48,7 @@
         void UpdateOrderStatusToECancel(OrderDto order, UpdateStatusCondition cond);
 
         PageData<MicroOrderView> MyOrder(MicroOrderCond orderCond);
+
+        Task<PageData<OrderSummaryView>> GetOrders(OrderCondition cond);
     }
 }

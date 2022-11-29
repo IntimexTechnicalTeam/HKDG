@@ -10,7 +10,7 @@
         /// <summary>
         /// 訂單編號
         /// </summary>
-        public string OrderNo { get; set; }
+        public string OrderNO { get; set; }
         /// <summary>
         /// 訂單的產品列表
         /// </summary>
@@ -78,5 +78,13 @@
         public DateTime? UpdateDate { get; set; }
 
         public string MemberName { get; set; }
+
+        public Guid MerchantId { get; set; }
+
+        public Guid MemberId { get; set; }
+
+        public string InvoiceNO { get; set; }
+
+        public string CurrencyCode { get; set; }
     }
 }

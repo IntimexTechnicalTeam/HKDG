@@ -23,7 +23,7 @@ namespace HKDG.WebSite.Areas
         /// </summary>
         /// <param name="pager"></param>
         /// <returns></returns>
-        [LoginAuthorizeAttribute]
+        [LoginAuthorize]
         [HttpPost("GetProductComments")]
         public async Task<SystemResult<List<ProductCommentDto>>> GetProductComments ([FromForm] SearchCommentsInfo cond)
         {

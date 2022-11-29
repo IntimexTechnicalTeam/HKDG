@@ -9,5 +9,7 @@
         /// </summary>
         /// <param name="order"></param>
         void UpdateOrderStatus(Order order);
+
+        PageData<OrderSummaryView> GetOrderByPage(OrderCondition cond);
     }
 }
