@@ -251,6 +251,7 @@
 
         public DbSet<ProductCommentImage> ProductCommentImages { get; set; }
 
+        public DbSet<CouponRule> CouponRules { get; set; }
 
         public virtual DbSet<Emailer> Emailers { get; set; }
         public virtual DbSet<EmailerMember> EmailerMembers { get; set; }

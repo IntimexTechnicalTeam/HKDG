@@ -255,6 +255,24 @@ namespace HKDG.BLL
                 view.IsActive = true;
             }
 
+            Favorite favoriteData = null;
+            if (CurrentUser.IsLogin)
+            {
+                string favKey = CacheKey.Favorite.ToString();
+                string favField = CurrentUser.UserId;
+                favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
+                //读数据库,回写缓存
+                if (favoriteData == null)
+                {
+                    favoriteData = await preHeatFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
+                    if (favoriteData != null)
+                    {
+                        await preHeatFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                    }
+                }
+            }
+
+            view.IsFavorite = favoriteData?.MchList?.Any(x => x == view.MerchantId) ?? false;
             return view;
         }
 

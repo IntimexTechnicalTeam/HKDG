@@ -33,9 +33,6 @@
         [Column(Order = 6)]
         public int Qty { get; set; }
 
-        [Column(Order = 8)]
-        public string Remark { get; set; }
-
         [Column(Order =9)]
         public Guid KolId { get; set; }
 

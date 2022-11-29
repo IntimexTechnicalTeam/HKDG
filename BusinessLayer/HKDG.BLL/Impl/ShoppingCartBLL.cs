@@ -499,8 +499,6 @@ namespace HKDG.BLL
         {
             var info = new MallCartInfo();
 
-            if (!CurrentUser.IsLogin) throw new BLException(Message.PleaseLogin);
-
             await DisableMallCartItem(CurrentUser.Id);
             double taxRate = SettingBLL.GetSalePriceTaxRate();
 
@@ -846,7 +844,7 @@ namespace HKDG.BLL
                     cond.ItemAmount = item.ItemAmount;
                     cond.ProductWeightInfo = item.ProductList.Select(x => new ProductWeightInfo { Code = x.ProductCode, Qty = x.BuyQty }).ToList();
 
-                    var result = DeliveryBLL.GetExpressChargeListByCode(cond);
+                    var result =await DeliveryBLL.GetExpressChargeListByCode(cond);
                     if (result.Succeeded)
                         item.ExpressChargeList = JsonUtil.JsonToObject<List<ExpressChargeInfo>>(result.ReturnValue.ToString());
                     //result.ReturnValue as List<ExpressChargeInfo>;

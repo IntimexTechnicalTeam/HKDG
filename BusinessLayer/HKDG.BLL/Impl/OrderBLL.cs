@@ -1005,7 +1005,7 @@ namespace HKDG.BLL
             foreach (var item in orderView.Items)
             {
                 int index = orderView.Items.IndexOf(item);
-                var address = deliveryAddressBLL.GetAddress(item.AddressId);
+                var address =await deliveryAddressBLL.GetAddress(item.AddressId);
 
                 var orderDelivery = new OrderDeliveryDto();
                 orderDelivery.Id = Guid.NewGuid();  //item.DeliveryId;           
@@ -2868,6 +2868,7 @@ namespace HKDG.BLL
 
             result.Data = orders.Data.OrderByDescending(d => d.CreateDate).ToList();
             result.TotalRecord = orders.TotalRecord;
+           
             return result;
 
         }

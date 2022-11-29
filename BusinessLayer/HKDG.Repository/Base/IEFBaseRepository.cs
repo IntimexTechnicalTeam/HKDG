@@ -111,7 +111,7 @@
 
         public abstract Task<IQueryable<T>> GetListAsync<T>(string sql, params object[] parameters) where T : class;
 
-        public abstract Task<IQueryable<T>> GetListAsync<T>(string sql, List<SqlParameter> parameters) where T : class;
+        public abstract Task<List<T>> GetListAsync<T>(string sql, List<SqlParameter> param) where T : class, new();
 
         #endregion
 
@@ -317,7 +317,7 @@
 
         Task<IQueryable<T>> GetListAsync<T>(string sql, params object[] parameters) where T : class;
 
-        Task<IQueryable<T>> GetListAsync<T>(string sql, List<SqlParameter> parameters) where T : class;
+        Task<List<T>> GetListAsync<T>(string sql, List<SqlParameter> param) where T : class,new();
 
         #endregion
 

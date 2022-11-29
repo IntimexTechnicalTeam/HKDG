@@ -5,14 +5,18 @@ namespace HKDG.BLL
     public class DeliveryAddressBLL : BaseBLL, IDeliveryAddressBLL
     {
         IDeliveryAddressRepository _deliveryAddressRepository;
+
+         static readonly Dictionary<int, List<ProvinceDto>> ProvinceList = new Dictionary<int, List<ProvinceDto>>();
+         static List<Country> CountryList;
+
         public DeliveryAddressBLL(IServiceProvider services) : base(services)
         {
             _deliveryAddressRepository = Services.Resolve<IDeliveryAddressRepository>();
         }
-        public SystemResult CreateAddress(DeliveryAddressDto deliveryInfo)
+
+        public async Task<SystemResult> CreateAddress(DeliveryAddressDto deliveryInfo)
         {
             SystemResult result = new SystemResult();
-
 
             if (string.IsNullOrEmpty(deliveryInfo.Email))
             {
@@ -23,7 +27,7 @@ namespace HKDG.BLL
                 deliveryInfo.Mobile = deliveryInfo.Phone;
             }
 
-            result = DeliveryAddressVerification(deliveryInfo);
+            result =await DeliveryAddressVerification(deliveryInfo);
             if (!result.Succeeded)
             {
                 return result;
@@ -43,33 +47,40 @@ namespace HKDG.BLL
             deliveryInfo.IsActive = true;
             deliveryInfo.IsDeleted = false;
 
+            var dbMobel = AutoMapperExt.MapTo<DeliveryAddress>(deliveryInfo);
             if (deliveryInfo.Default)
             {
-                _deliveryAddressRepository.UpdateOtherAddressNotDefault(Guid.Parse(CurrentUser.UserId));
+                await _deliveryAddressRepository.UpdateOtherAddressNotDefault(Guid.Parse(CurrentUser.UserId));
             }
-            var dbMobel = AutoMapperExt.MapTo<DeliveryAddress>(deliveryInfo);
-            baseRepository.Insert(dbMobel);
+            await baseRepository.InsertAsync(dbMobel);
 
             result.ReturnValue = dbMobel;
             result.Succeeded = true;
-            result.Message = HKDG.Resources.Message.SaveSuccess;
+            result.Message = Message.SaveSuccess;
 
             return result;
         }
 
-        public DeliveryAddressDto GetAddress(Guid id)
+        public async Task< DeliveryAddressDto> GetAddress(Guid id)
         {
-            DeliveryAddressDto result;
-
-            result = _deliveryAddressRepository.GetByKey(id);
+            var result = await _deliveryAddressRepository.GetByKey(id);
             return result;
         }
 
-        public List<DeliveryAddressDto> GetMemberAddress(Guid memberId)
+        public async Task<List<DeliveryAddressDto>> GetMemberAddress(Guid memberId)
         {
-            List<DeliveryAddressDto> result;
+            List<DeliveryAddressDto> result =await _deliveryAddressRepository.SearchAddress(memberId, true, false);
 
-            result = _deliveryAddressRepository.SearchAddress(memberId, true, false);
+            foreach (var item in result)
+            {
+                var dbCountry =await  baseRepository.GetModelAsync<Country>(x => x.Id == item.CountryId);
+                var dbProvince =await baseRepository.GetModelAsync<Province>(x => x.Id == item.ProvinceId);
+
+                var country = AutoMapperExt.MapTo<CountryDto>(dbCountry);
+                var province = AutoMapperExt.MapTo<ProvinceDto> (dbProvince);
+                item.CountryName = NameUtil.GetCountryName(CurrentUser.Lang.ToString(), country);
+                item.ProvinceName = NameUtil.GetProviceName(CurrentUser.Lang.ToString(), province);
+            }
 
             return result;
         }
@@ -104,14 +115,14 @@ namespace HKDG.BLL
         {
             throw new NotImplementedException();
         }
-        private static List<Country> CountryList;
-        public List<CountryDto> GetCountries()
+        
+        public async Task<List<CountryDto>> GetCountries()
         {
-
             var dtos = new List<CountryDto>();
             if (CountryList == null)
             {
-                CountryList = baseRepository.GetList<Country>().Where(d => d.IsActive == true && d.IsDeleted == false).OrderBy(o => o.Seq).ThenBy(t => t.Code).ToList();
+                CountryList = (await baseRepository.GetListAsync<Country>(d => d.IsActive && !d.IsDeleted)).ToList();
+                CountryList = CountryList.OrderBy(o => o.Seq).ThenBy(t => t.Code).ToList();
                 var model = AutoMapperExt.MapTo <List<CountryDto>>(CountryList);
                 foreach (var item in model)
                 {
@@ -119,7 +130,6 @@ namespace HKDG.BLL
                 }
             }
             dtos = AutoMapperExt.MapToList<Country, CountryDto>(CountryList);
-
             return dtos;
         }
 
@@ -128,16 +138,11 @@ namespace HKDG.BLL
             throw new NotImplementedException();
         }
 
-        private static readonly Dictionary<int, List<ProvinceDto>> ProvinceList = new Dictionary<int, List<ProvinceDto>>();
-        public List<ProvinceDto> GetProvinces(int countryId)
+        public async Task<List<ProvinceDto>> GetProvinces(int countryId)
         {
             List<ProvinceDto> dtoList = null;
             List<Province> list = null;
-            if (ProvinceList.Keys.Contains(countryId))
-            {
-                dtoList = ProvinceList[countryId];
-            }
-
+            if (ProvinceList.Keys.Contains(countryId)) dtoList = ProvinceList[countryId];
             if (dtoList != null)
             {
                 foreach (var item in dtoList)
@@ -146,13 +151,14 @@ namespace HKDG.BLL
                 }
                 return dtoList;
             }
+
             if (countryId == 0)
             {
-                list = baseRepository.GetList<Province>().Where(d => d.IsActive == true && d.IsDeleted == false).ToList();
+                list = (await baseRepository.GetListAsync<Province>(d => d.IsActive == true && d.IsDeleted == false)).ToList();
             }
             else
             {
-                list = baseRepository.GetList<Province>().Where(d => d.CountryId == countryId && d.IsActive == true && d.IsDeleted == false).ToList();
+                list = (await baseRepository.GetListAsync<Province>(d => d.CountryId == countryId && d.IsActive == true && d.IsDeleted == false)).ToList();
             }
 
             dtoList = AutoMapperExt.MapToList<Province, ProvinceDto>(list);
@@ -165,35 +171,32 @@ namespace HKDG.BLL
             return dtoList;
         }
 
-        public SystemResult RemoveAddress(Guid id)
+        public async Task<SystemResult> RemoveAddress(Guid id)
         {
             SystemResult result = new SystemResult();
 
             if (id == Guid.Empty)
             {
-                throw new BLException(HKDG.Resources.Message.IdEmpty);
+                throw new BLException(Message.IdEmpty);
             }
-            var data = _deliveryAddressRepository.GetByKey(id);
+            var data =await _deliveryAddressRepository.GetByKey(id);
             if (data == null)
             {
-                throw new BLException(HKDG.Resources.Message.RecordExist);
+                throw new BLException("not find");
             }
             data.IsDeleted = true;
-            _deliveryAddressRepository.Update(data);
+            await _deliveryAddressRepository.Update(data);
             result.Succeeded = true;
-            result.Message = HKDG.Resources.Message.DeleteSucceeded;
+            result.Message = Message.DeleteSucceeded;
 
             return result;
         }
 
-        public SystemResult UpdateAddress(DeliveryAddressDto deliveryInfo)
+        public async Task<SystemResult> UpdateAddress(DeliveryAddressDto deliveryInfo)
         {
             SystemResult result = new SystemResult();
 
-            if (deliveryInfo.Id == Guid.Empty)
-            {
-                throw new BLException(HKDG.Resources.Message.IdEmpty);
-            }
+            if (deliveryInfo.Id == Guid.Empty) throw new BLException(HKDG.Resources.Message.IdEmpty);
 
             if (string.IsNullOrEmpty(deliveryInfo.Email))
             {
@@ -204,23 +207,22 @@ namespace HKDG.BLL
                 deliveryInfo.Mobile = deliveryInfo.Phone;
             }
 
-            result = DeliveryAddressVerification(deliveryInfo);
+            result =await DeliveryAddressVerification(deliveryInfo);
             if (!result.Succeeded)
             {
                 return result;
             }
 
             deliveryInfo.MemberId = Guid.Parse(CurrentUser.UserId);
-
             if (deliveryInfo.Default)
             {
-                _deliveryAddressRepository.UpdateOtherAddressNotDefault(deliveryInfo.MemberId);
+                await _deliveryAddressRepository.UpdateOtherAddressNotDefault(deliveryInfo.MemberId);
             }
-
-            _deliveryAddressRepository.Update(deliveryInfo);
+          
+            await _deliveryAddressRepository.Update(deliveryInfo);
             result.ReturnValue = deliveryInfo;
             result.Succeeded = true;
-            result.Message = HKDG.Resources.Message.SaveSuccess;
+            result.Message =Message.SaveSuccess;
 
             return result;
         }
@@ -247,7 +249,7 @@ namespace HKDG.BLL
         /// 送貨地址資料數據校驗
         /// </summary>
         /// <param name="deliveryInfo">地址資料</param>
-        public SystemResult DeliveryAddressVerification(DeliveryAddressDto deliveryInfo)
+        public async Task<SystemResult> DeliveryAddressVerification(DeliveryAddressDto deliveryInfo)
         {
             var sysRslt = new SystemResult();
 
@@ -327,8 +329,8 @@ namespace HKDG.BLL
                     string postalCode = deliveryInfo.PostalCode;
 
                     //省份列表不為空時，必須指定省份
-                    var provinceList = GetProvinces(countryId);
-                    if (provinceList?.Count > 0 && provinceId <= 0)
+                    var provinceList =await GetProvinces(countryId);
+                    if (provinceList.Any() && provinceId <= 0)
                     {
                         //sysRslt.Message = "[" + Resources.Label.AddressDistrict + "] " + Resources.Message.FieldRequire;
                         sysRslt.Message = Resources.Message.EnterZipCode;

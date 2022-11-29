@@ -22,10 +22,7 @@ namespace HKDG.WebSite.Controllers
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> AddItem([FromForm] CartItem item)
         {
-            SystemResult result = new SystemResult { Succeeded = true };
-            result.Succeeded = CurrentUser?.IsLogin ?? false;
-            if (!result.Succeeded) throw new BLException("请登录");
-
+            SystemResult result = new SystemResult();
             result = await shoppingCartBLL.AddtoCartAsync(item);
             string key = $"{CacheKey.ShoppingCart}_{CurrentUser.UserId}";
             await RedisHelper.DelAsync(key);
@@ -41,8 +38,6 @@ namespace HKDG.WebSite.Controllers
         public async Task<SystemResult<MallCartInfo>> GetShopCartAsync()
         {
             var result = new SystemResult<MallCartInfo> { Succeeded = true };
-            result.Succeeded = CurrentUser?.IsLogin ?? false;
-            if (!result.Succeeded) throw new BLException("请登录");
 
             string key = $"{CacheKey.ShoppingCart}_{CurrentUser.UserId}";
             //读缓存
@@ -64,9 +59,7 @@ namespace HKDG.WebSite.Controllers
         [ProducesResponseType(typeof(SystemResult), 200)]
         public async Task<SystemResult> UpdateItemQty(Guid id, int qty)
         {
-            SystemResult result = new SystemResult();
-            result.Succeeded = CurrentUser?.IsLogin ?? false;
-            if (!result.Succeeded) throw new BLException("请登录");
+            SystemResult result = new SystemResult();          
             result = await shoppingCartBLL.UpdateCartItemAsync(id, qty);
 
             //直接删除
@@ -87,8 +80,6 @@ namespace HKDG.WebSite.Controllers
         {
             SystemResult result = new SystemResult();
 
-            result.Succeeded = CurrentUser?.IsLogin ?? false;
-            if (!result.Succeeded) throw new BLException("请登录");
             result = await shoppingCartBLL.RemoveFromCartAsyncV2(mallItem);
 
             //直接删除

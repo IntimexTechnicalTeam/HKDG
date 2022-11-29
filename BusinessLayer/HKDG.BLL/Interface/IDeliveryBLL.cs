@@ -258,7 +258,7 @@
         /// <param name="exCond">運費條件</param>
         /// <returns></returns>
         //List<ExpressChargeInfo> GetExpressCharge(ExpressCondition exCond);
-        SystemResult GetExpressCharge(ExpressCondition exCond);
+       Task<SystemResult> GetExpressCharge(ExpressCondition exCond);
         
 
         /// <summary>
@@ -286,6 +286,6 @@
         /// <returns></returns>
         Task<List<KeyValueAddress>> GetStorePickUpAddress(Guid MerchantId);
 
-        SystemResult GetExpressChargeListByCode(ExpressCondition exCond);
+        Task<SystemResult> GetExpressChargeListByCode(ExpressCondition exCond);
     }
 }

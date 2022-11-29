@@ -92,6 +92,7 @@ namespace Domain
             ConfigMap<ProductCommentImage, ProductCommentImageDto>();
 
             ConfigMap<HotProduct, Product>();
+            ConfigMap<ArrivalNotify, ArrivalNotifyDto>();
         }
 
         void ConfigMap<TSource, TDestination>()

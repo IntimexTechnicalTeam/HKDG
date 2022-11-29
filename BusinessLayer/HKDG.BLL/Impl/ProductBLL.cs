@@ -866,7 +866,6 @@
 
                 result.Data = list;
             }
-
             return result;
         }
 
@@ -3396,7 +3395,6 @@
             }
 
             CurrencyMoneyConversion(returnData.Data);
-
             return returnData;
 
         }

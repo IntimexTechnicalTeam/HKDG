@@ -377,10 +377,11 @@
             return result;
         }
 
-        public override async Task<IQueryable<T>> GetListAsync<T>(string sql, List<SqlParameter> parameters)
+        public override async Task<List<T>> GetListAsync<T>(string sql, List<SqlParameter> param)
         {
-            var result = await UnitWork.DataContext.Set<T>().FromSqlRaw(sql, parameters).ToArrayAsync();
-            return result.AsQueryable();
+            var pList = param.Select(s => new SqlParameter { Value = s.Value, ParameterName = s.ParameterName }).ToArray();
+            var result = await UnitWork.DataContext.Database.SqlQueryAsync<T>(sql, pList.ToArray());
+            return result;
         }
 
         /// <summary>

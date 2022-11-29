@@ -355,7 +355,7 @@ namespace HKDG.BLL
             return datas;
         }
 
-        public SystemResult GetExpressCharge(ExpressCondition exCond)
+        public async Task<SystemResult> GetExpressCharge(ExpressCondition exCond)
         {
             SystemResult result = new SystemResult();
 
@@ -376,7 +376,7 @@ namespace HKDG.BLL
                     totalWeight = 0.1M;
                 }
 
-                var mbrAddress = _deliveryAddressBLL.GetAddress(deliveryAddressId);
+                var mbrAddress = await _deliveryAddressBLL.GetAddress(deliveryAddressId);
                 if (mbrAddress != null)
                 {
                     int countryId = mbrAddress.CountryId;
@@ -509,7 +509,7 @@ namespace HKDG.BLL
                     {
                         if (exCond.TotalWeight > 0)
                         {
-                            ECSResult = GetECSDeliveryCharge(exCond);
+                            ECSResult = await GetECSDeliveryCharge(exCond);
                             if (ECSResult.Succeeded)
                             {
                                 ECSData = (List<ExpressChargeInfo>)ECSResult.ReturnValue;
@@ -855,13 +855,13 @@ namespace HKDG.BLL
         /// <param name="provinveId"></param>
         /// <param name="totalWeight"></param>
         /// <returns></returns>
-        private SystemResult GetECSDeliveryCharge(ExpressCondition exCond)
+        private async Task<SystemResult> GetECSDeliveryCharge(ExpressCondition exCond)
         {
             SystemResult result = new SystemResult();
             List<ExpressChargeInfo> list = new List<ExpressChargeInfo>();
             try
             {
-                var mbrAddress = _deliveryAddressBLL.GetAddress(exCond.DeliveryAddrId);
+                var mbrAddress =await _deliveryAddressBLL.GetAddress(exCond.DeliveryAddrId);
                 if (mbrAddress != null)
                 {
                     var localCountry = _codeMasterBLL.GetCodeMasterByKey(CodeMasterModule.Setting.ToString(), CodeMasterFunction.ECShip.ToString(), "LocalCountry")?.Value ?? "HKG";
@@ -2374,14 +2374,14 @@ namespace HKDG.BLL
             return selectedCountryProvince;
         }
 
-        public SystemResult GetExpressChargeListByCode(ExpressCondition exCond)
+        public async Task< SystemResult> GetExpressChargeListByCode(ExpressCondition exCond)
         {
             SystemResult result = new SystemResult();
             List<ExpressChargeInfo> list = new List<ExpressChargeInfo>();
             if (exCond.CCode == "Other")
             {
 
-                result= GetExpressCharge(exCond);
+                result=await GetExpressCharge(exCond);
             }
             return result;
         }

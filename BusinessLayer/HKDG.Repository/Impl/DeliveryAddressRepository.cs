@@ -51,10 +51,8 @@
 
 
         }
-        public void Update(DeliveryAddressDto model)
+        public async Task  Update(DeliveryAddressDto model)
         {
-
-
             string sql = @" 
                              update DeliveryAddresses set 
                              FirstName=@firstName,
@@ -91,18 +89,18 @@
             paramList.Add(new SqlParameter("@IsDeleted", model.IsDeleted));
             paramList.Add(new SqlParameter("@Remark", model.Remark ?? ""));
             paramList.Add(new SqlParameter("@Default", model.Default));
-            baseRepository.ExecuteSqlCommand(sql, paramList.ToArray());
+            await baseRepository.ExecuteSqlCommandAsync(sql, paramList.ToArray());
         }
 
-        public DeliveryAddressDto GetByKey(Guid key)
+        public async Task<DeliveryAddressDto> GetByKey(Guid key)
         {
-            var m = baseRepository.GetModel<DeliveryAddress>(d => d.Id == key);
+            var m =await baseRepository.GetModelAsync<DeliveryAddress>(d => d.Id == key);
             //DecryptField(m);
             var dto = AutoMapperExt.MapTo<DeliveryAddressDto>(m);
             return dto;
         }
         
-        public List<DeliveryAddressDto> SearchAddress(Guid memberId, bool isActive, bool isDeleted)
+        public async Task< List<DeliveryAddressDto>> SearchAddress(Guid memberId, bool isActive, bool isDeleted)
         {
             try
             {
@@ -123,10 +121,10 @@
                 sqlParameters.Add(new SqlParameter("@isActive", isActive));
                 sqlParameters.Add(new SqlParameter("@isDeleted", isDeleted));
 
-                var result = baseRepository.SqlQuery<DeliveryAddress>(sql, sqlParameters.ToArray());
+                var result =await baseRepository.GetListAsync<DeliveryAddress>(sql, sqlParameters.ToArray());
 
                 var finalResult = new List<DeliveryAddress>();
-                if (result?.Count > 0)
+                if (result!=null && result.Any())
                 {
                     var defaultAddrList = result.Where(x => x.Default).OrderByDescending(x => x.CreateDate).ToList();
                     if (defaultAddrList?.Count > 0)
@@ -250,7 +248,7 @@
             }
         }
 
-        public void UpdateOtherAddressNotDefault(Guid memberId)
+        public async Task UpdateOtherAddressNotDefault(Guid memberId)
         {
             try
             {
@@ -262,7 +260,7 @@
                 List<SqlParameter> paramList = new List<SqlParameter>();
                 paramList.Add(new SqlParameter("@id", memberId));
                 paramList.Add(new SqlParameter("@updateBy", CurrentUser.UserId));
-                baseRepository.ExecuteSqlCommand(sql, paramList.ToArray());
+                await baseRepository.ExecuteSqlCommandAsync(sql, paramList.ToArray());
 
             }
             catch (Exception ex)

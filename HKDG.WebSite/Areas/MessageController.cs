@@ -1,4 +1,7 @@
-﻿using Web.Mvc.Filters;
+﻿using Autofac;
+using HKDG.BLL.Impl;
+using Model;
+using Web.Mvc.Filters;
 
 namespace HKDG.WebSite.Areas
 {
@@ -7,9 +10,12 @@ namespace HKDG.WebSite.Areas
     public class MessageController : BaseApiController
     {
         IEmailerBLL emailerBLL;
+        IArrivalNotifyBLL arrivalNotifyBLL;
+
         public MessageController(IComponentContext service) : base(service)
         {            
             emailerBLL = Services.Resolve<IEmailerBLL>();
+            arrivalNotifyBLL = Services.Resolve<IArrivalNotifyBLL>();
         }
 
         /// <summary>
@@ -18,6 +24,7 @@ namespace HKDG.WebSite.Areas
         /// <returns></returns>
         [LoginAuthorize]
         [HttpPost("GetMessage")]
+        [ProducesResponseType(typeof(SystemResult<PageData<MessageFrontView>>), 200)]
         public async Task<SystemResult<PageData<MessageFrontView>>> GetMessage([FromForm]PageInfo pager)
         {
             var result = new SystemResult<PageData<MessageFrontView>>();
@@ -26,32 +33,41 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
-        //[LoginAuthorize]
-        //[HttpPost("CheckExsitArrivalNotify")]
-        //public SystemResult CheckExsitArrivalNotify(ArrivalNotifyCond cond)
-        //{
-        //    var sysRslt = new SystemResult();
-        //    try
-        //    {
-        //        if (CurrentUser != null && CurrentUser.IsLogin)
-        //        {
-        //            Guid skuId = GetSkuId(cond);
-        //            if (skuId != Guid.Empty)
-        //            {
-        //                sysRslt = ArrivalNotifyBLL.CheckExsitArrivalNotify(new ArrivalNotify()
-        //                {
-        //                    MemberId = CurrentUser.Id,
-        //                    SkuId = skuId,
-        //                });
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        sysRslt.Succeeded = false;
-        //        sysRslt.Message = ex.Message;
-        //    }
-        //    return sysRslt;
-        //}
+        [LoginAuthorize]
+        [HttpPost("CheckExsitArrivalNotify")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task<SystemResult> CheckExsitArrivalNotify([FromForm]ArrivalNotifyCond cond)
+        {
+            var result =await arrivalNotifyBLL.CheckExsitArrivalNotify(cond);
+            return result;
+        }
+
+        /// <summary>
+        /// 取消到货通知
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        [LoginAuthorize]
+        [HttpPost("CancelArrivalNotify")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task <SystemResult> CancelArrivalNotify([FromForm]ArrivalNotifyCond cond)
+        {
+            var result = await arrivalNotifyBLL.CancelArrivalNotify(cond);            
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <returns></returns>
+        [LoginAuthorize]
+        [HttpPost("AddArrivalNotify")]
+        public async Task<SystemResult> AddArrivalNotify([FromForm] ArrivalNotifyCond cond)
+        {
+            var result =  await arrivalNotifyBLL.AddArrivalNotify(cond);
+            return result;
+        }
+
     }
 }

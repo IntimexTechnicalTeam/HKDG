@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using Model;
 
 namespace HKDG.Repository.Impl
 {
@@ -235,10 +236,7 @@ namespace HKDG.Repository.Impl
                 sumQuery = sumQuery.OrderByDescending(o => o.CreateDate);
             }
 
-
-            pageData.Data = sumQuery.Skip(cond.PageInfo.Offset).Take(cond.PageInfo.PageSize).Distinct().ToList();
-
-
+            pageData.Data = sumQuery.Skip(cond.PageInfo.Offset).Take(cond.PageInfo.PageSize).Distinct().ToList();          
             return pageData;
 
         }

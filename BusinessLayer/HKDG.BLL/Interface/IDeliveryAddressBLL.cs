@@ -2,13 +2,15 @@
 {
     public interface IDeliveryAddressBLL : IDependency
     {
-        SystemResult CreateAddress(DeliveryAddressDto deliveryInfo);
+        Task<SystemResult> CreateAddress(DeliveryAddressDto deliveryInfo);
 
-        SystemResult UpdateAddress(DeliveryAddressDto deliveryInfo);
+        Task<SystemResult> UpdateAddress(DeliveryAddressDto deliveryInfo);
 
-        SystemResult RemoveAddress(Guid id);
-        DeliveryAddressDto GetAddress(Guid id);
-        List<DeliveryAddressDto> GetMemberAddress(Guid memberId);
+        Task<SystemResult> RemoveAddress(Guid id);
+
+       Task<DeliveryAddressDto> GetAddress(Guid id);
+
+        Task<List<DeliveryAddressDto>> GetMemberAddress(Guid memberId);
         /// <summary>
         /// 獲取會員香港本地的地址清單
         /// </summary>
@@ -24,13 +26,13 @@
         DeliveryAddressDto GetDefaultAddr(Guid memberId);
 
 
-        List<CountryDto> GetCountries();
+        Task<List<CountryDto>> GetCountries();
 
         CountryDto GetCountry(int id);
 
         ProvinceDto GetProvince(int id);
 
-        List<ProvinceDto> GetProvinces(int countryId);
+        Task<List<ProvinceDto>> GetProvinces(int countryId);
 
         List<CityDto> GetCities(int provinceId);
 
@@ -38,6 +40,6 @@
         /// 送貨地址資料數據校驗
         /// </summary>
         /// <param name="deliveryInfo">地址資料</param>
-        SystemResult DeliveryAddressVerification(DeliveryAddressDto deliveryInfo);
+        Task<SystemResult> DeliveryAddressVerification(DeliveryAddressDto deliveryInfo);
     }
 }

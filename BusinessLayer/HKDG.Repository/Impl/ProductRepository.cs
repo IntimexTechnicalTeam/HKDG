@@ -98,12 +98,12 @@ namespace HKDG.Repository
 
         public async Task<PageData<ProductSummary>> SearchAsync(ProdSearchCond cond)
         {
-            //PageData<ProductSummary> data = new PageData<ProductSummary>();
+           var result = new PageData<ProductSummary>();
 
             StringBuilder sb = new StringBuilder();
 
             var baseQuery = GenBaseQuery(cond);
-            //data.TotalRecord = GetProductCount(baseQuery);
+            result.TotalRecord = GetProductCount(baseQuery);
 
             var fromIndex = ((cond.PageInfo.Page - 1) * cond.PageInfo.PageSize) + 1;
             var toIndex = cond.PageInfo.Page * cond.PageInfo.PageSize;
@@ -140,7 +140,7 @@ namespace HKDG.Repository
             paramList.Add(new SqlParameter("@StartIndex", fromIndex));
             paramList.Add(new SqlParameter("@EndIndex", toIndex));
 
-            var result = await baseRepository.GetPageListAsync<ProductSummary>(sb.ToString(), paramList.ToArray());
+            result.Data = await baseRepository.GetListAsync<ProductSummary>(sb.ToString(), paramList);
             return result;
         }
 
