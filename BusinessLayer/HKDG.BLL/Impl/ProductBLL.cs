@@ -805,29 +805,42 @@
 
             var query = from a in productList.Values.AsQueryable()
                         join b in productStatists.Values.AsQueryable() on a.Code equals b.Code
-                        select new
+                        select new ProductSummary
                         {
-                            a,
-                            b
+                            ProductId = a.ProductId,
+                            Code = a.Code,
+                            Name = a.Name,
+                            SalePrice = a.SalePrice,
+                            CurrencyCode = a.CurrencyCode,
+                            Score = NumberUtil.ConvertToRounded(b.Score),
+                            CreateDate = a.CreateDate,
+                            UpdateDate = a.UpdateDate,
+                            PurchaseCounter = b.PurchaseCounter,
+                            ApproveType = a.Status,
+                            CatalogId = a.CatalogId,
+                            MerchantId = a.MchId,
+                            OriginalPrice = a.OriginalPrice,
+                            IconType = a.IconType,
+                            ProductIcons = a.ProductIcons
                         };
 
             #region 组装条件
 
             if (cond.MerchantId != Guid.Empty)
-                query = query.Where(x => x.a.MchId == cond.MerchantId);
+                query = query.Where(x => x.MerchantId == cond.MerchantId);
 
             if (!cond.KeyWord.IsEmpty())
             {
             }
 
             if (!cond.ProductCode.IsEmpty())
-                query = query.Where(x => x.a.ProductCode.Contains(cond.ProductCode));
+                query = query.Where(x => x.Code.Contains(cond.ProductCode));
 
             if (!cond.ProductName.IsEmpty())
-                query = query.Where(x => x.a.Name.Contains(cond.ProductName));
+                query = query.Where(x => x.Name.Contains(cond.ProductName));
 
             if (cond.ProductStatus.HasValue)
-                query = query.Where(x => x.a.Status == cond.ProductStatus);
+                query = query.Where(x => x.ApproveType == cond.ProductStatus);
             #endregion
 
             result.TotalRecord = query.Count();
@@ -838,26 +851,7 @@
             var sortBy = (SortType)Enum.Parse(typeof(SortType), cond.SortOrder.ToUpper());
             query = query.AsQueryable().SortBy(cond.SortName, sortBy).Skip(cond.Offset).Take(cond.PageSize);
 
-            var list = query.Select(s => new ProductSummary
-            {
-                ProductId = s.a.ProductId,
-                Code = s.a.Code,
-                Name = s.a.Name,
-                SalePrice = s.a.SalePrice,
-                CurrencyCode = s.a.CurrencyCode,
-                Score = NumberUtil.ConvertToRounded(s.a.Score),
-                CreateDate = s.a.CreateDate,
-                UpdateDate = s.a.UpdateDate,
-                PurchaseCounter = s.b.PurchaseCounter,
-                ApproveType = s.a.Status,
-                CatalogId = s.a.CatalogId,
-                MerchantId = s.a.MchId,
-                OriginalPrice = s.a.OriginalPrice,
-                IconType = s.a.IconType,
-                ProductIcons = s.a.ProductIcons ,
-                
-            }).ToList();
-
+            var list = query.ToList();
             if (list != null && list.Any())
             {
                 foreach (var item in list)

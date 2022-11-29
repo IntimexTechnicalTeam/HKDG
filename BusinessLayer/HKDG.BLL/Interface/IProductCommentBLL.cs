@@ -3,5 +3,7 @@
     public interface IProductCommentBLL:IDependency
     {
         Task<List<ProductCommentDto>> GetProductComments(SearchCommentsInfo cond);
+
+       // Task<SystemResult> SaveComments(List<ProductCommentDto> models);
     }
 }

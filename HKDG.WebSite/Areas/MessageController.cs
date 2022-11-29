@@ -25,5 +25,33 @@ namespace HKDG.WebSite.Areas
             result.Succeeded = true;
             return result;
         }
+
+        //[LoginAuthorize]
+        //[HttpPost("CheckExsitArrivalNotify")]
+        //public SystemResult CheckExsitArrivalNotify(ArrivalNotifyCond cond)
+        //{
+        //    var sysRslt = new SystemResult();
+        //    try
+        //    {
+        //        if (CurrentUser != null && CurrentUser.IsLogin)
+        //        {
+        //            Guid skuId = GetSkuId(cond);
+        //            if (skuId != Guid.Empty)
+        //            {
+        //                sysRslt = ArrivalNotifyBLL.CheckExsitArrivalNotify(new ArrivalNotify()
+        //                {
+        //                    MemberId = CurrentUser.Id,
+        //                    SkuId = skuId,
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        sysRslt.Succeeded = false;
+        //        sysRslt.Message = ex.Message;
+        //    }
+        //    return sysRslt;
+        //}
     }
 }

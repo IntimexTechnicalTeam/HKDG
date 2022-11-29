@@ -1,5 +1,6 @@
 ﻿using HKDG.BLL;
 using Intimex.Utility;
+using Model;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using Web.Jwt;
@@ -32,5 +33,13 @@ namespace HKDG.WebSite.Areas
             result.Succeeded = true;
             return result;
         }
+
+        //[LoginAuthorize]
+        //[HttpPost("SaveComments")]       
+        //public async Task<SystemResult> SaveComments([FromForm] List<ProductComment> comments)
+        //{
+        //    SystemResult result =await productCommentBLL.SaveComments(comments);
+        //    return result;
+        //}
     }
 }
