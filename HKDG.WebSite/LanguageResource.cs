@@ -1,16 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration.Json;
-using System.Collections.Generic;
-using System.Configuration;
 
 namespace HKDG.WebSite
 {
     public class Resources
     {
-        public static string ToMultiLang(string key, Language? language)
+        public static string ToMultiLang(string key, Language? language=null)
         {
             if (key.IsEmpty()) return "";
 
-            if (language ==null ) return key;
+            var context = Globals.Services.GetService<IHttpContextAccessor>();
+            var access_token = context?.HttpContext?.Request.Cookies["access_token"] ?? "";
+            var user = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", access_token) ?? null;
+   
+            if (language == null) language = user?.Language ?? Language.C;
 
             var providers = ((IConfigurationRoot)Globals.Configuration).Providers;
             var jsonProvider =providers.Where(x => x.GetType() == typeof(JsonConfigurationProvider)).Select(item=> (JsonConfigurationProvider)item)
