@@ -28,7 +28,7 @@ namespace HKDG.BLL
 
             var query = await baseRepository.GetListAsync<ProductComment>(x => x.IsShow && !x.IsDeleted);
 
-            if (cond.ShopperId != Guid.Empty) query = query.Where(x => x.CreateBy == cond.ShopperId);
+            //if (cond.ShopperId != Guid.Empty) query = query.Where(x => x.CreateBy == cond.ShopperId);
 
             if (prodIds !=null)  query = query.Where(d => prodIds.Contains(d.ProductId));
 
@@ -144,7 +144,7 @@ namespace HKDG.BLL
         //    AddGenHtmlFlag(model);
         //    NoticeUpdateForAppProdComment(model.ProductId);
 
-           
+
         //    #region 不需要同时保存文件的情况
 
         //    if (model.CommentImages?.Count > 0)
@@ -251,5 +251,53 @@ namespace HKDG.BLL
 
 
         //}
+
+        public async Task<List<ProductCommentDto>> GetSubOrderComments(Guid subOrderid)
+        {
+            var comments = new List<ProductCommentDto>();
+
+            var query = await baseRepository.GetListAsync<OrderDeliveryDetail>(d => d.DeliveryId == subOrderid && d.IsFree == false);
+            var list = query.OrderByDescending(o => o.CreateDate).ToList();
+
+            //if (list != null && list.Any())
+            //{
+                foreach (var item in list)
+                {
+                    var comment = await GetItem(subOrderid, item.ProductId);
+                    //var subOrder = await baseRepository.GetModelAsync<OrderDelivery>(x => x.Id == subOrderid);
+                    var member = await baseRepository.GetModelAsync<Member>(x => x.Id == comment.CreateBy);
+                    //comment.OrderId = subOrder.OrderId;
+                    //comment.SubOrderId = subOrderid;
+                    //comment.ProductId = item.ProductId;
+                    //comment.CommentImages = await GetCommentImage(comment.Id, Guid.Empty);
+                    comment.MemberName = member?.FirstName ?? "";
+                    //comment.MerchantId = subOrder.MerchantId;
+                    comments.Add(comment);
+                }
+           // }
+            return comments;
+        }
+
+        private async Task<ProductCommentDto> GetItem(Guid subOrderId, Guid prodId)
+        {
+            //ProductComment item = ProductCommentRepo.GetItem(subOrderId, prodId);
+            ProductCommentDto item = new ProductCommentDto();
+            var dbList = await baseRepository.GetListAsync<ProductComment>(d => !d.IsDeleted && d.SubOrderId == subOrderId && d.ProductId == prodId);
+            var dbItem = dbList.OrderBy(o=>o.CreateDate).FirstOrDefault();
+
+            if (dbItem != null)
+            {
+                item = AutoMapperExt.MapTo<ProductCommentDto>(dbItem);
+                var imageList = await baseRepository.GetListAsync<ProductCommentImage>(d => d.CommentId == item.Id && d.IsDeleted == false);
+                item.CommentImages = AutoMapperExt.MapToList<ProductCommentImage, ProductCommentImageDto>(imageList.ToList());
+            }
+
+            var productInfo = proudctBLL.GetProductInfo(prodId);
+            item.OrderNO = (await baseRepository.GetModelByIdAsync<Order>(item.OrderId))?.OrderNO ?? "";
+            item.ProductImg = productInfo.Images.Count() > 2 ? productInfo.Images[2] : "";
+            item.ProductName = productInfo?.Name ?? "";
+            item.ProductCode = productInfo?.Code ?? "";
+            return item;
+        }
     }
 }

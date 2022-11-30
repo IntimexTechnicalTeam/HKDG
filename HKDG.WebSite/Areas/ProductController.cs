@@ -26,6 +26,7 @@
         public async Task<SystemResult<ProductCheck>> Check(string code,Guid attr1,Guid attr2,Guid attr3,DateTime? saleTime)
         {
             var result = await productBLL.CheckSkuStateAsync(code, attr1, attr2, attr3, saleTime?.ToString() ?? "");
+            result.Succeeded = true;
             return result;
         }
 

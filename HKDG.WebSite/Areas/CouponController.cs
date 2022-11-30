@@ -18,6 +18,7 @@ namespace HKDG.WebSite.Areas
         /// <returns></returns>
         [LoginAuthorize]
         [HttpPost("GetMemberCoupon")]
+        [ProducesResponseType(typeof(SystemResult<PageData<CouponInfo>>), 200)]
         public async Task<SystemResult<PageData<CouponInfo>>> GetMemberCoupon([FromForm] CouponPager pager)
         {
             var result = new SystemResult<PageData<CouponInfo>>();

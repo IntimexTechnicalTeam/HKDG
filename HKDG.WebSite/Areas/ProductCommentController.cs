@@ -25,6 +25,7 @@ namespace HKDG.WebSite.Areas
         /// <param name="pager"></param>
         /// <returns></returns>
         [HttpPost("GetProductComments")]
+        [ProducesResponseType(typeof(SystemResult<List<ProductCommentDto>>), 200)]
         public async Task<SystemResult<List<ProductCommentDto>>> GetProductComments ([FromForm] SearchCommentsInfo cond)
         {
             var result = new SystemResult<List<ProductCommentDto>>();
@@ -40,5 +41,16 @@ namespace HKDG.WebSite.Areas
         //    SystemResult result =await productCommentBLL.SaveComments(comments);
         //    return result;
         //}
+
+        [HttpGet("GetSubOrderComments")]
+        [LoginAuthorize]
+        [ProducesResponseType(typeof(SystemResult<List<ProductCommentDto>>), 200)]
+        public async Task<SystemResult<List<ProductCommentDto>>> GetSubOrderComments(Guid subOrderId)
+        {
+            var result = new SystemResult<List<ProductCommentDto>>();
+            result.ReturnValue =await productCommentBLL.GetSubOrderComments(subOrderId);
+            result.Succeeded = true;
+            return result;
+        }
     }
 }

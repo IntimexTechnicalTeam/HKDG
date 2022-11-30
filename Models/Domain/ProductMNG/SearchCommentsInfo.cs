@@ -15,11 +15,11 @@ namespace Domain
         [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid ProductId { get; set; } = Guid.Empty;
 
-        /// <summary>
-        /// 買家ID
-        /// </summary>
-        [DefaultValue("00000000-0000-0000-0000-000000000000")]
-        public Guid ShopperId { get; set; } = Guid.Empty;
+        ///// <summary>
+        ///// 買家ID
+        ///// </summary>
+        //[DefaultValue("00000000-0000-0000-0000-000000000000")]
+        //public Guid? ShopperId { get; set; } = Guid.Empty;
 
 
 
