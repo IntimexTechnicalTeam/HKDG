@@ -202,6 +202,17 @@ namespace HKDG.BLL
             return size;
         }
 
+        public ImageSize GetBigProductImageSize()
+        {
+            ImageSize size = new ImageSize();
+
+            var val = _codeMasterRepo.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.ProductImgSize.ToString(), "B");
+            size.Width = int.Parse(val?.Value ?? "400");
+            size.Length = int.Parse(val?.Value ?? "400");
+
+            return size;
+        }
+
         /// <summary>
         /// 獲取庫存交易類型列表
         /// </summary>

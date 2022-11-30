@@ -261,6 +261,7 @@
 
         public virtual DbSet<EmailContent> EmailContents { get; set; }
 
+        public virtual DbSet<ArrivalNotify> ArrivalNotifies { get; set; }   
 
 
 

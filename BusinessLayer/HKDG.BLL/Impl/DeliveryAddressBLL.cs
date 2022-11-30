@@ -255,8 +255,8 @@ namespace HKDG.BLL
 
             if (deliveryInfo != null)
             {
-                var lang = CurrentUser.Lang;
-                string lengthOverFormat = HKDG.Resources.Message.DataLengthOverFlow;
+                var lang = CurrentUser.Language;
+                string lengthOverFormat =Resources.Message.DataLengthOverFlow;
 
                 int maxNameLen = 17;
                 //姓氏
@@ -281,6 +281,27 @@ namespace HKDG.BLL
                     return sysRslt;
                 }
 
+                //名字
+                //if (string.IsNullOrEmpty(deliveryInfo.FirstName))
+                //{
+                //    sysRslt.Message = "[" + Resources.Label.AddressFirstName + "] " + Resources.Message.FieldRequire;
+                //    return sysRslt;
+                //}
+                //else
+                //{
+                //    if (!UTF8StringLengthChecking(deliveryInfo.FirstName, maxNameLen))
+                //    {
+                //        sysRslt.Message = string.Format(lengthOverFormat, Resources.Label.AddressFirstName, maxNameLen.ToString());
+                //        return sysRslt;
+                //    }
+                //}
+
+                ////名字特殊字符檢查
+                //if (NameUtil.IsExistSpecialCharacter(deliveryInfo.FirstName))
+                //{
+                //    sysRslt.Message = "[" + Resources.Label.AddressFirstName + "] " + Resources.Message.EnterCorrectName;
+                //    return sysRslt;
+                //}
 
                 //電話號碼長度
                 if (string.IsNullOrEmpty(deliveryInfo.Mobile))
@@ -330,7 +351,7 @@ namespace HKDG.BLL
 
                     //省份列表不為空時，必須指定省份
                     var provinceList =await GetProvinces(countryId);
-                    if (provinceList.Any() && provinceId <= 0)
+                    if (provinceList?.Count > 0 && provinceId <= 0)
                     {
                         //sysRslt.Message = "[" + Resources.Label.AddressDistrict + "] " + Resources.Message.FieldRequire;
                         sysRslt.Message = Resources.Message.EnterZipCode;
@@ -339,123 +360,123 @@ namespace HKDG.BLL
 
                     //檢查郵編是否必填
                     var country = GetCountry(countryId);
-                    if (country != null)
-                    {
-                        if (country.IsNeedPostalCode && string.IsNullOrEmpty(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.FieldRequire;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
+                    //if (country != null)
+                    //{
+                    //    if (country.IsNeedPostalCode && string.IsNullOrEmpty(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.FieldRequire;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
 
                     #region 特殊地區的郵編正則檢查
 
                     string zipCodeRegex = string.Empty;
-                    if (countryId == (int)CountryType.Australia_WA || countryId == (int)CountryType.Australia_Other || countryId == (int)CountryType.Norway)
-                    {
-                        zipCodeRegex = @"^\d{4}$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.Brazil)
-                    {
-                        zipCodeRegex = @"^\d{5}-\d{3}$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.Canada)
-                    {
-                        zipCodeRegex = @"^\w\d\w \d\w\d$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.Ecuador || countryId == (int)CountryType.RussianFederation || countryId == (int)CountryType.Singapore || countryId == (int)CountryType.Vietnam)
-                    {
-                        zipCodeRegex = @"^\d{6}$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.France || countryId == (int)CountryType.Germany || countryId == (int)CountryType.Senegal || countryId == (int)CountryType.USA_Hawaii || countryId == (int)CountryType.USA_NewYork || countryId == (int)CountryType.USA_OtherStates)
-                    {
-                        zipCodeRegex = @"^\d{5}$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.SouthAfrica)
-                    {
-                        zipCodeRegex = @"^(\d{5})|(\d{6})$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.UnitedKingdom)
-                    {
-                        zipCodeRegex = @"^(\w\d \d\w\w)|(\w\d\d \d\w\w)|(\w\d\w \d\w\w)|(\w\w\d \d\w\w)|(\w\w\d\d \d\w\w)|(\w\w\d\w \d\w\w)$";
-                        Regex regex = new Regex(zipCodeRegex);
-                        if (!regex.IsMatch(postalCode))
-                        {
-                            //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                            sysRslt.Message = Resources.Message.ZipInconCountry;
-                            return sysRslt;
-                        }
-                    }
-                    else if (countryId == (int)CountryType.ChinaMainland)
-                    {
-                        if (provinceId == 10)//廣東
-                        {
-                            if (!string.IsNullOrEmpty(postalCode))
-                            {
-                                zipCodeRegex = @"^[5][1-2][0-9]\d{3}(?!\d)";
-                                Regex regex = new Regex(zipCodeRegex);
-                                if (!regex.IsMatch(postalCode))
-                                {
-                                    //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
-                                    sysRslt.Message = Resources.Message.ZipInconProvince;
-                                    return sysRslt;
-                                }
-                            }
-                            else
-                            {
-                                sysRslt.Message = Resources.Message.EnterZipCode; //"[" + Resources.Label.AddressPostal + "] " + Resources.Message.FieldRequire;
-                                return sysRslt;
-                            }
-                        }
-                    }
+                    //if (countryId == (int)CountryType.Australia_WA || countryId == (int)CountryType.Australia_Other || countryId == (int)CountryType.Norway)
+                    //{
+                    //    zipCodeRegex = @"^\d{4}$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.Brazil)
+                    //{
+                    //    zipCodeRegex = @"^\d{5}-\d{3}$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.Canada)
+                    //{
+                    //    zipCodeRegex = @"^\w\d\w \d\w\d$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.Ecuador || countryId == (int)CountryType.RussianFederation || countryId == (int)CountryType.Singapore || countryId == (int)CountryType.Vietnam)
+                    //{
+                    //    zipCodeRegex = @"^\d{6}$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.France || countryId == (int)CountryType.Germany || countryId == (int)CountryType.Senegal || countryId == (int)CountryType.USA_Hawaii || countryId == (int)CountryType.USA_NewYork || countryId == (int)CountryType.USA_OtherStates)
+                    //{
+                    //    zipCodeRegex = @"^\d{5}$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.SouthAfrica)
+                    //{
+                    //    zipCodeRegex = @"^(\d{5})|(\d{6})$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.UnitedKingdom)
+                    //{
+                    //    zipCodeRegex = @"^(\w\d \d\w\w)|(\w\d\d \d\w\w)|(\w\d\w \d\w\w)|(\w\w\d \d\w\w)|(\w\w\d\d \d\w\w)|(\w\w\d\w \d\w\w)$";
+                    //    Regex regex = new Regex(zipCodeRegex);
+                    //    if (!regex.IsMatch(postalCode))
+                    //    {
+                    //        //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //        sysRslt.Message = Resources.Message.ZipInconCountry;
+                    //        return sysRslt;
+                    //    }
+                    //}
+                    //else if (countryId == (int)CountryType.ChinaMainland)
+                    //{
+                    //    if (provinceId == 10)//廣東
+                    //    {
+                    //        if (!string.IsNullOrEmpty(postalCode))
+                    //        {
+                    //            zipCodeRegex = @"^[5][1-2][0-9]\d{3}(?!\d)";
+                    //            Regex regex = new Regex(zipCodeRegex);
+                    //            if (!regex.IsMatch(postalCode))
+                    //            {
+                    //                //sysRslt.Message = "[" + Resources.Label.AddressPostal + "] " + Resources.Message.ZipInconCountry;
+                    //                sysRslt.Message = Resources.Message.ZipInconProvince;
+                    //                return sysRslt;
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            sysRslt.Message = Resources.Message.EnterZipCode; //"[" + Resources.Label.AddressPostal + "] " + Resources.Message.FieldRequire;
+                    //            return sysRslt;
+                    //        }
+                    //    }
+                    //}
 
                     #endregion
                 }
 
-                int maxAddrEnLen = 35;
+                int maxAddrEnLen = 200;
                 //int maxAddrCnLen = 22;
                 //地址一
                 if (string.IsNullOrEmpty(deliveryInfo.Address))

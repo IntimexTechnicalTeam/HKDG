@@ -1,8 +1,14 @@
-﻿namespace Domain
+﻿using System.ComponentModel;
+
+namespace Domain
 {
     public class DeliveryAddressDto : BaseDto
     {
-        public Guid Id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>       
+        public Guid Id { get; set; } = Guid.Empty;
+
         public string Remark { get; set; }
         public bool Default { get; set; }
 

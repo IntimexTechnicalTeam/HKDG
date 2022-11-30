@@ -93,6 +93,8 @@ namespace Domain
 
             ConfigMap<HotProduct, Product>();
             ConfigMap<ArrivalNotify, ArrivalNotifyDto>();
+
+            ConfigMap<AddressInfo,DeliveryAddressDto>();
         }
 
         void ConfigMap<TSource, TDestination>()

@@ -58,7 +58,7 @@
         List<ImageSize> GetProductAdditionalImageSize();
         ImageSize GetSmallProductImageSize();
         //ImageSize GetMiddleProductImageSize();
-        //ImageSize GetBigProductImageSize();
+        ImageSize GetBigProductImageSize();
         //ImageSize GetLargeProductImageSize();
 
 

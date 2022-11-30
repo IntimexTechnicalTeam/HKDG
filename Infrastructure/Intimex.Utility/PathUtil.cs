@@ -45,9 +45,9 @@ namespace Intimex.Utility
         }
 
         /// <summary>
-        /// 生成物理路径
+        /// 生成物理路径，会把 /转换为\\
         /// </summary>
-        /// <param name="RootPath"></param>
+        /// <param name="RootPath">默认为Configuration["UploadPath"]</param>
         /// <param name="merchantId"></param>
         /// <param name="module"></param>
         /// <returns></returns>

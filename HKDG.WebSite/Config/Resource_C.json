@@ -1,5 +1,5 @@
 {
-  "PayType": "支付方式",
+  "PayType": "支付方式{0}",
   "MemberName":"會員姓名",
 
   "AccountNo" : "擺檔帳號",

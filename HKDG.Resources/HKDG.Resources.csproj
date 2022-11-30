@@ -207,10 +207,13 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Message.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Message.zh-CN.resx" />
+    <EmbeddedResource Include="Message.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Message.zh-HK.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Message.zh-HK1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Model.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

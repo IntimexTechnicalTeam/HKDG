@@ -68,10 +68,12 @@ namespace HKDG.WebSite.Areas
         [LoginAuthorize]
         [HttpPost("Add")]
         [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> Add([FromForm] DeliveryAddressDto address)
+        public async Task<SystemResult> Add([FromForm] AddressInfo address)
         {
             SystemResult result = new SystemResult();
-            result =await deliveryAddressBLL.CreateAddress(address);
+            var model = AutoMapperExt.MapTo<DeliveryAddressDto>(address);
+            model.Address = address.ContractAddress;
+            result =await deliveryAddressBLL.CreateAddress(model);
             return result;
         }
 
@@ -83,10 +85,12 @@ namespace HKDG.WebSite.Areas
         [LoginAuthorize]
         [HttpPost("Update")]
         [ProducesResponseType(typeof(SystemResult), 200)]
-        public async Task<SystemResult> Update([FromForm] DeliveryAddressDto address)
+        public async Task<SystemResult> Update([FromForm] AddressInfo address)
         {
             SystemResult result = new SystemResult();
-            result =await deliveryAddressBLL.UpdateAddress(address);
+            var model = AutoMapperExt.MapTo<DeliveryAddressDto>(address);
+            model.Address = address.ContractAddress;
+            result =await deliveryAddressBLL.UpdateAddress(model);
             return result;
         }
 

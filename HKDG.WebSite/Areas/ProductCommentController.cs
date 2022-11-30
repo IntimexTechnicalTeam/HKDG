@@ -34,13 +34,14 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
-        //[LoginAuthorize]
-        //[HttpPost("SaveComments")]       
-        //public async Task<SystemResult> SaveComments([FromForm] List<ProductComment> comments)
-        //{
-        //    SystemResult result =await productCommentBLL.SaveComments(comments);
-        //    return result;
-        //}
+        [LoginAuthorize]
+        [HttpPost("SaveComments")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task<SystemResult> SaveComments([FromForm] List<ProductCommentDto> comments)
+        {
+            SystemResult result = await productCommentBLL.SaveComments(comments);
+            return result;
+        }
 
         [HttpGet("GetSubOrderComments")]
         [LoginAuthorize]

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Model;
 using NETCoreViewLocationExpander.ViewLocationExtend;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using System.Xml.Linq;
 using Web.Swagger;
 
@@ -26,7 +28,7 @@ namespace HKDG.WebSite
                     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
                     // 如字段为null值，该字段不会返回到前端
                     // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                })               
+                })
                 .AddRazorRuntimeCompilation();              //可以在编译调试模式下编辑view
             //builder.Services.AddScoped(typeof(UserAuthorizeAttribute));         //注入Filter
 
@@ -40,9 +42,10 @@ namespace HKDG.WebSite
             });
             builder.Services.Configure<RazorViewEngineOptions>(configureOptions =>
             {
-                configureOptions.ViewLocationExpanders.Add(new TemplateViewLocationExpander(() => {
-                    return RegisterViewFactory.Views;                   
-                } )); //视图默认路径扩展
+                configureOptions.ViewLocationExpanders.Add(new TemplateViewLocationExpander(() =>
+                {
+                    return RegisterViewFactory.Views;
+                })); //视图默认路径扩展
             });
 
             builder.Services.AddMvc(options =>
@@ -65,6 +68,7 @@ namespace HKDG.WebSite
             Web.MediatR.ServiceCollectionExtensions.AddServices(builder.Services, typeof(Program));
             Web.Mvc.ServiceCollectionExtensions.AddFileProviderServices(builder.Services, builder.Configuration);
 
+            builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));    //此句是为了解决视图视获取从后台传来的数据的时候，中文乱码无法解码
             builder.Services.AddUEditorService("Config/config.json");
         }
 
