@@ -11,7 +11,7 @@
         [Required(ErrorMessage = "付款方式不能为空")]
         public Guid PaymentMethodId { get; set; }
 
-        public Currency Currency { get; set; } = new Currency();
+        //public Currency Currency { get; set; } = new Currency();
 
         /// <summary>
         /// 积分

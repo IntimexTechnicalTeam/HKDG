@@ -1,10 +1,12 @@
-﻿using System.Reflection.Emit;
+﻿using System.ComponentModel;
+using System.Reflection.Emit;
 
 namespace Domain
 {
     public class CartItem
     {
-        public Guid? Sku { get; set; } = Guid.Empty;
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
+        public Guid Sku { get; set; } = Guid.Empty;
 
         /// <summary>
         /// ///商品Id
@@ -17,14 +19,17 @@ namespace Domain
         /// </summary>
         [Required(ErrorMessage = "ProdCode必填")]
         public string ProdCode { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// 所选属性1
         /// </summary>
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid Attr1 { get; set; } = Guid.Empty;   //对应数值为ProductSku.AttrValue1
 
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid Attr2 { get; set; } = Guid.Empty;
 
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid Attr3 { get; set; } = Guid.Empty;
 
 
@@ -43,15 +48,16 @@ namespace Domain
         /// <summary>
         /// 购物数量
         /// </summary>
-        [DataMember]
         [Required(ErrorMessage = "购物数量必填")]     
         public int Qty { get; set; }
 
         /// <summary>
         /// 增量
         /// </summary>
-        public int? AddQty { get; set; } = 0;
+        [DefaultValue(1)]
+        public int AddQty { get; set; } = 0;
 
-        public Guid? KolId { get; set; } = Guid.Empty;
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
+        public Guid KolId { get; set; } = Guid.Empty;
     }
 }

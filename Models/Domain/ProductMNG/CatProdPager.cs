@@ -1,4 +1,6 @@
-﻿namespace Domain
+﻿using System.ComponentModel;
+
+namespace Domain
 { /// <summary>
   ///  产品目录产品列表分页器
   /// </summary>
@@ -9,6 +11,7 @@
         /// </summary>
         public Guid CatId { get; set; }
 
+        [DefaultValue("New")]
         public string OrderBy { get; set; } = "New";
 
         /// <summary>

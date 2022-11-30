@@ -6,5 +6,7 @@ namespace Domain
         public string Key { get; set; }
 
         public PageInfo PageInfo { get; set; } = new PageInfo();
+
+        public string MerchantId { get; set; } 
     }
 }

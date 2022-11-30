@@ -28,7 +28,7 @@ namespace HKDG.BLL
 
             var query = await baseRepository.GetListAsync<ProductComment>(x => x.IsShow && !x.IsDeleted);
 
-            if (cond.ShopperId.HasValue) query = query.Where(x => x.CreateBy == cond.ShopperId.Value);
+            if (cond.ShopperId != Guid.Empty) query = query.Where(x => x.CreateBy == cond.ShopperId);
 
             if (prodIds !=null)  query = query.Where(d => prodIds.Contains(d.ProductId));
 

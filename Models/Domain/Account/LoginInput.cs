@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel;
+
 namespace Domain
 {
     /// <summary>
