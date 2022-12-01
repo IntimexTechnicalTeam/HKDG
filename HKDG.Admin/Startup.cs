@@ -1,5 +1,7 @@
 using HKDG.Repository;
 using Intimex.Runtime;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace HKDG.Admin
 {
@@ -46,6 +48,7 @@ namespace HKDG.Admin
             Web.MediatR.ServiceCollectionExtensions.AddServices(builder.Services, typeof(Program));
             Web.Mvc.ServiceCollectionExtensions.AddFileProviderServices(builder.Services, builder.Configuration);
 
+            builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));    //此句是为了解决视图视获取从后台传来的数据的时候，中文乱码无法解码
             builder.Services.AddUEditorService("Config/config.json");
             //AddScopedIServiceProvider(services);
         }
@@ -68,7 +71,7 @@ namespace HKDG.Admin
             }
 
             app.UseMiddleware<GlobalErrorHandlingMiddleware>();         //全局异常处理
-                                                                        //app.UseMiddleware<JwtAuthenticationMiddleware>();
+            //app.UseMiddleware<JwtAuthenticationMiddleware>();
 
             app.UseHttpsRedirection();      //开启HTTPS重定向
 

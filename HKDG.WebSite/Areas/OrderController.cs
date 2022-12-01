@@ -58,5 +58,15 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
+        [LoginAuthorize]
+        [HttpGet("GetOrder")]
+        [ProducesResponseType(typeof(SystemResult<PageData<OrderSummaryView>>), 200)]
+        public async Task <SystemResult<OrderInfoView>> GetOrder(Guid id)
+        {
+           var result = new SystemResult<OrderInfoView>();
+            result.ReturnValue = orderBLL.GetOrder(id);
+            result.Succeeded = true;
+            return result;
+        }
     }
 }

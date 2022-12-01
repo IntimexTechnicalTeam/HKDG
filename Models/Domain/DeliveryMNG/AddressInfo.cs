@@ -5,14 +5,11 @@ namespace Domain
 {
     public class AddressInfo 
     {
-        [Required]
+
         [DefaultValue("00000000-0000-0000-0000-000000000000")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; } = Guid.Empty;
 
-        [Required]
-        public bool Default { get; set; }
-
-        public string FirstName { get; set; }
+        public bool Default { get; set; } = false; 
 
         [Required]
         public string LastName { get; set; }

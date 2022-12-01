@@ -30,9 +30,10 @@ namespace HKDG.WebSite.Controllers
                 return Redirect("/");
             }
 
-            var returnUrl = HttpContext.Request.Query["returnUrl"];
+            var returnUrl = HttpContext.Request.QueryString.Value ?? "";
             if (!returnUrl.IsNullOrEmpty() && !returnUrl.Contains("login"))
             {
+                returnUrl = returnUrl.Split("returnUrl=")?[1] ?? "";
                 ViewBag.ReturnUrl = returnUrl;
             }
 

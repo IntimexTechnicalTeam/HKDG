@@ -18,6 +18,7 @@
             builder.AddEndPoints("MerchantDetail", "/{controller=Merchant}/{action=Detail}/{IspType?}/{Id}");
             builder.AddEndPoints("CatProduct", "/{controller=Product}/{action=CatProduct}/{IspType?}/{Id}");
             builder.AddEndPoints("OrderList", "/{controller=Order}/{action=List}/{IspType?}");
+            //builder.AddEndPoints("AccountLogin", "/{controller=Account}/{action=Login}/{returnUrl?}");
             return builder;
         }
 

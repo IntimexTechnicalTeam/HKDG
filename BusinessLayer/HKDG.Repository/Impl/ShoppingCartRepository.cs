@@ -104,7 +104,7 @@
             var param = new List<SqlParameter>();
             param.Add(new SqlParameter { ParameterName = "@Id", Value = item.SkuId });
 
-            var data = (await baseRepository.GetListAsync<ShoppingCartItemDetailView>(strSql, new SqlParameter("@Id", item.SkuId))).FirstOrDefault();
+            var data = (await baseRepository.GetListAsync<ShoppingCartItemDetailView>(strSql, param)).FirstOrDefault();
 
             return data;
         }
