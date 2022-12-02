@@ -1,7 +1,4 @@
-﻿using HKDG.BLL;
-using System.Security.Cryptography;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     public class ProductController : BaseMvcController
     {

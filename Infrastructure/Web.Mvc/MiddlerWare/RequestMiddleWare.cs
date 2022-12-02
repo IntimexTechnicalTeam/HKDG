@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Web.Framework;
 
@@ -30,40 +33,38 @@ namespace Web.Mvc
         public async Task Invoke(HttpContext context)
         {
             string bearerToken = context.Request.Headers["Authorization"];
-            //if (string.IsNullOrEmpty(bearerToken))
-            //{
-            //    await this._next(context);
-            //    return;
-            //}
+          
             var ispType = context.Request.Query["IspType"];
-            var access_token = context.Request.Query["para2"];
-            if (!ispType.IsNullOrEmpty())
-            {               
-                if (ispType != Globals.Configuration["IspType"])
-                {
-                    var returnUrl = context.Request.GetDisplayUrl().Replace($"{ispType}", _config["IspType"])
-                                    .Replace("&para2=", "").Replace(access_token, "");
-                    context.Response.Redirect(returnUrl);
-                    return;                  
-                }
-            }
+            var access_token = context.Request.Query["access_token"];
+
+            ////暂时不处理这里
+            //if (!ispType.IsNullOrEmpty())
+            //{               
+            //    if (ispType != Globals.Configuration["IspType"])
+            //    {
+            //        var returnUrl = context.Request.GetDisplayUrl().Replace($"{ispType}", _config["IspType"])
+            //                        .Replace("&para2=", "").Replace(access_token, "");
+            //        context.Response.Redirect(returnUrl);
+            //        return;                  
+            //    }
+            //}
 
             if (!access_token.IsNullOrEmpty())
             {
-                var user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", access_token);
-                if (user == null || user.ExpireDate < DateTime.Now)  //不存在或过期
-                {
-                    var returnUrl = context.Request.GetDisplayUrl().Replace($"{ispType}", _config["IspType"])
-                                    .Replace("&para2=", "").Replace(access_token, "");
-                    context.Response.Cookies.Delete("access_token");
-                    context.Response.Redirect(returnUrl);
-                    return;
-                }
-                //else
-                {
-                    var option = new CookieOptions { HttpOnly = true, Secure = true };
-                    context.Response.Cookies.Append("access_token",access_token, option);
-                }
+                context.SetCookie("access_token", access_token);
+                
+                //var returnUrl = string.Concat(context.Request.Scheme,"://",context.Request.Host, context.Request.Path);
+                var returnUrl = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}";
+
+                string param = string.Empty;
+
+                //过滤access_token
+                var paramList = context.Request.Query.Where(x => x.Key != "access_token").Select(s => $"{s.Key}={s.Value}");
+                if (paramList.Any())  param = string.Join("&", paramList);            
+                if (!param.IsEmpty()) returnUrl = $"{returnUrl}?{param}";
+
+                context.Response.Redirect(returnUrl);
+                return;     
             }
 
             await this._next(context);

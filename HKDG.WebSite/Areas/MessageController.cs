@@ -60,8 +60,7 @@ namespace HKDG.WebSite.Areas
         /// 
         /// </summary>
         /// <param name="cond"></param>
-        /// <returns></returns>
-        [LoginAuthorize]
+        /// <returns></returns>    
         [HttpPost("AddArrivalNotify")]
         public async Task<SystemResult> AddArrivalNotify([FromForm] ArrivalNotifyCond cond)
         {
