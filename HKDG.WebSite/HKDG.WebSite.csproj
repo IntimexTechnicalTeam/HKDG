@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessLayer\HKDG.BLL\HKDG.BLL.csproj" />
+    <ProjectReference Include="..\HKDG.Resources\HKDG.Resources.csproj" />
     <ProjectReference Include="..\Infrastructure\UEditorNetCore\UEditorNetCore.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.AutoFac\Web.AutoFac.csproj" />
     <ProjectReference Include="..\Infrastructure\Web.Framework\Web.Framework.csproj" />

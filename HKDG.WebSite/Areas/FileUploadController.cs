@@ -56,10 +56,10 @@
         private void CheckFileFormat(FormFileCollection files)
         {
             if (files.Count > 5)
-                throw new BLException(Resources.Message.FileNotMoreThan + " 5");
+                throw new BLException(Message.FileNotMoreThan + " 5");
 
             if (files.Any(x => !x.ContentType.Contains("image")))
-                throw new BLException(Resources.Message.OnlyUploadImage);
+                throw new BLException(Message.OnlyUploadImage);
         }
 
         [NonAction]

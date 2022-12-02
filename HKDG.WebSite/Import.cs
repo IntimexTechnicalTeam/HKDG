@@ -27,3 +27,4 @@ global using Web.AutoFac;
 global using Web.Framework;
 global using Web.Jwt;
 global using Web.Mvc;
+global using HKDG.Resources;
