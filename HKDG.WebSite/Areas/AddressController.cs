@@ -1,9 +1,4 @@
-﻿using Autofac;
-using HKDG.BLL.Impl;
-using Model;
-using Web.Mvc.Filters;
-
-namespace HKDG.WebSite.Areas
+﻿namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
