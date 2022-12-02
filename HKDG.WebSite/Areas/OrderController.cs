@@ -1,5 +1,6 @@
 ﻿using Web.Mvc.Filters;
 using WebCache;
+using WS.ECShip.Model.MailTracking;
 
 namespace HKDG.WebSite.Areas
 {
@@ -65,6 +66,35 @@ namespace HKDG.WebSite.Areas
         {
            var result = new SystemResult<OrderInfoView>();
             result.ReturnValue = orderBLL.GetOrder(id);
+            result.Succeeded = true;
+            return result;
+        }
+
+        /// <summary>
+        /// 創建退換單
+        /// </summary>
+        [LoginAuthorize]
+        [HttpPost("CreateReturnOrder")]
+        [ProducesResponseType(typeof(SystemResult<NewReturnOrder>), 200)]
+        public async Task<SystemResult<NewReturnOrder>> CreateReturnOrder([FromForm] NewReturnOrder rOrder)
+        {
+             var result = await orderBLL.CreateReturnOrder(rOrder);
+            result.Succeeded = true;
+            return result;
+        }
+
+        /// <summary>
+        /// 獲取快遞單的物流情況
+        /// </summary>
+        /// <param name="trackingNo"></param>
+        /// <returns></returns>
+        [HttpGet("GetOrderMailTrackingInfo")]
+        [ProducesResponseType(typeof(SystemResult<MailTrackingInfo>), 200)]
+        public async Task<SystemResult<MailTrackingInfo>> GetOrderMailTrackingInfo(string trackingNo)
+        {
+            var result = new SystemResult<MailTrackingInfo>();
+            var data = orderBLL.GetOrderMailTrackingInfo(trackingNo);
+            result.ReturnValue = data;
             result.Succeeded = true;
             return result;
         }

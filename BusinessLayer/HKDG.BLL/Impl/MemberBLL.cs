@@ -770,5 +770,21 @@ namespace HKDG.BLL
 
             return result;
         }
+
+        public async Task<bool> Subscribe(string email)
+        { 
+            var member = await baseRepository.GetModelAsync<Member>(x=>x.Email== email); 
+            member.OptOutPromotion = true;
+            await baseRepository.UpdateAsync(member);
+            return true;
+        }
+
+        public async Task<bool> Unsubscribe(string email)
+        {
+            var member = await baseRepository.GetModelAsync<Member>(x => x.Email == email);
+            member.OptOutPromotion = false;
+            await baseRepository.UpdateAsync(member);
+            return true;
+        }
     }
 }

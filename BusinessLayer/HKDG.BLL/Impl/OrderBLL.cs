@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Model;
+using WS.ECShip.Model.MailTracking;
+using WS.ECShip;
 
 namespace HKDG.BLL
 {
@@ -73,7 +75,7 @@ namespace HKDG.BLL
                 TotalAmount = s.TotalAmount,
 
             }).ToList();
-            
+
             return result;
         }
 
@@ -88,7 +90,7 @@ namespace HKDG.BLL
             {
                 if (checkout.PaymentMethodId == Guid.Empty) throw new BLException(Resources.Message.PaymentTypeRequire);
                 foreach (var item in checkout.Items)
-                {                   
+                {
                     if (item.DeliveryType == DeliveryType.D && item.AddressId == Guid.Empty) throw new BLException(Resources.Message.DeliveryAddressRequire);
 
                     if (item.DeliveryType == DeliveryType.D && item.ChargeId == Guid.Empty) throw new BLException(Resources.Message.CourierRequire);
@@ -136,7 +138,7 @@ namespace HKDG.BLL
             var result = new SystemResult();
 
             var order = await GenOrder(cond.OrderId);
-            
+
             if (!CheckDeliveryStautsIsSame(cond, order)) throw new BLException(Resources.Message.StatusHasChanged);
             switch (cond.Status)
             {
@@ -208,7 +210,7 @@ namespace HKDG.BLL
 
         public void UpdateInventoryQty(OrderDto order, UpdateStatusCondition cond)
         {
-           
+
             var orderDeliveryInfo = cond.DeliveryTrackingInfo.FirstOrDefault();
             var orderDelivery = order.OrderDeliverys.FirstOrDefault(p => p.Id == orderDeliveryInfo.Id);
 
@@ -257,7 +259,7 @@ namespace HKDG.BLL
                     }
                 }
             }
-           
+
         }
 
         /// <summary>
@@ -278,7 +280,7 @@ namespace HKDG.BLL
                 UpdateStatusCondition cond = new UpdateStatusCondition();
                 cond.OrderId = delivery.OrderId;
                 cond.Status = OrderStatus.SRCancelled;
-                
+
                 cond.DeliveryTrackingInfo.FirstOrDefault().Id = id;
 
                 UpdateStatus(order, OrderStatus.SRCancelled, cond);
@@ -336,7 +338,7 @@ namespace HKDG.BLL
                     }).ToList();
 
                     foreach (var item in deliveryItems)
-                    {                      
+                    {
                         var orderDetail = order.OrderDetails.FirstOrDefault(p => p.SkuId == item.SkuId);
                         if (orderDetail != null)
                         {
@@ -345,14 +347,14 @@ namespace HKDG.BLL
                             reserved.ReservedQty = item.Qty;
                             reserved.OrderId = order.Id;
                             reserved.SubOrderId = orderDelivery.Id;
-                            var reservedResulst = inventoryBLL.AddInvReserved(reserved, order.MemberId);                            
+                            var reservedResulst = inventoryBLL.AddInvReserved(reserved, order.MemberId);
                         }
                     }
                 }
             }
         }
 
-     
+
 
         /// <summary>
         /// 更新產品銷售數量匯總數據
@@ -444,8 +446,8 @@ namespace HKDG.BLL
         {
             UnitOfWork.IsUnitSubmit = true;
             UpdateStatus(order, OrderStatus.ECancelled, cond);
-            if (order.Status == OrderStatus.ECancelled)            
-                CancelInventoryQty(order, cond);            
+            if (order.Status == OrderStatus.ECancelled)
+                CancelInventoryQty(order, cond);
             UnitOfWork.Submit();
         }
 
@@ -456,7 +458,7 @@ namespace HKDG.BLL
         /// <returns></returns>
         /// <exception cref="BLException"></exception>
         public async Task<bool> UpdateOrderPayStatus(Guid orderId)
-        {         
+        {
             var order = await GenOrder(orderId);
 
             UnitOfWork.IsUnitSubmit = true;
@@ -467,15 +469,15 @@ namespace HKDG.BLL
                 cond.CurrentStatus = OrderStatus.ReceivedOrder;
                 cond.Status = OrderStatus.PaymentConfirmed;//不會用於更改數據
                 cond.DeliveryTrackingInfo.FirstOrDefault().Id = item.Id;
-              
+
                 //如果这里高并发，可以考虑用队列来处理
                 UpdateOrderStatusToPayConfirm(order, cond);
-                 
+
                 if (true)//TODO 以後會添加開關控制，是否直接跳到去處理中
                 {
                     cond.CurrentStatus = OrderStatus.PaymentConfirmed;
                     UpdateOrderStatusToProcess(order, cond);
-                }         
+                }
             }
 
             UnitOfWork.Submit();
@@ -524,7 +526,7 @@ namespace HKDG.BLL
             if (cond == null)
             {
                 foreach (var item in orderDeliveries)
-                {                
+                {
                     foreach (var product in item.DeliveryDetails)
                     {
                         var reserve = new InventoryReservedDto();
@@ -562,13 +564,13 @@ namespace HKDG.BLL
                             {
                                 throw new BLException(result.Message);
                             }
-                        }                       
+                        }
                     }
                 }
             }
         }
 
-        void DeleteInventoryHold(List<Guid> skuHisList, Guid sku,Guid memberId)
+        void DeleteInventoryHold(List<Guid> skuHisList, Guid sku, Guid memberId)
         {
             if (!skuHisList.Contains(sku))
             {
@@ -698,7 +700,7 @@ namespace HKDG.BLL
             {
                 UnitOfWork.IsUnitSubmit = true;
                 order.IsPaid = true;
-                UpdateStatus(order, OrderStatus.PaymentConfirmed, cond);               
+                UpdateStatus(order, OrderStatus.PaymentConfirmed, cond);
                 UpdateProductSaleSummary(order);
                 UnitOfWork.Submit();
             }
@@ -805,7 +807,7 @@ namespace HKDG.BLL
             var deliveries = order.OrderDeliverys;
             var orderDeliveries = AutoMapperExt.MapTo<List<OrderDelivery>>(deliveries);
 
-            if (orderDeliveries.Any() && (cond?.DeliveryTrackingInfo?.Any() ?? false) )
+            if (orderDeliveries.Any() && (cond?.DeliveryTrackingInfo?.Any() ?? false))
             {
                 var deliveryInfo = cond.DeliveryTrackingInfo.FirstOrDefault();
                 var deliveryData = orderDeliveries.FirstOrDefault(p => p.Id == deliveryInfo.Id);
@@ -879,7 +881,7 @@ namespace HKDG.BLL
             {
                 var id = cond.DeliveryTrackingInfo[0].Id;
                 var orderDelivery = baseRepository.GetModel<OrderDelivery>(p => p.Id == id);
-                if (orderDelivery == null || orderDelivery.Status != cond.CurrentStatus) return false;                            
+                if (orderDelivery == null || orderDelivery.Status != cond.CurrentStatus) return false;
             }
 
             return result;
@@ -905,7 +907,7 @@ namespace HKDG.BLL
             var discountMessage = CheckOrderDiscount(orderView);
             if (!discountMessage.IsEmpty()) throw new BLException(discountMessage);
 
-            var items =(await baseRepository.GetListAsync<ShoppingCartItem>(d => d.MemberId == Guid.Parse(CurrentUser.UserId) && d.IsActive && !d.IsDeleted)).ToList();
+            var items = (await baseRepository.GetListAsync<ShoppingCartItem>(d => d.MemberId == Guid.Parse(CurrentUser.UserId) && d.IsActive && !d.IsDeleted)).ToList();
             if (!items?.Any() ?? false) throw new BLException(Resources.Message.NotValidProduct);
 
             decimal totalWeightKG = 0;
@@ -981,7 +983,7 @@ namespace HKDG.BLL
 
                 item.IsDeleted = true;
 
-                var itemDetails =(await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.ShoppingCartItemId == item.Id)).ToList();
+                var itemDetails = (await baseRepository.GetListAsync<ShoppingCartItemDetail>(x => x.ShoppingCartItemId == item.Id)).ToList();
 
                 foreach (var dd in itemDetails)
                 {
@@ -1005,7 +1007,7 @@ namespace HKDG.BLL
             foreach (var item in orderView.Items)
             {
                 int index = orderView.Items.IndexOf(item);
-                var address =await deliveryAddressBLL.GetAddress(item.AddressId);
+                var address = await deliveryAddressBLL.GetAddress(item.AddressId);
 
                 var orderDelivery = new OrderDeliveryDto();
                 orderDelivery.Id = Guid.NewGuid();  //item.DeliveryId;           
@@ -1270,7 +1272,7 @@ namespace HKDG.BLL
 
             foreach (var item in calcuateList)
             {
-                 rabbitMQService.PublishMsg(MQSetting.CalculateQtyQueue, MQSetting.CalculateQtyExchange, item.Id.ToString());
+                rabbitMQService.PublishMsg(MQSetting.CalculateQtyQueue, MQSetting.CalculateQtyExchange, item.Id.ToString());
             }
 
             //foreach (var item in msgList)
@@ -1302,7 +1304,7 @@ namespace HKDG.BLL
             OrderSummaryView view = new OrderSummaryView();
             view.Id = order.Id;
             view.OrderNO = order.OrderNO;
-            view.IsPay = order.IsPaid;       
+            view.IsPay = order.IsPaid;
             view.Currency = currencyBLL.GetSimpleCurrency(order.CurrencyCode);
             view.Status = order.Status;
             view.StatusName = codeMasterRepository.GetCodeMaster(CodeMasterModule.System.ToString(), CodeMasterFunction.OrderStatus.ToString(), order.Status.ToString())?.Description ?? "";
@@ -1327,7 +1329,7 @@ namespace HKDG.BLL
         private OrderInfoView BuildModel(Order dbOrder)
         {
             if (dbOrder == null) return null;
-    
+
             //var countrys = DeliveryAddressBLL.GetCountries();
             //var provinces = DeliveryAddressBLL.GetProvinces(0);
             var member = baseRepository.GetModelById<Member>(dbOrder.MemberId);
@@ -1371,7 +1373,7 @@ namespace HKDG.BLL
             }
             else
             {
-                order.StatusCode = baseRepository.GetModel<OrderDelivery>(x=>x.OrderId== dbOrder.Id && x.MerchantId == CurrentUser.MerchantId)?.Status.ToInt().ToString();
+                order.StatusCode = baseRepository.GetModel<OrderDelivery>(x => x.OrderId == dbOrder.Id && x.MerchantId == CurrentUser.MerchantId)?.Status.ToInt().ToString();
             }
 
             order.StatusName = codeMasterRepository.GetCodeMaster(CodeMasterModule.System.ToString(), CodeMasterFunction.OrderStatus.ToString(), dbOrder.Status.ToString())?.Description ?? "";
@@ -1394,7 +1396,7 @@ namespace HKDG.BLL
             if (orderDetails?.Any() ?? false)
             {
                 if (CurrentUser.IsMerchant) orderDetails = orderDetails.Where(p => p.MerchantId == CurrentUser.MerchantId).ToList();
-                
+
                 orderItems = orderDetails.Select(item => new OrderItem
                 {
                     Id = item.Id,
@@ -1453,10 +1455,10 @@ namespace HKDG.BLL
             var merchant = merchantBLL.GetMerchById(dbDelivery.MerchantId);
             var expressCompany = new ExpressCompanyDto();
             if (dbDelivery.ExpressCompanyId != Guid.Empty)
-                expressCompany = deliveryBLL.GetExpressItem(dbDelivery.ExpressCompanyId);            
+                expressCompany = deliveryBLL.GetExpressItem(dbDelivery.ExpressCompanyId);
             else
                 expressCompany = null;
-            
+
             var order = baseRepository.GetModelById<Order>(dbDelivery.OrderId);
 
             delivery = AutoMapperExt.MapTo<OrderDeliveryInfo>(dbDelivery);
@@ -1472,7 +1474,7 @@ namespace HKDG.BLL
             delivery.DeliveryItems = GetOrderDeliveryItems(dbDelivery);
             delivery.ExpressServiceCode = dbDelivery.ServiceType;
             delivery.ExpressServiceName = expressCompany?.Name ?? "";
-            delivery.DeliveryTypeName = codeMasterRepository.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.ExpressService.ToString(), delivery.DeliveryTypeCode)?.Remark ?? ""; 
+            delivery.DeliveryTypeName = codeMasterRepository.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.ExpressService.ToString(), delivery.DeliveryTypeCode)?.Remark ?? "";
             delivery.PLName = string.IsNullOrEmpty(dbDelivery.PLCode) ? "" : codeMasterRepository.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.IPostStation.ToString(), dbDelivery.PLCode)?.Description ?? "";
             delivery.CollectionOfficeName = string.IsNullOrEmpty(dbDelivery.COCode) ? "" : codeMasterRepository.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.CollectionOffice.ToString(), dbDelivery.COCode)?.Description ?? "";
             delivery.FullAddress = GetDeliveryAddress(delivery);
@@ -1507,7 +1509,7 @@ namespace HKDG.BLL
                 delivery.TrackingNo = dbDelivery.TrackingNo;
             }
             delivery.StatusCode = ((int)dbDelivery.Status).ToString();
-            delivery.StatusName = codeMasterRepository.GetCodeMaster(CodeMasterModule.System.ToString(), CodeMasterFunction.OrderStatus.ToString(), dbDelivery.Status.ToString())?.Description ?? "";       
+            delivery.StatusName = codeMasterRepository.GetCodeMaster(CodeMasterModule.System.ToString(), CodeMasterFunction.OrderStatus.ToString(), dbDelivery.Status.ToString())?.Description ?? "";
             delivery.Discounts = GetSubOrderDiscount(dbDelivery.Id);
             CheckIsCoolDownDate(delivery, dbDelivery);
 
@@ -1516,7 +1518,7 @@ namespace HKDG.BLL
             delivery.ECShipStatus = ecshipStatus?.Status ?? MassProcessStatusType.Waitting;
             delivery.IsShowECShipStatus = ecshipStatus == null ? false : true;
             delivery.ECShipMessage = ecshipStatus?.Message ?? "";
-        
+
             delivery.UpdateDate = DateUtil.DateTimeToString(dbDelivery.UpdateDate, Setting.DefaultDateTimeFormat);
             delivery.GoodsType = ShoppingCartItemType.BUYDONG;
 
@@ -1607,7 +1609,7 @@ namespace HKDG.BLL
         }
 
         private List<DiscountView> GetOrderDiscount(Guid id)
-        {            
+        {
             var discounts = baseRepository.GetList<OrderDiscount>(p => p.IsActive && !p.IsDeleted && p.OrderId == id && p.SubOrderId == Guid.Empty).ToList();
             var result = discounts.Select(item => new DiscountView
             {
@@ -1694,14 +1696,14 @@ namespace HKDG.BLL
             }
 
             ///如果同時存在現金券、推廣規則。表示優惠規則有問題
-            if (hasPromotionRule == true && priceCouponCount > 0)result = false;
-            
-            if (priceCouponCount > 1 && priceCouponMerchCount > 0)result = false;
-            
+            if (hasPromotionRule == true && priceCouponCount > 0) result = false;
+
+            if (priceCouponCount > 1 && priceCouponMerchCount > 0) result = false;
+
             var memberAccount = baseRepository.GetModel<MemberAccount>(x => x.MemberId == Guid.Parse(CurrentUser.UserId));
 
-            if ((memberAccount?.Fun  ?? 0)< order.MallFun)  result = false;
-            
+            if ((memberAccount?.Fun ?? 0) < order.MallFun) result = false;
+
             return result;
         }
 
@@ -1777,7 +1779,7 @@ namespace HKDG.BLL
                 });
 
                 foreach (var item in deliveryItems)
-                {                 
+                {
                     OrderItem orderItem = new OrderItem();
                     orderItem.Id = item.Id;
                     orderItem.Product = productBLL.GenProductInfoBySkuId(item.ProductId, item.SkuId);
@@ -1836,7 +1838,7 @@ namespace HKDG.BLL
                             if ((!coupon.IsActive || coupon.IsDeleted) || (coupon.EffectDateFrom > DateTime.Now || coupon.EffectDateTo < DateTime.Now))
                             {
                                 var rule = baseRepository.GetModelById<CouponRule>(coupon.RuleId);
-                                var ruleTitle = translationRepository.GetDescForLang(rule.TitleTransId,CurrentUser.Lang);
+                                var ruleTitle = translationRepository.GetDescForLang(rule.TitleTransId, CurrentUser.Lang);
                                 isActive = false;
                                 result = string.Format(Resources.Message.DiscountExpired, ruleTitle);
                             }
@@ -1849,7 +1851,7 @@ namespace HKDG.BLL
                         {
                             if ((!promotionCode.IsActive || promotionCode.IsDeleted) || (promotionCode.EffectDateFrom > DateTime.Now || promotionCode.EffectDateTo < DateTime.Now))
                             {
-                                var title = translationRepository.GetDescForLang(promotionCode.TitleTransId,CurrentUser.Lang);
+                                var title = translationRepository.GetDescForLang(promotionCode.TitleTransId, CurrentUser.Lang);
                                 isActive = false;
                                 result = string.Format(Resources.Message.DiscountExpired, title);
                             }
@@ -1904,133 +1906,133 @@ namespace HKDG.BLL
         /// <returns></returns>
         private List<PRDiscountPrice> CalculateProductGroupSaleDiscount(OrderDto order, List<CheckoutItem> checkoutItems)
         {
-         
-                List<OrderDeliveryItemView> buyItems = new List<OrderDeliveryItemView>();
-                foreach (var item in checkoutItems)//获取所有是GroupSale的产品
+
+            List<OrderDeliveryItemView> buyItems = new List<OrderDeliveryItemView>();
+            foreach (var item in checkoutItems)//获取所有是GroupSale的产品
+            {
+                foreach (var product in item.Detail)
                 {
-                    foreach (var product in item.Detail)
+                    if (product.RuleType == PromotionRuleType.GroupSale)
                     {
-                        if (product.RuleType == PromotionRuleType.GroupSale)
+                        buyItems.Add(new OrderDeliveryItemView
                         {
-                            buyItems.Add(new OrderDeliveryItemView
-                            {
-                                DeliveryId = item.DeliveryId,
-                                IsFree = product.IsFree,
-                                Qty = product.Qty,
-                                RuleId = product.RuleId,
-                                RuleType = product.RuleType,
-                                Sku = product.Sku,
-                            });
-                        }
+                            DeliveryId = item.DeliveryId,
+                            IsFree = product.IsFree,
+                            Qty = product.Qty,
+                            RuleId = product.RuleId,
+                            RuleType = product.RuleType,
+                            Sku = product.Sku,
+                        });
                     }
-
                 }
 
+            }
 
-                var groupBuyItems = buyItems.Where(p => p.Qty > 0).GroupBy(g => new { g.Sku, g.RuleId }).Select(d => new
+
+            var groupBuyItems = buyItems.Where(p => p.Qty > 0).GroupBy(g => new { g.Sku, g.RuleId }).Select(d => new
+            {
+                //DeliveryId = d.Key.DeliveryId,
+                RuleId = d.Key.RuleId,
+                Sku = d.Key.Sku,
+                Qty = d.Sum(s => s.Qty)
+            }).ToList();//将分拆的产品Group起来
+
+
+            List<PromotionRuleDiscountView> discountView = new List<PromotionRuleDiscountView>();
+
+            foreach (var item in groupBuyItems)//获取所有PromotionRule的信息
+            {
+                var orderDetail = order.OrderDetails.SingleOrDefault(d => d.SkuId == item.Sku);
+
+                discountView.Add(GetPromotionRule(item.RuleId, orderDetail));
+            }
+
+            discountView = discountView.GroupBy(g => new { g.Id, g.ProductId }).Select(d => new PromotionRuleDiscountView
+            {
+                Id = d.Key.Id,
+                ProductId = d.Key.ProductId,
+                DiscountPrice = d.Select(a => a.DiscountPrice).FirstOrDefault(),
+                SingleDiscountPrice = d.Select(a => a.SingleDiscountPrice).FirstOrDefault()
+            }).ToList();
+
+            List<PRDiscountPrice> result = new List<PRDiscountPrice>();
+
+
+            //foreach (var delivery in checkoutItems)
+            //{
+            //    delivery.de
+            foreach (var discount in discountView)//根据有对少种PromtionRule进行遍历
+            {
+
+                decimal usedSingleDiscount = 0;
+
+                var ruleProducts = buyItems.Where(p => p.RuleId == discount.Id && p.Sku == discount.ProductId && p.Qty > 0).ToList();
+
+                var endFlag = 0;//用于辨识一个Rule中是否到达最后一个产品，用于同一个Rule同一种产品进行拆分
+
+                for (int i = 0; i < ruleProducts.Count; i++)
                 {
-                    //DeliveryId = d.Key.DeliveryId,
-                    RuleId = d.Key.RuleId,
-                    Sku = d.Key.Sku,
-                    Qty = d.Sum(s => s.Qty)
-                }).ToList();//将分拆的产品Group起来
+                    var ruleProduct = ruleProducts[i];//产品
 
-
-                List<PromotionRuleDiscountView> discountView = new List<PromotionRuleDiscountView>();
-
-                foreach (var item in groupBuyItems)//获取所有PromotionRule的信息
-                {
-                    var orderDetail = order.OrderDetails.SingleOrDefault(d => d.SkuId == item.Sku);
-
-                    discountView.Add(GetPromotionRule(item.RuleId, orderDetail));
-                }
-
-                discountView = discountView.GroupBy(g => new { g.Id, g.ProductId }).Select(d => new PromotionRuleDiscountView
-                {
-                    Id = d.Key.Id,
-                    ProductId = d.Key.ProductId,
-                    DiscountPrice = d.Select(a => a.DiscountPrice).FirstOrDefault(),
-                    SingleDiscountPrice = d.Select(a => a.SingleDiscountPrice).FirstOrDefault()
-                }).ToList();
-
-                List<PRDiscountPrice> result = new List<PRDiscountPrice>();
-
-
-                //foreach (var delivery in checkoutItems)
-                //{
-                //    delivery.de
-                foreach (var discount in discountView)//根据有对少种PromtionRule进行遍历
-                {
-
-                    decimal usedSingleDiscount = 0;
-
-                    var ruleProducts = buyItems.Where(p => p.RuleId == discount.Id && p.Sku == discount.ProductId && p.Qty > 0).ToList();
-
-                    var endFlag = 0;//用于辨识一个Rule中是否到达最后一个产品，用于同一个Rule同一种产品进行拆分
-
-                    for (int i = 0; i < ruleProducts.Count; i++)
+                    if (endFlag == ruleProducts.Count - 1)//到最后一件时，每件产品优惠价钱计算略不同
                     {
-                        var ruleProduct = ruleProducts[i];//产品
-
-                        if (endFlag == ruleProducts.Count - 1)//到最后一件时，每件产品优惠价钱计算略不同
-                        {
-                            if (ruleProducts.Count == 1)//如果是一件产品，那么每件产品的价格是SingleDiscountPrice
-                            {
-                                result.Add(new PRDiscountPrice
-                                {
-                                    DeliveryId = ruleProduct.DeliveryId,
-                                    ProductId = ruleProduct.Sku,
-                                    PromotionRuleId = ruleProduct.RuleId,
-                                    DiscountPrice = discount.DiscountPrice,
-                                    SingleDiscountPrice = discount.DiscountPrice
-                                });
-                            }
-                            else
-                            {
-
-                                decimal lastDiscountPrice = 0;
-
-                                //每个送货单的产品有机会有多个，所以不能discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)，要遍历到最后一个才用discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)
-                                if (ruleProduct.Qty > 1)
-                                {
-                                    lastDiscountPrice = ((ruleProduct.Qty - 1) * discount.SingleDiscountPrice) + discount.DiscountPrice - (usedSingleDiscount + ((ruleProduct.Qty - 1) * discount.SingleDiscountPrice));
-                                }
-                                else
-                                {
-                                    lastDiscountPrice = discount.DiscountPrice - usedSingleDiscount;
-                                }
-
-                                result.Add(new PRDiscountPrice
-                                {
-                                    DeliveryId = ruleProduct.DeliveryId,
-                                    ProductId = ruleProduct.Sku,
-                                    PromotionRuleId = ruleProduct.RuleId,
-                                    DiscountPrice = lastDiscountPrice,
-                                    SingleDiscountPrice = discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)
-                                });
-                            }
-                        }
-                        else
+                        if (ruleProducts.Count == 1)//如果是一件产品，那么每件产品的价格是SingleDiscountPrice
                         {
                             result.Add(new PRDiscountPrice
                             {
                                 DeliveryId = ruleProduct.DeliveryId,
                                 ProductId = ruleProduct.Sku,
                                 PromotionRuleId = ruleProduct.RuleId,
-                                DiscountPrice = ruleProduct.Qty * discount.SingleDiscountPrice,
-                                SingleDiscountPrice = discount.SingleDiscountPrice
-
+                                DiscountPrice = discount.DiscountPrice,
+                                SingleDiscountPrice = discount.DiscountPrice
                             });
-                            usedSingleDiscount += ruleProduct.Qty * discount.SingleDiscountPrice;
                         }
-                        endFlag++;
+                        else
+                        {
+
+                            decimal lastDiscountPrice = 0;
+
+                            //每个送货单的产品有机会有多个，所以不能discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)，要遍历到最后一个才用discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)
+                            if (ruleProduct.Qty > 1)
+                            {
+                                lastDiscountPrice = ((ruleProduct.Qty - 1) * discount.SingleDiscountPrice) + discount.DiscountPrice - (usedSingleDiscount + ((ruleProduct.Qty - 1) * discount.SingleDiscountPrice));
+                            }
+                            else
+                            {
+                                lastDiscountPrice = discount.DiscountPrice - usedSingleDiscount;
+                            }
+
+                            result.Add(new PRDiscountPrice
+                            {
+                                DeliveryId = ruleProduct.DeliveryId,
+                                ProductId = ruleProduct.Sku,
+                                PromotionRuleId = ruleProduct.RuleId,
+                                DiscountPrice = lastDiscountPrice,
+                                SingleDiscountPrice = discount.DiscountPrice - usedSingleDiscount//优惠的价钱-之前累计的单个产品优惠价钱)
+                            });
+                        }
                     }
-                    //}
+                    else
+                    {
+                        result.Add(new PRDiscountPrice
+                        {
+                            DeliveryId = ruleProduct.DeliveryId,
+                            ProductId = ruleProduct.Sku,
+                            PromotionRuleId = ruleProduct.RuleId,
+                            DiscountPrice = ruleProduct.Qty * discount.SingleDiscountPrice,
+                            SingleDiscountPrice = discount.SingleDiscountPrice
+
+                        });
+                        usedSingleDiscount += ruleProduct.Qty * discount.SingleDiscountPrice;
+                    }
+                    endFlag++;
                 }
+                //}
+            }
 
 
-                return result;
-           
+            return result;
+
         }
 
         private PromotionRuleDiscountView GetPromotionRule(Guid promoRuleId, OrderDetail orderDetail)
@@ -2288,7 +2290,7 @@ namespace HKDG.BLL
                                 #region 限品類優惠
 
                                 //可優惠的產品清單
-                                var codeProdList =  baseRepository.GetList<PromotionCodeProduct>(x=>x.RuleId == codeCoupon.Id && x.IsActive && !x.IsDeleted).ToList();
+                                var codeProdList = baseRepository.GetList<PromotionCodeProduct>(x => x.RuleId == codeCoupon.Id && x.IsActive && !x.IsDeleted).ToList();
                                 if (codeProdList?.Count > 0)
                                 {
                                     foreach (var deliveryDetail in delivery.DeliveryDetails)
@@ -2595,7 +2597,7 @@ namespace HKDG.BLL
         {
             if (mallFun > 0)
             {
-                var memberAccount = baseRepository.GetModel<MemberAccount>(x=>x.MemberId==Guid.Parse(CurrentUser.UserId) && x.IsActive && !x.IsDeleted);
+                var memberAccount = baseRepository.GetModel<MemberAccount>(x => x.MemberId == Guid.Parse(CurrentUser.UserId) && x.IsActive && !x.IsDeleted);
                 if (memberAccount != null)
                 {
                     memberAccount.Fun -= mallFun;
@@ -2605,7 +2607,7 @@ namespace HKDG.BLL
                     history.AccountId = memberAccount.Id;
                     history.Amount = mallFun;
                     history.Type = InOut.Out;
-                    
+
                     baseRepository.Insert(history);
                     baseRepository.Update(memberAccount);
                 }
@@ -2617,16 +2619,16 @@ namespace HKDG.BLL
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        private  void InsertOrderStatusHistory(Guid id, OrderStatus status)
+        private void InsertOrderStatusHistory(Guid id, OrderStatus status)
         {
             var operatorDate = DateTime.Now;
 
-            var lastHistory = baseRepository.GetModel<OrderStatusHistory>(p => p.IsActive && !p.IsDeleted && p.OrderId == id && p.Status == status-1);
+            var lastHistory = baseRepository.GetModel<OrderStatusHistory>(p => p.IsActive && !p.IsDeleted && p.OrderId == id && p.Status == status - 1);
             if (lastHistory != null)
             {
                 lastHistory.UpdateBy = Guid.Parse(CurrentUser.UserId);
                 lastHistory.UpdateDate = operatorDate;
-                baseRepository.Update(lastHistory);  
+                baseRepository.Update(lastHistory);
             }
 
             OrderStatusHistory orderStatushistory = new OrderStatusHistory();
@@ -2700,7 +2702,7 @@ namespace HKDG.BLL
                 }
 
                 baseRepository.Update(couponList);
-                baseRepository.Update(promotionCodeCoupons);           
+                baseRepository.Update(promotionCodeCoupons);
                 baseRepository.Insert(discountList);
             }
 
@@ -2723,7 +2725,7 @@ namespace HKDG.BLL
                 lastHistory.UpdateDate = operatorDate;
                 baseRepository.Update(lastHistory);
             }
-            
+
             SubOrderStatusHistory subOrderStatushistory = new SubOrderStatusHistory();
             subOrderStatushistory.Id = Guid.NewGuid();
 
@@ -2790,7 +2792,7 @@ namespace HKDG.BLL
                             //case DiscountType.MemberGroup:
                             //    break;
                     }
-                }               
+                }
                 baseRepository.Update(couponList);
                 baseRepository.Update(promotionCodeCoupons);
                 baseRepository.Insert(discountList);
@@ -2826,7 +2828,7 @@ namespace HKDG.BLL
                 //var id = cond.DeliveryTrackingInfo[0].Id;
                 //var orderDelivery = baseRepository.GetModelById<OrderDelivery>(id);
                 if (!order.OrderDeliverys.Any()) return false;
-                if (cond.CurrentStatus !=  order.OrderDeliverys.FirstOrDefault()?.Status ) return false;
+                if (cond.CurrentStatus != order.OrderDeliverys.FirstOrDefault()?.Status) return false;
             }
 
             return result;
@@ -2846,31 +2848,242 @@ namespace HKDG.BLL
 
                 view.PaymentMethod = pm?.Name ?? "";
                 view.PMCode = pm?.Code ?? "";
-                view.PMRate = pm?.ServRate ?? decimal.Zero;                
+                view.PMRate = pm?.ServRate ?? decimal.Zero;
                 view.UpdateDateString = DateUtil.DateTimeToString(view.UpdateDate, "yyyy-MM-dd HH:mm:ss");
                 //view.StatusName = codeMasterBLL.GetCodeMaster(CodeMasterModule.System, CodeMasterFunction.OrderStatus, view.Status.ToString())?.Description ?? "";
                 view.Currency = currencyBLL.GetSimpleCurrency(view.CurrencyCode);
 
                 if (view.Status == OrderStatus.Processing)
                 {
-                    view.Status = OrderStatus.PaymentConfirmed;                   
+                    view.Status = OrderStatus.PaymentConfirmed;
                 }
                 else if (view.Status == OrderStatus.DeliveryArranged)
                 {
-                    view.Status = OrderStatus.PaymentConfirmed;               
+                    view.Status = OrderStatus.PaymentConfirmed;
                 }
                 else if (view.Status == OrderStatus.SCancelled || view.Status == OrderStatus.SRCancelled || view.Status == OrderStatus.ECancelled)
                 {
-                    view.Status = view.Status;                  
+                    view.Status = view.Status;
                 }
                 view.StatusName = orderStatusList.FirstOrDefault(x => x.Key == view.Status.ToString()).Description ?? "";
             }
 
             result.Data = orders.Data.OrderByDescending(d => d.CreateDate).ToList();
             result.TotalRecord = orders.TotalRecord;
-           
+
             return result;
 
+        }
+
+        public async Task<List<KeyValue>> GetReturnOrderTypeComboSrc()
+        {
+            var query = codeMasterBLL.GetCodeMasters(CodeMasterModule.System, CodeMasterFunction.ReturnOrderType);
+            var result = query.Select(s => new KeyValue { Id = s.Id.ToString(), Text = s.Description }).ToList();
+            return result;
+        }
+
+        public async Task<SystemResult<NewReturnOrder>> CreateReturnOrder(NewReturnOrder rOrder)
+        {
+            var result = new SystemResult<NewReturnOrder>();
+
+            var order = await baseRepository.GetModelAsync<Order>(x => x.Id == rOrder.OrderId && x.IsActive && !x.IsDeleted);
+
+            if (order == null) throw new BLException(Resources.Message.CantFindOrder);
+
+            var returnOrder = new ReturnOrder
+            {
+                Id = Guid.NewGuid(),
+                //RONo = rOrderNo,
+                OrderId = order.Id,
+                MemberId = order.MemberId,
+                ApplyType = rOrder.ApplyType,
+                Status = ReturnOrderStatus.Apply,
+                MallFun = 0,
+            };
+
+            rOrder.Id = returnOrder.Id;
+
+            var rOrderDtlList = new List<ReturnOrderDetail>();//明細
+            var rOrderImgList = new List<ReturnOrderImageDto>();//附加圖片
+            var rOrderMsgList = new List<ReturnOrderMessage>();//留言
+
+            if (rOrder.Items?.Count > 0)
+            {
+                var orderItem = rOrder.Items.FirstOrDefault();
+
+                var deliveryDetail = (from od in baseRepository.GetList<OrderDelivery>()
+                                      join odd in baseRepository.GetList<OrderDeliveryDetail>() on od.Id equals odd.DeliveryId
+                                      where od.Id == orderItem.DeliveryId
+                                      select odd).FirstOrDefault();
+
+                if (deliveryDetail != null)
+                {
+                    var product = await baseRepository.GetModelAsync<Product>(x => x.Id == deliveryDetail.ProductId);
+                    var productExtension = await baseRepository.GetModelAsync<ProductExtension>(x => x.Id == deliveryDetail.ProductId);
+
+                    if (product != null && productExtension != null)
+                    {
+                        if (productExtension.IsSalesReturn)
+                        {
+                            throw new BLException(Resources.Message.NonReturnableItemAlert);
+                        }
+                    }
+                }
+
+                var exsitROrder = IsExsitReturnOrderReply(new ReturnOrderCondition()
+                {
+                    OrderId = order.Id,
+                    OrderDeliveryId = orderItem.DeliveryId,
+                    SkuId = orderItem.SkuId,
+                });
+                if (exsitROrder != null)
+                {
+                    rOrder.Id = exsitROrder.Id;
+                    rOrder.isNew = false;
+                    result.Succeeded = true;
+                    result.ReturnValue = rOrder;
+                    return result;
+                }
+
+                //不存在已有記錄則新增明細及其他信息
+                {
+                    string rOrderNo = AutoGenerateNumber(CodeMasterModule.Setting, CodeMasterFunction.ReturnOrderNoSetting);
+                    if (rOrderNo == null)
+                    {
+                        throw new BLException(Resources.Message.GenerateReNumFailed);
+                    }
+                    returnOrder.RONo = rOrderNo;
+
+                    var orderDtl = (from d in baseRepository.GetList<OrderDelivery>()
+                                    join dd in baseRepository.GetList<OrderDeliveryDetail>()
+                                    on d.Id equals dd.DeliveryId
+                                    where d.IsActive && !d.IsDeleted
+                                    && dd.IsActive && !dd.IsDeleted
+                                    && d.Id == orderItem.DeliveryId
+                                    && d.OrderId == rOrder.OrderId
+                                    && dd.SkuId == orderItem.SkuId
+                                    && !dd.IsFree
+                                    select dd).FirstOrDefault();
+
+                    if (orderDtl != null)
+                    {
+                        Guid merchantId = baseRepository.GetModelById<OrderDelivery>(orderDtl.DeliveryId).MerchantId;
+                        orderItem.MerchantId = merchantId;
+
+                        //退換單詳細
+                        var rOrderDtl = new ReturnOrderDetail()
+                        {
+                            Id = Guid.NewGuid(),
+                            ROrderId = returnOrder.Id,
+                            MerchantId = merchantId,
+                            Qty = orderDtl.Qty,
+                            UnitPrice = orderDtl.SalePrice,
+                            ProductId = orderDtl.ProductId,
+                            SkuId = orderDtl.SkuId,
+                            OrderDeliveryId = orderDtl.DeliveryId
+                        };
+                        rOrderDtlList.Add(rOrderDtl);
+
+                        //退換單附加圖片列表
+                        var imgList = orderItem.AttachImages;
+                        if (imgList?.Count > 0)
+                        {
+                            //保存圖片
+                            var relPath = PathUtil.GetRelativePath(merchantId.ToString(), FileFolderEnum.ROrderImage) + "/" + returnOrder.Id;
+
+                            foreach (var img in imgList)
+                            {
+                                if (!string.IsNullOrEmpty(img.NewImageSName) && !string.IsNullOrEmpty(img.NewImageBName))
+                                {
+                                    var returnOrderImg = new ReturnOrderImageDto()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        ROrderDtlId = rOrderDtl.Id,
+                                        ROrderId = returnOrder.Id,
+                                        ImageS = relPath + "/" + img.NewImageSName,
+                                        ImageB = relPath + "/" + img.NewImageBName,
+                                        Type = ReturnOrderImgType.AttachedPic,
+                                    };
+
+                                    img.Id = returnOrderImg.Id;
+
+                                    rOrderImgList.Add(returnOrderImg);
+                                }
+                            }
+                        }
+                    }
+
+                    //退換單留言列表                        
+                    if (!string.IsNullOrEmpty(rOrder.Message))
+                    {
+                        var msg = CreateReturnOrderMsg(rOrder.Message, returnOrder.Id);
+                        if (msg != null)
+                        {
+                            rOrderMsgList.Add(msg);
+                        }
+                    }
+
+                    UnitOfWork.IsUnitSubmit = true;
+
+                    await baseRepository.InsertAsync(returnOrder);      //退換單主數據                 
+                    await baseRepository.InsertAsync(rOrderDtlList);    //退換單明細數據
+                    await baseRepository.InsertAsync(rOrderMsgList); //退換單留言信息
+
+                    var dbImgList = AutoMapperExt.MapToList<ReturnOrderImageDto, ReturnOrderImage>(rOrderImgList);
+                    await baseRepository.InsertAsync(dbImgList); //退換單明細附圖
+
+                    UnitOfWork.Submit();
+
+                    result.Succeeded = true;
+                    rOrder.isNew = true;
+                    result.ReturnValue = rOrder;
+
+                    // SendReturnOrderHandleEmail(returnOrder);
+                }
+            }
+
+            return result;
+        }
+
+        public MailTrackingInfo GetOrderMailTrackingInfo(string trackingNo)       
+        {
+          
+                var accountInfo = settingBLL.GetMailTrackingAccountInfo();
+
+                var data = MailTracking.GetMailTrackingInfo(accountInfo, trackingNo,CurrentUser.Lang.ToString());
+
+                data.Details = data.Details.OrderByDescending(o => o.MessageTime).ThenByDescending(t => t.Seq).Take(1).ToList();
+                return data;          
+        }
+
+
+        private ReturnOrder IsExsitReturnOrderReply(ReturnOrderCondition cond)
+        {
+            var query = from ro in baseRepository.GetList<ReturnOrder>()
+                        join rod in baseRepository.GetList<ReturnOrderDetail>()
+                        on ro.Id equals rod.ROrderId
+                        where ro.IsActive && !ro.IsDeleted && rod.IsActive && !rod.IsDeleted
+                        && ro.OrderId == cond.OrderId && rod.OrderDeliveryId == cond.OrderDeliveryId && rod.SkuId == cond.SkuId
+                        select ro;
+            var rOrder = query?.FirstOrDefault() ?? null;
+            return rOrder;
+        }
+
+        private ReturnOrderMessage CreateReturnOrderMsg(string message, Guid rOrderId)
+        {
+            ReturnOrderMessage rtnOrderMsg = null;
+            if (!string.IsNullOrEmpty(message) && rOrderId != Guid.Empty)
+            {
+                rtnOrderMsg = new ReturnOrderMessage()
+                {
+                    Id = Guid.NewGuid(),
+                    ROrderId = rOrderId,
+                    Message = message,
+                    UserId = CurrentUser.Id,
+                    UserType = CurrentUser.Type
+                };
+            }
+            return rtnOrderMsg;
         }
     }
 }

@@ -180,7 +180,7 @@
         ///// <returns></returns>
         //ECShipAccountInfo GetECSSoazAccountInfo();
 
-        //MailTrackingAccountInfo GetMailTrackingAccountInfo();
+        MailTrackingAccountInfo GetMailTrackingAccountInfo();
 
         ///// <summary>
         ///// 获取cms内容长度限制

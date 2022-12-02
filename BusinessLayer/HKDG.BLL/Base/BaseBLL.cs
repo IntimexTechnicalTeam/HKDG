@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using log4net;
+
+namespace HKDG.BLL
 {
     /// <summary>
     /// 业务逻辑层继承此类
@@ -135,6 +137,19 @@
                     _currencyBLL = Services.Resolve<ICurrencyBLL>();
                 }
                 return this._currencyBLL;
+            }
+        }
+
+        public ICodeMasterBLL _codeMasterBLL;
+        public ICodeMasterBLL codeMasterBLL
+        {
+            get
+            {
+                if (_codeMasterBLL == null)
+                {
+                    _codeMasterBLL = Services.Resolve<ICodeMasterBLL>();
+                }
+                return this._codeMasterBLL;
             }
         }
 
@@ -339,6 +354,64 @@
             }
         }
 
+        public string AutoGenerateNumber(CodeMasterModule module, CodeMasterFunction function)
+        {
+            string result = "";
+
+            var perfix = codeMasterBLL.GetCodeMaster(module, function, "Perfix");
+            var postfix = codeMasterBLL.GetCodeMaster(module, function, "Counter");
+            var postfixLength = codeMasterBLL.GetCodeMaster(module, function, "PostfixLength");
+            var format = codeMasterBLL.GetCodeMaster(module, function, "Format");
+
+            AutoGenNumberInfo numberInfo = new AutoGenNumberInfo();
+            numberInfo.Perfix = perfix?.Value ?? "";
+            numberInfo.Postfix = int.Parse(postfix?.Value ?? "0") + 1;
+            numberInfo.PostfixLength = int.Parse(postfixLength?.Value ?? "0");
+            numberInfo.Format = format?.Value ?? "";
+
+            if (string.IsNullOrEmpty(numberInfo.Perfix))
+            {
+                return "";
+            }
+            if (string.IsNullOrEmpty(numberInfo.Format))
+            {
+                return "";
+            }
+            if (numberInfo.PostfixLength <= 0)
+            {
+                return "";
+            }
+
+            result = StringUtil.GenerateNumber(numberInfo.Perfix, numberInfo.Format, numberInfo.Postfix, numberInfo.PostfixLength);
+
+            UpdateCounter(format, postfix);
+
+            return result;
+        }
+
+        public void UpdateCounter(CodeMasterDto format, CodeMasterDto postfix)
+        {
+            postfix.Value = (int.Parse(postfix.Value) + 1).ToString();
+
+            //根據format格式判斷重置計數器的時間間隔
+            if (format.Value.ToString().IndexOf("MM") > 0)//每月重置計數器
+            {
+                if (DateTime.Now.Month > ((DateTime)postfix.UpdateDate).Month)
+                {
+                    postfix.Value = "0";
+                }
+            }
+            else if (format.Value.ToString().IndexOf("dd") > 0)//每日重置計數器
+            {
+                if (DateTime.Parse(DateUtil.DateTimeToString(DateTime.Now, "yyyy-MM-dd")) > DateTime.Parse(DateUtil.DateTimeToString(postfix.UpdateDate, "yyyy-MM-dd")))
+                {
+                    postfix.Value = "0";
+                }
+            }
+
+            var dbPostFix = AutoMapperExt.MapTo<CodeMaster>(postfix);
+            baseRepository.Update(dbPostFix);
+        }
     }
 
     public class ServiceBase<TDal> : BaseBLL

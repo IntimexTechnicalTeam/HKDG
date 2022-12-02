@@ -1,4 +1,5 @@
 ﻿using HKDG.BLL;
+using Intimex.Common;
 using Microsoft.AspNetCore.Authorization;
 using Model;
 using Web.Jwt;
@@ -13,11 +14,13 @@ namespace HKDG.WebSite.Areas
     {
         IMemberBLL memberBLL;
         IJwtToken jwtToken;
+        IOrderBLL orderBLL;
 
         public MemberController(IComponentContext service) : base(service)
         {
             jwtToken = this.Services.Resolve<IJwtToken>();
             memberBLL = this.Services.Resolve<IMemberBLL>();
+            orderBLL = this.Services.Resolve<IOrderBLL>();
         }
 
         /// <summary>
@@ -210,5 +213,35 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
+        [LoginAuthorize]
+        [HttpGet("Subscribe")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task<SystemResult> Subscribe(string email, bool status)
+        {
+            SystemResult result = new SystemResult();
+            bool flag;
+            if (status)
+            {
+                 flag =await memberBLL.Subscribe(email);              
+            }
+            else
+            {
+                 flag =await memberBLL.Unsubscribe(email);             
+            }
+            result.Succeeded = true;
+            result.ReturnValue = flag;
+
+            return result;
+        }
+
+        [HttpGet("GetReturnType")]
+        [ProducesResponseType(typeof(SystemResult<List<KeyValue>>), 200)]
+        public async Task<SystemResult<List<KeyValue>>> GetReturnType()
+        {
+            var result = new SystemResult<List<KeyValue>>();
+            result.ReturnValue = await orderBLL.GetReturnOrderTypeComboSrc();
+            result.Succeeded = true;
+            return result;
+        }
     }
 }

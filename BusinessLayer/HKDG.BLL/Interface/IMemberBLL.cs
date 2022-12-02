@@ -101,5 +101,10 @@
         PageData<MemberDto> Search(MbrSearchCond condition);
 
         Task<SystemResult> UpdatePassword(string oldpwd, string newpwd);
+
+        Task<bool> Subscribe(string email);
+
+        Task<bool> Unsubscribe(string email);
+      
     }
 }

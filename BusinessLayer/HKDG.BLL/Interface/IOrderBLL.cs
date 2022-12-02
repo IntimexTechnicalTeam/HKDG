@@ -1,4 +1,6 @@
-﻿namespace HKDG.BLL
+﻿using WS.ECShip.Model.MailTracking;
+
+namespace HKDG.BLL
 {
     public interface IOrderBLL:IDependency
     {
@@ -50,5 +52,11 @@
         PageData<MicroOrderView> MyOrder(MicroOrderCond orderCond);
 
         Task<PageData<OrderSummaryView>> GetOrders(OrderCondition cond);
+
+        Task<List<KeyValue>> GetReturnOrderTypeComboSrc();
+
+        Task<SystemResult<NewReturnOrder>> CreateReturnOrder(NewReturnOrder rOrder);
+
+        MailTrackingInfo GetOrderMailTrackingInfo(string trackingNo);
     }
 }

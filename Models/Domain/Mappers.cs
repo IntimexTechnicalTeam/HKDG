@@ -95,6 +95,8 @@ namespace Domain
             ConfigMap<ArrivalNotify, ArrivalNotifyDto>();
 
             ConfigMap<AddressInfo,DeliveryAddressDto>();
+
+            ConfigMap<ReturnOrderImage, ReturnOrderImageDto>();
         }
 
         void ConfigMap<TSource, TDestination>()
