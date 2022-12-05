@@ -16,8 +16,8 @@ namespace HKDG.BLL.Impl
             var prodSku = await baseRepository.GetModelAsync<ProductSku>(p => p.IsActive && !p.IsDeleted
                 && p.ProductCode == notify.ProductCode && p.AttrValue1 == notify.AttrVal1 && p.AttrValue2 == notify.AttrVal2 && p.AttrValue3 == notify.AttrVal3);
 
-            if (prodSku == null) throw new BLException(Resources.Message.SkuProductNotFound);
- 
+            if (prodSku == null) return result; 
+            
             var flag = await baseRepository.AnyAsync<Member>(x=>x.Id == CurrentUser.Id);
             var notifyList = await baseRepository.GetListAsync<ArrivalNotify>(x => x.IsActive && !x.IsDeleted && !x.IsNotified && x.NotifyDate == null && x.SkuId == prodSku.Id);
 
@@ -70,8 +70,7 @@ namespace HKDG.BLL.Impl
             var prodSku = await baseRepository.GetModelAsync<ProductSku>(p => p.IsActive && !p.IsDeleted
                                       && p.ProductCode == notify.ProductCode && p.AttrValue1 == notify.AttrVal1 && p.AttrValue2 == notify.AttrVal2 && p.AttrValue3 == notify.AttrVal3);
 
-            if (prodSku == null) return result;
-            if (!prodSku.IsActive || prodSku.IsDeleted) throw new BLException(Resources.Message.SkuProductNotFound);
+            if (prodSku == null)  throw new BLException(Resources.Message.SkuProductNotFound);
 
             var product = await baseRepository.GetModelAsync<Product>(x => x.IsApprove && x.Status == ProductStatus.OnSale && x.Code == prodSku.ProductCode);
 

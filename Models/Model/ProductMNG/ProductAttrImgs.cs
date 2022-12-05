@@ -14,7 +14,10 @@
 
         public Guid AttrValue3 { get; set; }
 
-
+        /// <summary>
+        /// 库存属性MD5加密
+        /// </summary>
+        public string AttrKey { get; set; } = "";
 
         /// <summary>
         /// 是否库存属性

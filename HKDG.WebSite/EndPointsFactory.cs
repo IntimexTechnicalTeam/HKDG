@@ -1,4 +1,7 @@
-﻿namespace HKDG.WebSite
+﻿using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using System.Xml.Linq;
+
+namespace HKDG.WebSite
 {
     public static class EndPointsFactory
     {      
@@ -9,16 +12,20 @@
         /// <returns></returns>
         public static IEndpointRouteBuilder BindEndPoints(this IEndpointRouteBuilder builder)
         {
-            builder.AddEndPoints("Default", "/{controller=Default}/{action=Index}/{IspType?}/{para2?}/{para3?}");     //让MVC Controller支持无参或一个参数以上
-            builder.AddEndPoints("Category", "/{controller=Product}/{action=Category}/{IspType?}");                       //让MVC Controller支持无参或一个参数以上
-            builder.AddEndPoints("MyMessage", "/{controller=Account}/{action=MyMessage}/{IspType?}");             //让MVC Controller支持无参或一个参数以上
-            builder.AddEndPoints("ProductSearch", "/{controller=Product}/{action=Search}/{IspType?}/{key}");
-            builder.AddEndPoints("ProductDetail", "/{controller=Product}/{action=Detail}/{IspType?}/{Id}");
-            builder.AddEndPoints("MerchantList", "/{controller=Merchant}/{action=List}/{IspType?}/{key?}");
-            builder.AddEndPoints("MerchantDetail", "/{controller=Merchant}/{action=Detail}/{IspType?}/{Id}");
-            builder.AddEndPoints("CatProduct", "/{controller=Product}/{action=CatProduct}/{IspType?}/{Id}");
-            builder.AddEndPoints("OrderList", "/{controller=Order}/{action=List}/{IspType?}");
-            //builder.AddEndPoints("AccountLogin", "/{controller=Account}/{action=Login}/{returnUrl?}");
+            builder.AddEndPoints("Default", "/{controller=Default}/{action=Index}/{IspType?}");                                 //让MVC Controller支持无参或一个参数以上
+            //builder.AddEndPoints("Category", "/{controller=Product}/{action=Category}/{IspType?}");                       //让MVC Controller支持无参或一个参数以上
+            //builder.AddEndPoints("MyMessage", "/{controller=Account}/{action=MyMessage}/{IspType?}");             //让MVC Controller支持无参或一个参数以上
+
+            //builder.AddEndPoints("ProductSearch", "/{controller=Product}/{action=Search}/{IspType?}/{key}");
+            ////builder.AddEndPoints("ProductDetail", "/{controller=Product}/{action=Detail}/{Id}/{IspType?}");
+            //builder.AddEndPoints("MerchantList", "/{controller=Merchant}/{action=List}/{IspType?}/{key?}");
+            //builder.AddEndPoints("MerchantDetail", "/{controller=Merchant}/{action=Detail}/{IspType?}/{Id}");
+            //builder.AddEndPoints("CatProduct", "/{controller=Product}/{action=CatProduct}/{IspType?}/{Id}");
+            //builder.AddEndPoints("OrderList", "/{controller=Order}/{action=List}/{IspType?}");
+            //builder.AddEndPoints("AccountFavorite", "/{controller=Account}/{action=MyFavorite}/{IspType?}");
+            //builder.AddEndPoints("OrderDetail", "/{controller=Order}/{action=Detail}/{IspType?}");
+            //builder.AddEndPoints("ProductComment", "/{controller=Product}/{action=Comment}/{IspType?}");
+
             return builder;
         }
 

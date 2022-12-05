@@ -156,14 +156,10 @@ namespace Web.Mvc
                 string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
                 if (token.IsEmpty() || token == "undefined") token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
 
-                //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
-
                 _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
 
-                //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
-
                 if (_currentUser == null) _currentUser = new CurrentUser();
-
+                _currentUser.IspType = Configuration["IspType"];
                 return _currentUser;
             }
         }
@@ -262,7 +258,7 @@ namespace Web.Mvc
         /// <exception cref="BLException"></exception>
         async Task InitIspType(string IspType)
         {
-            if (IspType.IsEmpty()) IspType = "DG";
+            if (IspType.IsEmpty()) IspType = CurrentUser.IspType;
             var flag = await ispProviderBLL.CheckIspType(IspType);
             if (!flag) throw new BLException($"wrong IspType: {IspType}");
             ViewBag.IspType = IspType;

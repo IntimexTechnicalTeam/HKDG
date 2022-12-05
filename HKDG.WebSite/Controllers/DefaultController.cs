@@ -16,11 +16,12 @@ namespace HKDG.WebSite.Controllers
             productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
         }
 
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <param name="Id">IspType</param>
-       /// <returns></returns>      
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id">IspType</param>
+        /// <returns></returns>      
+        //[HttpGet("Default/Index/{IspType?}")]  //这里不用设置，在EndPointsFactory已做终结点绑定
         public async Task<IActionResult> Index(string IspType)
         {
             await InitViewPage(IspType);
@@ -42,6 +43,7 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("Index");
         }
 
+        [HttpGet("Default/Menu/{IspType?}")]
         public async Task<IActionResult> Menu(string IspType)
         {
             await InitViewPage(IspType);
@@ -62,6 +64,7 @@ namespace HKDG.WebSite.Controllers
             return View();
         }
 
+        [HttpGet("Default/Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

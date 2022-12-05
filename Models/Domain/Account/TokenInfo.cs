@@ -30,6 +30,9 @@ namespace Domain
 
         public bool IsLogin { get; set; } = false;
 
+        /// <summary>
+        /// 取配置文件的
+        /// </summary>
         public string IspType { get; set; } = "DG";
 
         public DateTime ExpireDate { get; set; }

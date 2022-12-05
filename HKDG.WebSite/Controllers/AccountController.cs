@@ -13,6 +13,7 @@ namespace HKDG.WebSite.Controllers
             interactMessageBLL = Services.Resolve<IInteractMessageBLL>();
         }
 
+        [HttpGet("Account/MyMessage/{IspType?}")]
         public async Task<IActionResult> MyMessage(string IspType)
         {
             await InitViewPage(IspType);
@@ -22,6 +23,7 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("MyMessage");
         }
 
+        [HttpGet("Account/Login")]
         public async Task<IActionResult> Login()
         {
             await InitLastNotice();
@@ -40,18 +42,21 @@ namespace HKDG.WebSite.Controllers
             return GetActionResult("Login");
         }
 
+        [HttpGet("Account/MyCoupon")]
         public async Task<IActionResult> MyCoupon()
         {
             await InitLastNotice();
             return GetActionResult("MyCoupon");
         }
 
+        [HttpGet("Account/MemberInfo")]
         public async Task<IActionResult> MemberInfo()
         {
             await InitLastNotice();
             return GetActionResult("MemberInfo");
         }
 
+        [HttpGet("Account/MyFavorite/{IspType?}")]
         public async Task<IActionResult> MyFavorite(string IspType)
         {
             await InitViewPage(IspType);

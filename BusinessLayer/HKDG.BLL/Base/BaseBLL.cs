@@ -181,6 +181,8 @@ namespace HKDG.BLL
 
                 if (_currentUser == null) _currentUser = new CurrentUser();
 
+                _currentUser.IspType = Configuration["IspType"];
+
                 return _currentUser;
             }
         }

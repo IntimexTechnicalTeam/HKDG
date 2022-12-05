@@ -42,5 +42,7 @@
         public string HSCode { get; set; }
 
         public GS1Status GS1Status { get; set; }
+
+        public bool IsShowAdult { get; set; }
     }
 }

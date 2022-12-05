@@ -111,8 +111,10 @@ namespace HKDG.WebSite
 
             app.UseRouting();
             app.UseAuthorization();         //这个必须在UseRouting 和 UseEndpoints 之间
+
             app.UseEndpoints(endpoints => { endpoints = endpoints.BindEndPoints(); });
         }
+
         /// <summary>
         /// 模型验证
         /// </summary>

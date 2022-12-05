@@ -110,18 +110,17 @@ namespace Web.Mvc
         /// <param name="next"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next,string token)
+        public static async Task<TokenType> CheckMemeberToken(ActionExecutingContext context, ActionExecutionDelegate next,string token)
         {
             var jwtToken = context.HttpContext.RequestServices.GetService(typeof(IJwtToken)) as IJwtToken;
             var Configuration = context.HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
 
-            bool flag = true;
+            TokenType flag = TokenType.Ok;
             var attributes = context.ActionDescriptor.FilterDescriptors;
             bool isAnonymous = attributes.Any(p => p.Filter is AllowAnonymousFilter);//匿名标识 无需验证
             if (isAnonymous)
             {
-                //await next();
-                flag = true;
+                //await next();               
                 return flag;
             }
 
@@ -129,21 +128,21 @@ namespace Web.Mvc
             if (mUser == null)
             {
                 //await next();
-                flag = false;
+                flag = TokenType.Fail;
                 return flag;
             }
             
             if (mUser.LoginType < LoginType.Member)
             {
-               //await next();
-                flag = false;
+                //await next();
+                flag = TokenType.Fail;
                 return flag;
             }
 
             if (mUser.ExpireDate < DateTime.Now)
             {
                 //await next();
-                flag = false;
+                flag = TokenType.Expired;
                 return flag;
             }
 

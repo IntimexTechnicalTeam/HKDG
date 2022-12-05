@@ -13,6 +13,20 @@ namespace HKDG.Repository
           
         }
 
+        IConfiguration _configuration;
+        public IConfiguration Configuration
+        {
+            get
+            {
+                if (this._configuration == null)
+                {
+                    this._configuration = this.Services.GetService(typeof(IConfiguration)) as IConfiguration;
+                }
+
+                return this._configuration;
+            }
+        }
+
         IUnitOfWork _unitOfWork;
         public IUnitOfWork UnitOfWork
         {
@@ -81,13 +95,9 @@ namespace HKDG.Repository
                 if (token.IsEmpty() || token =="undefined") token = CurrentContext?.HttpContext?.Request?.Cookies["access_token"]?.ToString() ?? "";
 
                 _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
-                //if (_currentUser.LoginType <= LoginType.Admin)
-                //{
-                //    loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) });
-                //}
-
+            
                 if (_currentUser == null) _currentUser = new CurrentUser();
-
+                _currentUser.IspType = Configuration["IspType"];
                 return _currentUser;
             }
         }

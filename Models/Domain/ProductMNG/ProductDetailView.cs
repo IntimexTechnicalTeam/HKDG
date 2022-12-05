@@ -52,5 +52,7 @@
         public DateTime CreateDate { get; set; }
 
         public string IconString { get; set; }
+
+        public bool IsShowAdult { get; set; }
     }
 }

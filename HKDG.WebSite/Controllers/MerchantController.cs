@@ -12,13 +12,9 @@ namespace HKDG.WebSite.Controllers
             merchantBLL = Services.Resolve<IMerchantBLL>();
         }
 
-        /// <summary>
-        /// 商家列表
-        /// </summary>
-        /// <param name="key">查询关键字</param>
-        /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> List(string IspType,string key)
+        [HttpGet("Merchant/List/{key}/{IspType?}")]
+        public async Task<IActionResult> List(string key, string IspType)
         {
             await InitViewPage(IspType);
 
@@ -34,7 +30,8 @@ namespace HKDG.WebSite.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult> Detail(string IspType, Guid Id)
+        [HttpGet("Merchant/Detail/{Id}/{IspType?}")]
+        public async Task<ActionResult> Detail(Guid Id, string IspType)
         {
             await InitViewPage(IspType);
             var mchDetail = await merchantBLL.GetMerchantInfoAsync(Id);

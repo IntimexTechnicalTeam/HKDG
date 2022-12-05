@@ -97,6 +97,8 @@ namespace Domain
             ConfigMap<AddressInfo,DeliveryAddressDto>();
 
             ConfigMap<ReturnOrderImage, ReturnOrderImageDto>();
+
+            ConfigMap<ProductExtension,ProductExtensionView>();
         }
 
         void ConfigMap<TSource, TDestination>()

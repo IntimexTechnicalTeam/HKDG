@@ -16,7 +16,7 @@ namespace HKDG.BLL
         public ICodeMasterBLL CodeMasterBLL;
         public ISettingBLL SettingBLL;
         public IDeliveryBLL DeliveryBLL;
-
+        public PreHeatProductService productService;
 
         public ShoppingCartBLL(IServiceProvider services) : base(services)
         {
@@ -32,6 +32,8 @@ namespace HKDG.BLL
             CodeMasterBLL = Services.Resolve<ICodeMasterBLL>();
             SettingBLL = Services.Resolve<ISettingBLL>();
             DeliveryBLL = Services.Resolve<IDeliveryBLL>();
+
+            productService = (PreHeatProductService)Services.GetService(typeof(PreHeatProductService));
         }
 
         public async Task<ShopCartInfo> GetShoppingCart()
@@ -610,6 +612,18 @@ namespace HKDG.BLL
 
             var product = await RedisHelper.HGetAsync<HotProduct>($"{PreHotType.Hot_Products}_{CurrentUser.Language}", item.ProductCode);
             var imgList = await RedisHelper.HGetAsync<List<HotProductImage>>($"{PreHotType.Hot_ProductImage}", item.ProductCode);
+
+            if (product == null)
+            {
+                //读数据库，回写缓存            
+                var pList = await productService.GetDataSourceAsync(item.ProductId);
+                if (pList != null && pList.Any())
+                {
+                    //重新刷新缓存
+                    await productService.SetDataToHashCache(pList, CurrentUser.Language);
+                    product = pList.FirstOrDefault();
+                }
+            }
 
             prodItem.CatalogId = product?.CatalogId ?? Guid.Empty;
             prodItem.ProductName = product?.Name ?? "";

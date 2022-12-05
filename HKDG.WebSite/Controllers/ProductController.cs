@@ -18,6 +18,7 @@
         /// <param name="Id"></param>
         /// <returns></returns>
         [AllowAnonymous]
+        [HttpGet("Product/Category/{IspType?}")]
         public async Task<IActionResult> Category(string IspType)
         {
             await InitViewPage(IspType);
@@ -35,8 +36,9 @@
         /// <param name="Id">ProductCode</param>
         /// <returns></returns>
         [AllowAnonymous]
+        [HttpGet("Product/Detail/{Id}/{IspType?}")]
         //[ProductViewTrackFilter]
-        public async Task<IActionResult> Detail(string IspType, string Id)
+        public async Task<IActionResult> Detail(string Id,string IspType)
         {
             await InitViewPage(IspType);
 
@@ -53,7 +55,8 @@
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> Search(string IspType, string key)
+        [HttpGet("Product/Search/{key}/{IspType?}")]
+        public async Task<ActionResult> Search( string key, string IspType)
         {
             await InitViewPage(IspType);
             if (key.IsEmpty())
@@ -65,7 +68,8 @@
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> CatProduct(string IspType, string Id)
+        [HttpGet("Product/CatProduct/{Id}/{IspType?}")]
+        public async Task<ActionResult> CatProduct(string Id, string IspType)
         {
             if (!Guid.TryParse(Id, out var catId)) catId = Guid.Empty;
 
@@ -88,6 +92,14 @@
 
         }
 
+        [AllowAnonymous]
+        [HttpGet("Product/Comment/{IspType?}")]
+        public async Task<ActionResult> Comment(string IspType)
+        {
+            await InitViewPage(IspType);
 
+            return GetActionResult("CatProduct");
+
+        }
     }
 }
