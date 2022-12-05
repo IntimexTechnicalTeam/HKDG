@@ -3136,8 +3136,8 @@ namespace HKDG.BLL
                 attrImg.Type = Img.Type;
                 attrImg.Side = Img.Side;
                 attrImg.ProductCode = ProductCode;
-                var productImageList = Img.ImageItems.OrderBy(d => d.Type).ToList();
-                var activeImages = Img.ImageItems.Where(p => p.Path != null && p.Path != "").OrderBy(d => d.Type).ToList();
+                var productImageList = (await baseRepository.GetListAsync<ProductImageList>(x => x.ImageID == Img.Id)).OrderBy(o => o.Type).ToList();
+                var activeImages = productImageList.Where(p => p.Path != null && p.Path != "").OrderBy(d => d.Type).ToList();
                 var maxIndex = activeImages.Count - 1;
                 attrImg.ImageItems = new List<string>();
                 if (productImageList.Count >= 8)
