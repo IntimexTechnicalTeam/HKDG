@@ -83,7 +83,7 @@ namespace Web.Mvc
             var flag = await BaseAuthority.CheckMemeberToken(context, next, authorization);
             if (flag == TokenType.Fail)
             {
-                logger.LogInformation($"token:{authorization}过期，重定向到首页");
+                await RedisHelper.HDelAsync($"{CacheKey.CurrentUser}", authorization);
                 context.HttpContext.DeleteCookie("access_token");
                 context.HttpContext.Response.Redirect("/");
                 return;
@@ -91,26 +91,23 @@ namespace Web.Mvc
 
             if (flag == TokenType.Expired) await RefreashToken(context, authorization);  //过期就进行续期
 
+            context.HttpContext.SetCookie("access_token", authorization);
             await next();
         }
 
         /// <summary>
-        /// 鉴权通过，刷新会员token过期时间
+        /// 刷新会员token过期时间
         /// </summary>
         /// <param name="context"></param>
         /// <param name="authorization"></param>
         /// <returns></returns>
         async Task RefreashToken(ActionExecutingContext context,string authorization)
         {
-            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);
-            logger.LogInformation($"{mUser.LoginSerialNO}鉴权通过");
-         
-            context.HttpContext.SetCookie("access_token", authorization);
-
-            ////鉴权通过刷新过期时间
+            var mUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", authorization);           
             mUser.ExpireDate = DateTime.Now.AddSeconds(Setting.MemberAccessTokenExpire);
             mUser.IspType = Globals.Configuration["IspType"];
             await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", authorization, mUser);
+
             logger.LogInformation($"{mUser.LoginSerialNO}刷新过期时间");
         }     
     }

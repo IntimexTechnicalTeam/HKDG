@@ -8,10 +8,9 @@ namespace HKDG.WebSite.Controllers
         {
         }
 
-        
-        public async Task<ActionResult> GoTo()
+        public async Task<IActionResult> GoTo(string returnUrl)
         {
-            string returnUrl = HttpContext.Request.GetDisplayUrl().Split("returnUrl=")[1] ?? "";
+            //string returnUrl = HttpContext.Request.GetDisplayUrl().Split("returnUrl=")[1] ?? "";
 
             if (string.IsNullOrEmpty(returnUrl))
             {
