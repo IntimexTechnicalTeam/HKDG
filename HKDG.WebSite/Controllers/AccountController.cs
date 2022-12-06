@@ -26,6 +26,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/Login")]
         public async Task<IActionResult> Login()
         {
+            await InitViewPage("");
             await InitLastNotice();
             if (CurrentUser.IsLogin && !CurrentUser.IsTempUser)
             {

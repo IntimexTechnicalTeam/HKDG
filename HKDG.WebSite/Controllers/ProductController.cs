@@ -55,10 +55,10 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("Product/Search/{key}/{IspType?}")]
-        public async Task<ActionResult> Search( string key, string IspType)
+        [HttpGet("Product/Search/{key?}/{IspType?}")]
+        public async Task<ActionResult> Search(string key)
         {
-            await InitViewPage(IspType);
+            await InitViewPage("");
             if (key.IsEmpty())
                 return RedirectToAction("Index", "Default");
 

@@ -31,8 +31,8 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
                 var tokenInfo = AutoMapperExt.MapTo<CurrentUser>(userInfo);
                 tokenInfo.Id = userInfo.Id;
                 tokenInfo.IsLogin = true;
-                tokenInfo.Type = AccountType.User;                
-                tokenInfo.IspType = input.IspType ?? "DG";
+                tokenInfo.Type = AccountType.User;
+                tokenInfo.IspType = input.IspType ?? Configuration["IspType"];
                 tokenInfo.ExpireDate = DateTime.Now.AddSeconds(Setting.UserAccessTokenExpire);
                 tokenInfo.LoginSerialNO = HashUtil.Md5Encrypt(Guid.NewGuid().ToString());
 
