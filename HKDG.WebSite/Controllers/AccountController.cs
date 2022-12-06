@@ -46,6 +46,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/MyCoupon")]
         public async Task<IActionResult> MyCoupon()
         {
+            await InitViewPage("");
             await InitLastNotice();
             return GetActionResult("MyCoupon");
         }
@@ -53,6 +54,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/MemberInfo")]
         public async Task<IActionResult> MemberInfo()
         {
+            await InitViewPage("");
             await InitLastNotice();
             return GetActionResult("MemberInfo");
         }

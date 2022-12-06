@@ -155,7 +155,7 @@
 
         public SimpleCurrency Currency { get; set; } = new SimpleCurrency();
 
-        public SimpleCurrency Currency2 { get; set; } = new SimpleCurrency();
+        public SimpleCurrency Currency2 { get; set; } = null;
 
         /// <summary>
         /// 優惠描述
