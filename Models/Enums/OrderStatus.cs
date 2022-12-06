@@ -2,6 +2,8 @@
 {
     public enum OrderStatus
     {
+        All =-1,
+
         /// <summary>
         /// 收到訂單
         /// </summary>

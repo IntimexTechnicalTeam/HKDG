@@ -21,7 +21,7 @@ namespace HKDG.WebSite.Controllers
         public async Task<IActionResult> Detail(string Id, string IspType)
         {
             await InitViewPage(IspType);
-            return GetActionResult("List");
+            return GetActionResult("Detail");
         }
     }
 }

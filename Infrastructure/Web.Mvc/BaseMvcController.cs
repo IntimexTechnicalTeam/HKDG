@@ -235,7 +235,7 @@ namespace Web.Mvc
         /// </summary>
         /// <param name="IspType"></param>
         /// <returns></returns>
-        public virtual async Task InitViewPage(string IspType)
+        public virtual async Task InitViewPage(string IspType = "")
         {
             await InitIspType(IspType);
             await InitMenusAsync(ViewBag.IspType);

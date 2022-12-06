@@ -26,7 +26,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/Login")]
         public async Task<IActionResult> Login()
         {
-            await InitViewPage("");
+            await InitViewPage();
             await InitLastNotice();
             if (CurrentUser.IsLogin && !CurrentUser.IsTempUser)
             {
@@ -46,7 +46,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/MyCoupon")]
         public async Task<IActionResult> MyCoupon()
         {
-            await InitViewPage("");
+            await InitViewPage();
             await InitLastNotice();
             return GetActionResult("MyCoupon");
         }
@@ -54,7 +54,7 @@ namespace HKDG.WebSite.Controllers
         [HttpGet("Account/MemberInfo")]
         public async Task<IActionResult> MemberInfo()
         {
-            await InitViewPage("");
+            await InitViewPage();
             await InitLastNotice();
             return GetActionResult("MemberInfo");
         }
