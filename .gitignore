@@ -78,3 +78,4 @@
 /HKDG.WebApi/bin
 
 /BusinessLayer/HKDG.BLL/Impl/ArrivalNotifyBLL.cs
+/BusinessLayer/HKDG.BLL/Impl/LoginBLL.cs
