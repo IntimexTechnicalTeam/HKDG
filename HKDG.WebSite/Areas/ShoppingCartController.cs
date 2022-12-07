@@ -1,6 +1,6 @@
 ﻿using Web.Mvc.Filters;
 
-namespace HKDG.WebSite.Controllers
+namespace HKDG.WebSite.Controllers.Areas
 {
     [Route("api/[controller]")]
     [LoginAuthorize]

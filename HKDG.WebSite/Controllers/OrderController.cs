@@ -21,6 +21,7 @@ namespace HKDG.WebSite.Controllers
         public async Task<IActionResult> Detail(string Id, string IspType)
         {
             await InitViewPage(IspType);
+            ViewBag.OrderId = Id;
             return GetActionResult("Detail");
         }
     }
