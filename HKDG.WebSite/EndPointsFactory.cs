@@ -17,7 +17,7 @@ namespace HKDG.WebSite
             //builder.AddEndPoints("MyMessage", "/{controller=Account}/{action=MyMessage}/{IspType?}");             //让MVC Controller支持无参或一个参数以上
 
             //builder.AddEndPoints("ProductSearch", "/{controller=Product}/{action=Search}/{IspType?}/{key}");
-            ////builder.AddEndPoints("ProductDetail", "/{controller=Product}/{action=Detail}/{Id}/{IspType?}");
+            //builder.AddEndPoints("ProductDetail", "/{controller=Product}/{action=Detail}/{Id}/{IspType?}");
             //builder.AddEndPoints("MerchantList", "/{controller=Merchant}/{action=List}/{IspType?}/{key?}");
             //builder.AddEndPoints("MerchantDetail", "/{controller=Merchant}/{action=Detail}/{IspType?}/{Id}");
             //builder.AddEndPoints("CatProduct", "/{controller=Product}/{action=CatProduct}/{IspType?}/{Id}");
