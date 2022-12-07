@@ -2,7 +2,7 @@
 
 namespace HKDG.WebSite.Controllers
 {
-
+    [Hidden]
     public class OrderController : BaseMvcController
     {
         public OrderController(IComponentContext service) : base(service)

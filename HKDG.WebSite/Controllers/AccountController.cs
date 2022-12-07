@@ -3,7 +3,7 @@ using Enums;
 
 namespace HKDG.WebSite.Controllers
 {
-
+    [Hidden]
     public class AccountController : BaseMvcController
     {
         IInteractMessageBLL interactMessageBLL;

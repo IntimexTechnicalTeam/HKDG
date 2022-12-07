@@ -20,7 +20,7 @@ namespace HKDG.WebSite.Areas
         }
 
         /// <summary>
-        /// 
+        /// 获取产品评论
         /// </summary>
         /// <param name="pager"></param>
         /// <returns></returns>
@@ -34,6 +34,11 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
+        /// <summary>
+        /// 保存产品评论
+        /// </summary>
+        /// <param name="comments"></param>
+        /// <returns></returns>
         [LoginAuthorize]
         [HttpPost("SaveComments")]
         [ProducesResponseType(typeof(SystemResult), 200)]

@@ -31,7 +31,7 @@
         }
 
         /// <summary>
-        /// 
+        /// 产品目录下商品分页列表
         /// </summary>
         /// <param name="pager"></param>
         /// <returns></returns>
@@ -47,7 +47,7 @@
         }
 
         /// <summary>
-        /// 
+        /// 商品查询
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>

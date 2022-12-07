@@ -35,7 +35,7 @@ namespace HKDG.WebSite.Areas
         }
 
         /// <summary>
-        /// 
+        /// 我的订单 
         /// </summary>
         /// <param name="pager"></param>
         /// <returns></returns>
@@ -59,6 +59,11 @@ namespace HKDG.WebSite.Areas
             return result;
         }
 
+        /// <summary>
+        /// 订单明细
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [LoginAuthorize]
         [HttpGet("GetOrder")]
         [ProducesResponseType(typeof(SystemResult<PageData<OrderSummaryView>>), 200)]

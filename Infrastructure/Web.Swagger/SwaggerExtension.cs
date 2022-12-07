@@ -54,13 +54,14 @@ namespace Web.Swagger
                     {
                         var xmlPath = Path.Combine(basePath, xmlFile);
                         if (File.Exists(xmlPath))
-                            c.IncludeXmlComments(xmlPath);
+                            c.IncludeXmlComments(xmlPath,true);
                     }
                 }
 
-                c.DocumentFilter<MvcControllerDescription>();//接口说明
-
-               c.SchemaFilter<SchemaFilter>();   //保证可以自定义实体参数的默认值
+                //c.DocumentFilter<MvcControllerDescription>();            //接口说明
+                c.SchemaFilter<SchemaFilter>();                                     //保证可以自定义实体参数的默认值
+                c.DocumentFilter<HiddenApiFilter>();
+                c.SchemaFilter<HiddenFieldFilter>();
             });
 
             return services;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HKDG.WebSite.Controllers
 {
+    [Hidden]
     public class MerchantController :   BaseMvcController
     {
         IMerchantBLL merchantBLL;

@@ -3,6 +3,7 @@ using WebCache;
 
 namespace HKDG.WebSite.Controllers
 {
+    [Hidden]
     public class DefaultController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;

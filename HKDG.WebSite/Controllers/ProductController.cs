@@ -1,5 +1,6 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
+    [Hidden]
     public class ProductController : BaseMvcController
     {
         IProductCatalogBLL productCatalogBLL;

@@ -17,6 +17,11 @@ namespace HKDG.WebSite.Areas
             productBLL = Services.Resolve<IProductBLL>();
         }
 
+        /// <summary>
+        /// 获取商家下的产品分页数据
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GetProducts")]
         [ProducesResponseType(typeof(SystemResult<PageData<ProductSummary>>), 200)]
