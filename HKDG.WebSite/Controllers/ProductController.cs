@@ -94,13 +94,15 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("Product/Comment/{IspType?}")]
-        public async Task<ActionResult> Comment(string IspType)
+        [HttpGet("Product/Comment/{Id}")]
+        public async Task<ActionResult> Comment(string Id)
         {
-            await InitViewPage(IspType);
-
-            return GetActionResult("CatProduct");
-
+            await InitViewPage();
+            if (!string.IsNullOrEmpty(Id))
+            {
+                ViewBag.oId = Id;              
+            }
+            return GetActionResult("Comment");
         }
     }
 }

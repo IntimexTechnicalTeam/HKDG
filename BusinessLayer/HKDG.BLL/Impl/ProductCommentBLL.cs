@@ -152,20 +152,20 @@ namespace HKDG.BLL
 
             //if (list != null && list.Any())
             //{
-                foreach (var item in list)
-                {
-                    var comment = await GetItem(subOrderid, item.ProductId);
-                    //var subOrder = await baseRepository.GetModelAsync<OrderDelivery>(x => x.Id == subOrderid);
-                    var member = await baseRepository.GetModelAsync<Member>(x => x.Id == comment.CreateBy);
-                    //comment.OrderId = subOrder.OrderId;
-                    //comment.SubOrderId = subOrderid;
-                    //comment.ProductId = item.ProductId;
-                    //comment.CommentImages = await GetCommentImage(comment.Id, Guid.Empty);
-                    comment.MemberName = member?.FirstName ?? "";
-                    //comment.MerchantId = subOrder.MerchantId;
-                    comments.Add(comment);
-                }
-           // }
+            foreach (var item in list)
+            {
+                var comment = await GetItem(subOrderid, item.ProductId);
+                var subOrder = await baseRepository.GetModelAsync<OrderDelivery>(x => x.Id == subOrderid);
+                var member = await baseRepository.GetModelAsync<Member>(x => x.Id == comment.CreateBy);
+                comment.OrderId = subOrder.OrderId;
+                comment.SubOrderId = subOrderid;
+                comment.ProductId = item.ProductId;
+                comment.CommentImages = await GetCommentImage(comment.Id, Guid.Empty);
+                comment.MemberName = member?.FirstName ?? "";
+                comment.MerchantId = subOrder.MerchantId;
+                comments.Add(comment);
+            }
+            // }
             return comments;
         }
 
@@ -188,6 +188,7 @@ namespace HKDG.BLL
             item.ProductImg = productInfo.Images.Count() > 2 ? productInfo.Images[2] : "";
             item.ProductName = productInfo?.Name ?? "";
             item.ProductCode = productInfo?.Code ?? "";
+           
             return item;
         }
 
