@@ -126,7 +126,6 @@
                 data = CustomMenuRepo.GetMenuBar();
                 await RedisHelper.HSetAsync(key, field, data);
             }
-
             return data;
         }
 

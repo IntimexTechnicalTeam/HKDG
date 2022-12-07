@@ -612,6 +612,15 @@ namespace HKDG.Repository
             return list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sources">所有节点数据</param>
+        /// <param name="roots">根节点数据源</param>
+        /// <param name="parentId"></param>
+        /// <param name="level"></param>
+        /// <param name="attributes"></param>
+        /// <returns></returns>
         private List<FrontMenuDetailModel> GenTreeNodes(List<MenuDetailModel> sources, List<MenuDetailModel> roots, Guid parentId, int level, List<ProductAttributeValue> attributes)
         {
             List<FrontMenuDetailModel> result = new List<FrontMenuDetailModel>();
@@ -648,7 +657,7 @@ namespace HKDG.Repository
                     }
                     result.Add(node);
                 }
-                var childs = sources.Where(p => p.ParentId == item.Id.ToString()).ToList();
+                var childs = sources.Where(p => string.Equals(p.ParentId, item.Id.ToString(), StringComparison.OrdinalIgnoreCase)).ToList();
                 if (childs.Count > 0)
                 {
                     node.Childs = GenTreeNodes(sources, childs, item.Id, level, attributes);
