@@ -1,7 +1,4 @@
-﻿using Enums;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
     public class MerchantController :   BaseMvcController

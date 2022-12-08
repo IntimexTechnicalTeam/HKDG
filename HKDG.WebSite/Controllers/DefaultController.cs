@@ -1,7 +1,4 @@
-﻿using HKDG.BLL;
-using WebCache;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
     public class DefaultController : BaseMvcController

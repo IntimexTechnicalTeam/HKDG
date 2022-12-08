@@ -51,7 +51,8 @@ namespace HKDG.WebSite.Areas
         public async Task<SystemResult> ChangeLang(Language Lang)
         {
             var result = new SystemResult() { Succeeded = true };
-            result = await memberBLL.ChangeLang(CurrentUser, Lang);
+            result = await memberBLL.ChangeLang(Lang);
+            
             return result;
         }
 
@@ -66,7 +67,17 @@ namespace HKDG.WebSite.Areas
         public async Task<SystemResult> ChangeCurrencyCode(string CurrencyCode)
         {
             var result = new SystemResult() { Succeeded = true };
-            result.ReturnValue = await memberBLL.ChangeCurrencyCode(CurrentUser, CurrencyCode);
+            result.ReturnValue = await memberBLL.ChangeCurrencyCode( CurrencyCode);
+            return result;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ChangeSetting")]
+        [ProducesResponseType(typeof(SystemResult), 200)]
+        public async Task<SystemResult> ChangeSetting(Language Lang, string CurrencyCode)
+        {
+            var result = new SystemResult() { Succeeded = true };
+            result.ReturnValue = await memberBLL.ChangeSetting(Lang,CurrencyCode);
             return result;
         }
 

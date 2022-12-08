@@ -64,7 +64,7 @@
                 return RedirectToAction("Index", "Default");
 
             ViewBag.Key = key;         
-            return GetActionResult("Search", key);
+            return GetActionResult("Search");
 
         }
 

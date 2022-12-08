@@ -92,42 +92,72 @@ namespace HKDG.BLL
             return result;
         }
 
-        public async Task<SystemResult> ChangeLang(CurrentUser currentUser, Language Lang)
+        public async Task<SystemResult> ChangeLang(Language Lang)
         {
             var result = new SystemResult() { Succeeded = false };
             string message = string.Empty;
-            if (currentUser.IsLogin)
+            if (CurrentUser.IsLogin)
             {
-                var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
+                var member = await baseRepository.GetModelByIdAsync<Member>(CurrentUser.Id);
                 member.Language = Lang;
                 await baseRepository.UpdateAsync(member);
             }
 
-            currentUser.Lang = Lang;
-            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, currentUser);
+            var NewUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO);
+            NewUser.Lang = Lang;
+
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", NewUser.LoginSerialNO, NewUser);
             
             result.Succeeded = true;
             return result;
         }
 
-        public async Task<SystemResult> ChangeCurrencyCode(CurrentUser currentUser, string CurrencyCode)
+        public async Task<SystemResult> ChangeCurrencyCode(string CurrencyCode)
         {
             var result = new SystemResult() { Succeeded = false };
             string message = string.Empty;
-            if (currentUser.IsLogin)
+            if (CurrentUser.IsLogin)
             {
-                var member = await baseRepository.GetModelByIdAsync<Member>(Guid.Parse(currentUser.UserId));
+                var member = await baseRepository.GetModelByIdAsync<Member>(CurrentUser.Id);
                 member.CurrencyCode = CurrencyCode;
                 await baseRepository.UpdateAsync(member);                
             }
 
-            currentUser.CurrencyCode = CurrencyCode;
-            currentUser.Currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
-            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, currentUser);
+            var NewUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO);
+            NewUser.CurrencyCode = CurrencyCode;
+            NewUser.Currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
+
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", NewUser.LoginSerialNO, NewUser);
 
             result.Succeeded = true;
             return result;
         }
+
+        public async Task<SystemResult> ChangeSetting(Language Lang, string CurrencyCode)
+        {
+            var result = new SystemResult() { Succeeded = false };
+            string message = string.Empty;
+
+            if (CurrentUser.IsLogin)
+            {
+                var member = await baseRepository.GetModelByIdAsync<Member>(CurrentUser.Id);
+                member.CurrencyCode = CurrencyCode;
+                member.Language = Lang;
+                member.UpdateDate = DateTime.Now;
+                await baseRepository.UpdateAsync(member);
+            }
+
+            var NewUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO);
+            NewUser.Lang= Lang;
+            NewUser.CurrencyCode = CurrencyCode;
+            NewUser.Currency = currencyBLL.GetSimpleCurrency(CurrencyCode);
+
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", NewUser.LoginSerialNO, NewUser);
+
+            result.Succeeded = true;
+            return result;
+        }
+
 
         public RegSummary GetRegSummary()
         {

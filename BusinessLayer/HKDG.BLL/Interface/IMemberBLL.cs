@@ -9,10 +9,11 @@
 
         SystemResult Register(RegisterMember member);
 
-        Task<SystemResult> ChangeLang(CurrentUser currentUser, Language Lang);
+        Task<SystemResult> ChangeLang( Language Lang);
 
-        Task<SystemResult> ChangeCurrencyCode(CurrentUser currentUser, string CurrencyCode);
+        Task<SystemResult> ChangeCurrencyCode( string CurrencyCode);
 
+        Task<SystemResult> ChangeSetting(Language Lang, string CurrencyCode);
         RegSummary GetRegSummary();
 
         Task<SystemResult> AddFavMerchant(string merchCode);

@@ -1,6 +1,4 @@
-﻿using HKDG.BLL;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
     public class OrderController : BaseMvcController
