@@ -1,7 +1,6 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
-    [LanguageFilter]
     public class DefaultController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;

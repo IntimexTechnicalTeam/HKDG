@@ -1,7 +1,6 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
-    [LanguageFilter]
     public class ProductController : BaseMvcController
     {
         IProductCatalogBLL productCatalogBLL;
