@@ -15,13 +15,13 @@
       <div class="form-group password">
         <label>@Resources.ToMultiLang("Password")</label>
         <input type="password" name="password" v-model="password" @@keyup.enter="signIn" />
-        <a href="javascript:;" class="forget">@Resources.ToMultiLang("ForgetPassword")？</a>
+        <a href="javascript:;" class="forget" @@click="forget">@Resources.ToMultiLang("ForgetPassword")？</a>
       </div>
 
       <div class="login-btns">
         <button type="button" @@click="signIn">@Resources.ToMultiLang("Login")</button>
         <span>@Resources.ToMultiLang("or")</span>
-        <button><img src="/imgs/icons/fb-green.png"> @Resources.ToMultiLang("LoginasFacebook")</button>
+        <button onclick="fbLogin();"><img src="/imgs/icons/fb-green.png"> @Resources.ToMultiLang("LoginasFacebook")</button>
 
         <span>@Resources.ToMultiLang("NeverJoin")<a href="javascript:;" @@click="register">@Resources.ToMultiLang("Register")</a></span>
       </div>
@@ -39,5 +39,6 @@
     var targetUrl = '@ViewBag.ReturnUrl';
   </script>
   <script type="text/javascript" src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+  <script type="text/javascript" src="/js/fbLogin.js" asp-append-version="true"></script>
 	<script type="text/javascript" src="/js/page/login.js" asp-append-version="true"></script>
 }
