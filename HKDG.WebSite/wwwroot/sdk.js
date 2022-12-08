@@ -540,6 +540,25 @@
                         }
                     });
                 };
+                /**
+                   * 語言/貨幣切換
+                   * @param Lang 語言
+                   * @param CurrencyCode 貨幣
+                   */
+                MemberApi.prototype.changeSetting = function (param, callback) {
+                    var _this = this;
+                    WSGet(this.apiPath + "/Member/ChangeSetting", param, function (data, status) {
+                        _this.log(data);
+                        if (data.Succeeded) {
+                            if (callback) {
+                                callback(data);
+                            }
+                        }
+                        else {
+                            alert(data.Message);
+                        }
+                    });
+                };
                 ;
                 MemberApi.prototype.getCurrency = function (callback) {
                     var _this = this;

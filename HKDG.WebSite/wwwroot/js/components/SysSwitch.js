@@ -4,7 +4,7 @@ var tempStr = '<div class="lang-switch" @click="openDialog">\
     <img src="/imgs/icons/language.png">\
     <span>{{langStr}}</span>\
 </div>\
-<bd-dialog class="lang-currency" type="sumbit" :confirmtext="comStr.Confirm" :showcancelbtn="false" ref="SysSwitch" @confirm="confirm">\
+<bd-dialog class="lang-currency" type="sumbit" :confirmtext="comStr.Confirm" :showcancelbtn="false" ref="SysSwitch" @confirm="changeSetting">\
     <div class="set-one">\
         <p>語言 / Language</p>\
         <ul>\
@@ -87,6 +87,22 @@ var SysSwitch = {
                         reject(data.Message);
                     }
                 });
+            });
+        },
+        // 語言/貨幣切換
+        changeSetting: function () {
+            let _this = this;
+            let param = {
+                Lang: this.lang,
+                CurrencyCode: this.currency
+            };
+            InstoreSdk.api.member.changeSetting(param, function (data) {
+                if (data.Succeeded) {
+                    _this.$refs.SysSwitch.quitDialog();
+                    location.reload();
+                } else {
+                    addtocartS(data.Message, '/imgs/warn-icon.png');
+                }
             });
         }
     },

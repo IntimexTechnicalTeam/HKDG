@@ -76,3 +76,25 @@ createApp({
         });
 	}
 }).mount('#header')
+
+//公共初始化函数
+$(function () {
+    var link = "https://connect.facebook.net/zh_CN/sdk.js";
+    if (getUILanguage() === "E") {
+        link = "https://connect.facebook.net/en_US/sdk.js";
+    } else if (getUILanguage() === "S") {
+        link = "https://connect.facebook.net/zh_CN/sdk.js";
+    } else if (getUILanguage() === "C") {
+        link = "https://connect.facebook.net/zh_HK/sdk.js";
+    }
+    else {
+        link = "https://connect.facebook.net/en_US/sdk.js";
+    }
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = link;
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+})
