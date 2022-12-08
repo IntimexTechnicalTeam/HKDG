@@ -3,8 +3,60 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Raw(TempData["Category"])
+<div id="container" class="catProduct-page" v-cloak>
+  <div class="category-banner">
+    <img :src="isMobile ? catalog.ImgM : catalog.Img">
+  </div>
 
-<div class="text-center">
- fasfasd
+  <div class="mid-box">
+    <div class="screen-box">
+      <div class="screen-list">
+        <select v-model="subCatId" @@change="changeQuery">
+          <option value="" selected>@Resources.ToMultiLang("AllPros")</option>
+          <option :value="item.Id" v-for="item in catalog.Nodes">{{item.Name}}</option>
+        </select>
+        <select v-model="sort" @@change="changeQuery">
+          <option value="" selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
+          <option :value="item.value" v-for="item in sortType">{{item.name}}</option>
+        </select>
+        <select>
+          <option selected disabled hidden>@Resources.ToMultiLang("Brand")</option>
+          <option>option1</option>
+        </select>
+        <select>
+          <option selected disabled hidden>@Resources.ToMultiLang("Price")</option>
+          <option>option1</option>
+        </select>
+        <select>
+          <option selected disabled hidden>@Resources.ToMultiLang("FreeDelivery")</option>
+          <option>option1</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <button @@click="isGrid = !isGrid"><img v-bind:src="isGrid ? '/imgs/icons/layout1.png' : '/imgs/icons/layout2.png'"></button>
+        <button><img src="/imgs/icons/classify.png"></button>
+      </div>
+    </div>
+
+    <template v-if="catProducts.length">
+      <p class="pros-num">{{totalRecord}}@Resources.ToMultiLang("ProsNum")</p>
+
+      <pro-list :data="catProducts" :grid="isGrid" :totalpage="totalPage" @@load="getCatProduct" v-if="catProducts.length"></pro-list>
+    </template>
+
+    <div class="none" v-else>
+      @Resources.ToMultiLang("NoRePros")
+    </div>
+  </div>
 </div>
+
+@section scripts{
+	<script type="text/javascript">
+		var catId = '@ViewBag.CatId'; // 當前目錄Id
+		var catalog = @Html.Raw(ViewData["CurrentCatalog"]); // 當前目錄數據
+		var catProducts = @Html.Raw(ViewData["CatalogProducts"]); // 當前目錄數據
+	</script>
+	<script src="/js/components/ProList.js" asp-append-version="true"></script>
+	<script src="/js/page/catproduct.js" asp-append-version="true"></script>
+}

@@ -1,39 +1,178 @@
 ﻿@{
 Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="container" class="memberinfo-page">
+<div id="container" class="memberinfo-page" v-cloak>
     <div class="mid-box">
-        <div class="nav-tab">
-            <a href="javascript:;" class="active">個人資訊</a>
-            <a href="javascript:;">優惠券</a>
-            <a href="javascript:;">訊息</a>
-            <a href="javascript:;">行程表</a>
-            <a href="javascript:;">我的訂單</a>
-            <a href="javascript:;">喜愛清單</a>
-        </div>
+        <nav-tab></nav-tab>
         <div class="nav-tab-content">
             <div class="nav-tab-title">
-                <p>個人資料</p>
+                <p>@Resources.ToMultiLang("PersonalData")</p>
             </div>
             <div class="member-info">
                 <div>
-                    <label>帳號：</label>
-                    <span>Apple123</span>
+                    <label>@Resources.ToMultiLang("Account")：</label>
+                    <span>{{memberInfo.FirstName + memberInfo.LastName}}</span>
                 </div>
                 <div>
-                    <label>電郵：</label>
-                    <span>Apple123@gmail.com</span>
+                    <label>@Resources.ToMultiLang("Email")：</label>
+                    <span>{{memberInfo.Email}}</span>
                 </div>
-                <button>更改密碼</button>
+                <button @@click="changePWD">@Resources.ToMultiLang("ChangePassword")</button>
             </div>
-            <div class="address-box">
-                <p class="title">我的收貨地址：</p>
+            <div class="my-delivery-address">
+                <p class="title">@Resources.ToMultiLang("MyDeliveryAddress")：</p>
+
+                <div class="address-handle">
+                    <a href="javascript:;" class="addAddr" v-on:click="editAddr">@Resources.ToMultiLang("NewMailAddr")</a>
+                    <a href="javascript:;" class="manageAddr" v-on:click="manageAddr">@Resources.ToMultiLang("ManageMailAddr")</a>
+                </div>
+
+                <div class="address-box">
+                    <div class="address-list">
+                        <div class="address-one" v-for="addr in addressList" v-on:click="selectAddr(addr.Id)">
+                            <div class="dtls">
+                                <div class="recipient">
+                                    <p>{{addr.CountryName}}{{addr.ProvinceName}}</p>
+                                    <p>（To {{addr.LastName}}）</p>
+                                </div>
+                                <p>{{addr.Mobile}}</p>
+                                <p class="address">{{addr.Address}}</p>
+                            </div>
+
+                            <div class="btns">
+                                <span role="button" v-on:click.stop="editAddr(addr)">@Resources.ToMultiLang("Modify")</span>
+                                <span role="button" v-on:click="deleteAddr(addr.Id)">@Resources.ToMultiLang("Delete")</span>
+                            </div>
+
+                            <span class="default-addr" v-if="addr.Default">@Resources.ToMultiLang("Default")</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <button class="logout">登出</button>
+            <button class="logout" @@click="logout">@Resources.ToMultiLang("Logout")</button>
         </div>
     </div>
+
+    <!-- 管理郵寄地址 -->
+    <div class="manageAddr mDialog inside">
+        <div class="content-box">
+            <p class="addr-title">@Resources.ToMultiLang("ManageMailAddr")</p>
+
+            <div class="address-list scroll-box">
+                <div class="address-one" v-for="addr in addressList">
+                    <div class="dtls">
+                        <div class="recipient">
+                            <p>{{addr.CountryName}}{{addr.ProvinceName}}</p>
+                            <p>（To {{addr.LastName}}）</p>
+                        </div>
+                        <p>{{addr.Mobile}}</p>
+                        <p class="address">{{addr.Address}}</p>
+                    </div>
+
+                    <div class="btns">
+                        <span role="button" v-on:click="editAddr(addr)">@Resources.ToMultiLang("Modify")</span>
+                        <span role="button" v-on:click="deleteAddr(addr.Id)">@Resources.ToMultiLang("Delete")</span>
+                        <span role="button" class="default" v-if="addr.Default">@Resources.ToMultiLang("DefaultAddr")</span>
+                        <span role="button" class="default" v-on:click="setDefaultAddr(addr)" v-else>@Resources.ToMultiLang("SetDefault")</span>
+                    </div>
+
+                    <span class="default-addr" v-if="addr.Default">@Resources.ToMultiLang("Default")</span>
+                </div>
+            </div>
+
+            <div class="bottom-btns">
+                <button v-on:click="quitDialog">@Resources.ToMultiLang("Quit")</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 創建 / 修改郵寄地址 -->
+    <div class="editAddr mDialog inside">
+        <div class="content-box">
+            <p class="addr-title" v-if="editClAddr.Id">@Resources.ToMultiLang("ModifyMailAddr")</p>
+            <p class="addr-title" v-else>@Resources.ToMultiLang("CreateMailAddr")</p>
+
+            <form id="addrForm">
+                <div class="form_group">
+                    <label required>@Resources.ToMultiLang("AddrInfo")</label>
+                    
+                    <div class="location-group">
+                        <select name="country" id="country" hidden>
+                            <option v-bind:value="country.Id" v-for="(country,index) in countryList">{{country.Name}}</option>
+                        </select>
+
+                        <select name="province" id="province" hidden>
+                            <option value="" selected></option>
+                            <option v-bind:value="province.Id" v-for="province in provinceList">{{province.Name}}</option>
+                        </select>
+
+                        <input name="address" type="text" v-model="editClAddr.Address">
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="form_group">
+                        <label required>@Resources.ToMultiLang("ConsigneeName")</label>
+                        
+                        <input name="name" type="text" v-model="editClAddr.LastName">
+                    </div>
+
+                    <div class="form_group">
+                        <label required>@Resources.ToMultiLang("ContactNum")</label>
+                        
+                        <input name="mobile" type="text" v-model="editClAddr.Mobile">
+                    </div>
+                </div>
+
+                <div class="form_group set-default">
+                    <label>
+                        <input name="default" type="checkbox" v-model="editClAddr.Default">
+                        @Resources.ToMultiLang("SetAsDefault")
+                    </label>
+                </div>
+            </form>
+
+            <div class="bottom-btns">
+                <button v-on:click="saveAddr">{{editClAddr.Id ? '@Resources.ToMultiLang("SaveModify")' : '@Resources.ToMultiLang("SaveM")'}}</button>
+                <button v-on:click="quitDialog">{{editClAddr.Id ? '@Resources.ToMultiLang("CancelModify")' : '@Resources.ToMultiLang("CancelM")'}}</button>
+            </div>
+        </div>
+    </div>
+
+    <bd-dialog type="sumbit" confirmtext='@Resources.ToMultiLang("Confirm")' canceltext='@Resources.ToMultiLang("CancelM")' ref="pwd" @@confirm="savePwd">
+        <form id="password">
+            <div class="form-group">
+                <label>@Resources.ToMultiLang("Password")</label>
+                <input type="password" name="password" v-model="memberInfo.password" />
+            </div>
+            <div class="form-group">
+                <label>@Resources.ToMultiLang("NewPassword")</label>
+                <input id="newPwd" type="password" name="newPwd" v-model="memberInfo.newPwd" />
+            </div>
+            <div class="form-group">
+                <label>@Resources.ToMultiLang("ConfirmPassword")</label>
+                <input id="confirmPwd" type="password" name="confirmPwd" v-model="memberInfo.confirmPwd" />
+            </div>
+        </form>
+    </bd-dialog>
 </div>
 
 @section scripts{
-	<!-- <script src="/js/page/orderlist.js" asp-append-version="true"></script> -->
+    <script type="text/javascript">
+        var jsMessage = {
+            IsRequired: '@Resources.ToMultiLang("IsRequired")',
+            SureDeleteAddr: '@Resources.ToMultiLang("SureDeleteAddr")',
+            NameCharacters:'@string.Format(Resources.ToMultiLang("ExceedCharacters"),17)',
+            AddressCharacters: '@string.Format(Resources.ToMultiLang("ExceedCharacters"),300)',
+            EnterCorrectName: '@Resources.ToMultiLang("EnterCorrectName")',
+            EnterCorrectPhoneNumber: '@Resources.ToMultiLang("EnterCorrectPhoneNumber")'
+        }
+    </script>
+    <script src="/js/components/NavTab.js" asp-append-version="true"></script>
+    <script src="/js/components/BdDialog.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="/js/destListCombo.js" asp-append-version="true"></script>
+	<script src="/js/page/memberinfo.js" asp-append-version="true"></script>
 }

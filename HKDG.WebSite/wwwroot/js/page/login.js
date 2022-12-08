@@ -2,7 +2,9 @@ createApp({
   data() {
 	  return {
 	  	accountNo: '', // 擺檔賬號
-	  	password: '' // 密碼
+	  	password: '', // 密碼
+        targetUrl: targetUrl, // 登錄後跳轉Url
+        errorPassNum: 0
 	  }
 	},
 	methods: {
@@ -14,60 +16,48 @@ createApp({
                 return;
             }
 
-            InstoreSdk.api.member.setUILanguage('C', function(data) {
-                // if (data.Succeeded) {
-
-                //     var href = window.location.href;
-                //     if (href.indexOf("?") === -1) {
-                //         if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
-                //             href = setUrlParam(href, ["lang"], [e]);
-                //         } else {
-                //             href += "?lang=" + e;
-                //         }
-
-                //     } else {
-                //         if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
-                //             href = setUrlParam(href, ["lang"], [e]);
-                //         } else {
-                //             href += "&lang=" + e;
-                //         }
-                //     }
-                //     window.location.href = href;
-                // } else {
-                //     console.log(data);
-                // }
-            });
-
+            let _this = this;
             let param = {
               account: this.accountNo,
               password: this.password
             };
 
 			InstoreSdk.api.member.login(param, function (data) {
-				console.log(data,'signIn');
-                // if (data.Succeeded) {
-                //     if (localStorage.getItem("subscribeEmail")) {
-                //         window.location.href = "/Account/subscribe?email=" + localStorage.getItem("subscribeEmail");
-                //     }
-                //     else { 
-                //         if (app.targetUrl == "") {
-                //             app.targetUrl = "/";
-                //         }
+                if (data.Succeeded) {
+                    localStorage.setItem("logined", "1");
+                    if (localStorage.getItem("subscribeEmail")) {
+                        window.location.href = "/Account/subscribe?email=" + localStorage.getItem("subscribeEmail");
+                    }
+                    else { 
+                        if (!_this.targetUrl) {
+                            _this.targetUrl = "/Account/Memberinfo";
+                        }
 
-                //         window.location.href = app.targetUrl;
-                //     }
+                        window.location.href = _this.targetUrl;
+                    }
 
-                // } else {
-                //     _this.errorPassNum++; 
-                //     $("#loginFailMsg").text(data.Message || 'Login Failed' );
-                //     $("#loginFailMsg").show();
-                //     $("input[name='passWord']").val("").focus();
-                //     if (_this.errorPassNum == 5) {
-                //         window.location.href = '/account/forgetpassword';
-                //     }
-                // }
+                } else {
+                    // _this.errorPassNum++; 
+                    // $("#loginFailMsg").text(data.Message || 'Login Failed' );
+                    // $("#loginFailMsg").show();
+                    // $("input[name='password']").val("").focus();
+                    // if (_this.errorPassNum == 5) {
+                    //     window.location.href = '/account/forgetpassword';
+                    // }
+
+                    _this.errorPassNum++; 
+                    if (_this.errorPassNum == 5) {
+                        window.location.href = '/account/forgetpassword';
+                    } else {
+                        addtocartS(data.Message || 'Login Failed', '/imgs/warn-icon.png');
+                    }
+                }
             });
-		}
+		},
+        // 註冊
+        register: function () {
+            window.location.href = "/TranView/GoTo?returnUrl=" + BuyDong + "/account/register";
+        }
 	},
 	created() {
 	},

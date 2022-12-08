@@ -3,26 +3,20 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="container" class="merchant-page">
+<div id="container" class="merchant-page" v-cloak>
     <div class="merchant-banner">
-        <img src="https://img0.baidu.com/it/u=2564065540,1877968420&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313">
+        <img :src="merchantData.Cover">
     </div>
     <div class="mid-box">
         <div class="merchant-main">
             <div class="img-box">
-                <img src="https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500">
+                <img :src="merchantData.Logo">
             </div>
             <div class="merchant-info">
-                <p class="merchant-name">Traveler’s Art Journal</p>
+                <p class="merchant-name">{{merchantData.MerchantName}}</p>
                 <div class="rating-box">
-                    <div class="rating">
-                        <span>☆</span>
-                        <span>☆</span>
-                        <span class="active">☆</span>
-                        <span>☆</span>
-                        <span>☆</span>
-                    </div>
-                    <span>5.0</span>
+                    <star-rating v-model="merchantData.Score" disabled></star-rating>
+                    <span>{{merchantData.Score.toFixed(1)}}</span>
                     <span>(20)</span>
                 </div>
                 <div class="merchant-bottom">
@@ -30,30 +24,28 @@
                         <p>2019開館</p>
                         <div class="other">
                             <div>
-                                <span>追蹤人數</span>
+                                <span>@Resources.ToMultiLang("TrackedNum")</span>
                                 <span>1288</span>
                             </div>
                             <div>
-                                <span>已賣出件數</span>
+                                <span>@Resources.ToMultiLang("SoldNum")</span>
                                 <span>540</span>
                             </div>
                         </div>
                     </div>
                     <div class="right">
-                        <button>聯絡設計師</button>
-                        <button>+追蹤</button>
+                        <button>@Resources.ToMultiLang("ContactDsigner")</button>
+                        <button @@click="addFavMerchant">{{merchantData.IsFavorite ? '@Resources.ToMultiLang("CancelTrack")' : '@Resources.ToMultiLang("Track")'}}</button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="mer-msg-one introduce">
-            <p class="util-title2">品牌介紹</p>
-            <div class="content">
-                <p>一個插畫家，想用畫筆記下世界上每個美麗的角落，從而勾起大家心中美好的回憶。「旅遊不在乎終點，而是在乎途中的人和事還有那些美好的記憶和景色。」</p>
-            </div>
+            <p class="util-title2">@Resources.ToMultiLang("BrandIntro")</p>
+            <div class="content" v-html="merchantData.Description"></div>
             <div class="terms">
-                <a href="javascript:;">退貨及退款條款</a>
-                <a href="javascript:;">運送及運費條款</a>
+                <a href="javascript:;" @@click="readTerms(1)">@Resources.ToMultiLang("RARPolicy")</a>
+                <a href="javascript:;" @@click="readTerms(2)">@Resources.ToMultiLang("ShipmentPolicy")</a>
             </div>
         </div>
         <div class="mer-msg-one about">
@@ -67,31 +59,52 @@
         <div class="screen-box">
             <div class="screen-list">
                 <select>
-                    <option selected disabled hidden>全部商品</option>
+                    <option selected disabled hidden>@Resources.ToMultiLang("AllPros")</option>
                     <option>option1</option>
                 </select>
                 <select>
-                    <option selected disabled hidden>排序</option>
+                    <option selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
                     <option>option1</option>
                 </select>
                 <select>
-                    <option selected disabled hidden>價格</option>
+                    <option selected disabled hidden>@Resources.ToMultiLang("Price")</option>
                     <option>option1</option>
                 </select>
                 <select>
-                    <option selected disabled hidden>免運</option>
+                    <option selected disabled hidden>@Resources.ToMultiLang("FreeDelivery")</option>
                     <option>option1</option>
                 </select>
             </div>
             <div class="btn-group">
-                <button><img src="./wwwroot/imgs/icons/layout2.png"></button>
-                <button><img src="./wwwroot/imgs/icons/classify.png"></button>
+                <button @@click="isGrid = !isGrid"><img v-bind:src="isGrid ? '/imgs/icons/layout1.png' : '/imgs/icons/layout2.png'"></button>
+                <button><img src="/imgs/icons/classify.png"></button>
             </div>
         </div>
+
+        <pro-list :data="merProData" :grid="isGrid" :totalpage="totalPage" @@load="getMerchantPro" v-if="merProData.length"></pro-list>
+
+        <div class="none" v-else>
+          @Resources.ToMultiLang("NoRePros")
+        </div>
     </div>
+
+    <!-- 消息彈窗 -->
+    <bd-dialog ref="terms">
+        <div v-html="termsDtls"></div>
+    </bd-dialog>
 </div>
 
 @section scripts{
-	<!-- <script src="/js/components/StarRating.js" asp-append-version="true"></script> -->
-	<script src="/js/page/merchant.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        var MerchantDetail = @Html.Raw(ViewData["MerchantDetail"]); // 商家數據
+        var MerchantProdData = @Html.Raw(ViewData["MerchantProdData"]); // 商家產品數據
+
+        var jsMessage = {
+          // CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess",ViewBag.Lang)'
+        }
+    </script>
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+    <script src="/js/components/ProList.js" asp-append-version="true"></script>
+    <script src="/js/components/BdDialog.js" asp-append-version="true"></script>
+	<script src="/js/page/merchantDetail.js" asp-append-version="true"></script>
 }

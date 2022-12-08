@@ -1,22 +1,21 @@
-﻿<div id="footer">
+﻿<div id="footer" v-cloak>
 	<div class="mid-box">
 		<ul class="footer-nav">
-			<li>
-				<a href="javascript:;">商戶加盟</a>
+			<li v-for="menu in FooterMenus">
+				<a href="javascript:;" @@click="toUrl(menu)">{{menu.Name}}</a>
 
-				<ul>
-					<li><a href="javascript:;">我想在擺檔開店！</a></li>
-					<li><a href="javascript:;">商戶問與答</a></li>
+				<ul v-if="menu.Childs">
+					<li v-for="c in menu.Childs"><a href="javascript:;" @@click="toUrl(c)">{{c.Name}}</a></li>
 				</ul>
 			</li>
 		</ul>
 
 		<div class="subscribe-box">
-			<p>歡迎訂閱最新消息</p>
+			<p>@Resources.ToMultiLang("SubscribeNews")</p>
 
 			<div class="subscribe-input">
-				<input type="text" id="email" name="email" v-model="email" @@keyup.13="subscribe">
-				<button>訂閱</button>
+				<input type="text" id="email" name="email" v-model="email" @@keyup.enter="subVerify">
+				<button @@click="subVerify">@Resources.ToMultiLang("Subscribe")</button>
 			</div>
 		</div>
 
@@ -24,11 +23,8 @@
 			<img src="/imgs/payment.png">
 		</div>
 
-		<p class="site-tips">
-			使用cookies来确保我们在我们的网站上给阁下最好的体验。<br>
-			如果阁下继续，我们假定你同意接收所有摆档网站上的所有cookies。<br>
-			根據香港法律，不得在業務過程中，向未成年人售賣或供應令人醺醉的酒類。
-		</p>
+		<!-- <p class="site-tips">@Html.Raw(Resources.ToMultiLang("CookiesTips"))</p> -->
+		<p class="site-tips" v-html="CookiesTips"></p>
 
 		<div class="trace">
 			<a v-bind:href="item.link" target="_blank" v-for="item in traceList">
@@ -42,3 +38,15 @@
         </div>
 	</div>
 </div>
+
+
+<script type="text/javascript">
+	var jsMessage = {
+      CookiesTips: '@Resources.ToMultiLang("CookiesTips")',
+      EnterEmailForSubscribe: '@Resources.ToMultiLang("EnterEmailForSubscribe")',
+      ThanksForSubscribe: '@Resources.ToMultiLang("ThanksForSubscribe")',
+      SubscribeFail: '@Resources.ToMultiLang("SubscribeFail")'
+    }
+
+    var menu = @Html.Raw(ViewData["MenubarDatas"]); // 菜單數據
+</script>

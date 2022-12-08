@@ -1,6 +1,6 @@
-﻿<div id="header">
+﻿<div id="header" v-cloak>
 	<!-- 系統公告 -->
-    <div class="announcement_box" v-if="sysAnnounce.length">
+    <div class="announcement_box" v-if="show && sysAnnounce.length">
         <div id="announcement" class="swiper mid-box">
           <div class="swiper-wrapper">
             <div class="swiper-slide" v-for="item in sysAnnounce">
@@ -29,7 +29,7 @@
                     <option value="1">商家</option>
                 </select>*@
 
-                <input type="text" id="key" name="key" v-model="searchKey" v-on:keyup.13="goSearch">
+                <input type="text" id="key" name="key" placeholder="搜尋" v-model="searchKey" @@keyup.enter="goSearch">
 
                 <span class="search-btn" v-on:click="goSearch"></span>
             </div>
@@ -37,18 +37,42 @@
 
         <div class="handle-group">
         	<a href="/account/MemberInfo">
-        		<img src="/imgs/icons/user.png">
+        		<img :src="logined ? '/imgs/icons/user3.png' : '/imgs/icons/user.png'">
         	</a>
         	<a href="/account/MyMessage">
         		<img src="/imgs/icons/notice.png">
         	</a>
-        	<a href="/account/shoppingcart">
+        	<a :href="'/TranView/GoTo?returnUrl=' + BuyDong + '/account/shoppingcart'" class="cart">
         		<img src="/imgs/icons/cart.png">
+
+                <strong v-if="totalNum">{{totalNum}}</strong>
         	</a>
         </div>
     </div>
 </div>
 
-<script>
-	var plat_flag = 'M';
+<script type="text/javascript">
+    var defaultMsg = {
+        Login: '@Resources.ToMultiLang("Login")',
+        Pleaselogin: '@Resources.ToMultiLang("Pleaselogin")'
+    };
+
+     var comStr = {
+        Close: '@Resources.ToMultiLang("Close")',
+        Pleaselogin: '@Resources.ToMultiLang("Pleaselogin")',
+        PersonalInfo: '@Resources.ToMultiLang("PersonalInfo")',
+        Coupon: '@Resources.ToMultiLang("Coupon")',
+        Message: '@Resources.ToMultiLang("Message")',
+        MyOrder: '@Resources.ToMultiLang("MyOrder")',
+        MyFavorite: '@Resources.ToMultiLang("MyFavorite")',
+        More: '@Resources.ToMultiLang("More")',
+        SeeMore: '@Resources.ToMultiLang("SeeMore")',
+        HotSale: '@Resources.ToMultiLang("HotSale")',
+        NewLaunch: '@Resources.ToMultiLang("NewLaunch")',
+        Discounted: '@Resources.ToMultiLang("Discounted")',
+        Confirm: '@Resources.ToMultiLang("Confirm")',
+        CurrencyTips: '@Resources.ToMultiLang("CurrencyTips")'
+    };
+    
+    var LatesNotice = @Html.Raw(ViewData["LatesNotice"]); // 最新公告
 </script>

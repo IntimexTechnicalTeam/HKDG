@@ -3,13 +3,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="container" class="category-page">
+<div id="container" class="category-page" v-cloak>
 	<div class="mid-box">
 		<!-- Category -->
 		<div class="menu-bar">
 			<div class="top-bar">
-				<div class="back-btn" @@click="backPage"><span>香港設計館</span></div>	
-				<div class="join-in"><img src="/imgs/icons/join.png"> <span>加盟設計館</span></div>	
+				<div class="back-btn" @@click="backPage"><span>@Resources.ToMultiLang("HKDesign")</span></div>	
+				<div class="join-in" @@click="joinIn"><img src="/imgs/icons/join.png"> <span>@Resources.ToMultiLang("JoinDesign")</span></div>	
 			</div>
 			<ul class="nav-list">
 				<li v-for="item in category" @@click="pushPage(item)">{{item.Name}}</li>

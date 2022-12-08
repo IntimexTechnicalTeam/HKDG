@@ -2,165 +2,64 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="container" class="pro-dtl-page">
-    <div class="swiper proPreview">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="item in banner">
-                <img v-bind:src="item.src">
-            </div>
-        </div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-pagination"></div>
-    </div>
-    <div class="mid-box">
-        <div class="pro-panel">
-            <p class="pro-name">香港插畫絲巾 | 古典約依印花 - 靛藍色</p>
-            <p class="old-price">HKD $338</p>
-            <p class="sale-price">HKD $288</p>
-            <div class="rating-box">
-                <star-rating v-model="rating" disabled></star-rating>
-                <span>5.0</span>
-                <span>(20)</span>
-            </div>
-            <div class="attr-group">
-                <div class="attr-one">
-                    <label>顏色</label>
-                    <div class="options">
-                        <span class="selected">靛藍色</span>
-                        <span>土黃色</span>
-                        <span>酒紅色</span>
-                    </div>
-                </div>
-            </div>
-            <div class="number-box">
-                <label>數量</label>
-                <div class="input-number">
-                    <span role="button">-</span>
-                    <input type="number" v-model.number.lazy="buyQty" oninput="if(value.length>4) value=value.slice(0,4);" />
-                    <span role="button">+</span>
-                </div>
-            </div>
-            <div class="related-dtls">
-                <p class="tips">付款後，從備貨到寄出商品為5個工作天。</p>
-                <a href="javascript:;">退貨及退款條款</a>
-                <a href="javascript:;">運送及運費條款</a>
-            </div>
-            <div class="btn-box">
-                <button>加入購物車</button>
-                <button>立即購買</button>
-            </div>
-            <div class="fav-box">
-                <button>
-                    <img src="/imgs/icons/heart.png">
-                    加入喜愛清單
-                </button>
-            </div>
-            <div class="share-box">
-                <span>分享至</span>
-                <a href="javascript:;" class="fb"></a>
-                <a href="javascript:;" class="whatsapp"></a>
-                <a href="javascript:;" class="link"></a>
-            </div>
-        </div>
-        <div class="pro-introduce">
-          <div class="tabs">
-            <a href="javascript:;" class="active">商品詳情</a>
-            <a href="javascript:;">顧客評價</a>
-          </div>
-
-          <div class="tab-content" v-if="false">
-            <div class="tab-title">
-              <p>商品詳情</p>
-            </div>
-            
-            <div class="content details">
-              商品詳情商品詳情商品詳情商品詳情商品詳情...
-            </div>
-          </div>
-
-          <div class="tab-content">
-            <div class="tab-title">
-              <p>顧客評價</p>
-            </div>
-            <!-- 此產品暫時未有用家意見，立即購買並成為首名留言者！ -->
-            <div class="content comments">
-              <p class="total-sum">20個評價</p>
-              <div class="rating-box">
-                <star-rating v-model="rating" disabled></star-rating>
-                <span>5.0分</span>
-              </div>
-
-              <div class="comments-list">
-                <div class="comment-one">
-                  <div class="user">
-                    <div class="avatar">
-                      <img src="/imgs/icons/user3.png">
-                    </div>
-                    <div class="info">
-                      <span>a*******3</span>
-                      <span>January 2， 2022</span>
-                    </div>
-                  </div>
-
-                  <div class="rating-box">
-                    <star-rating v-model="rating" disabled></star-rating>
-                    <span>5.0分</span>
-                  </div>
-
-                  <p class="comments-text">
-                    評價評價評價評價評價評價評價評價評價評價評價評價評價評價評價評價
-                  </p>
-
-                  <ul class="comments-imgs">
-                    <li>
-                      <img src="https://img2.baidu.com/it/u=864800148,863255913&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1668704400&t=41d7466ed6055d821970ac0004a6abc7">
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <hr>
-
-        <div class="about-merchant">
-            <p class="util-title">關於品牌</p>
-            <div class="merchant-box">
-                <div class="img-box">
-                    <img src="https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500">
-                </div>
-                <div class="merchant-info">
-                    <p class="merchant-name">Traveler’s Art Journal</p>
-                    <div class="merchant-bottom">
-                        <div class="left">
-                            <div>
-                                <img src="/imgs/icons/star.png">
-                                <span>評價</span>
-                                <span>5.0</span>
+<div id="container" class="pro-comment-page" v-cloak>
+    <div id="main-content">
+        <input type="hidden" value="@ViewBag.oId" id="orderId" />
+        <div class="write-comment-block" v-for="item,index in comments">
+            <table>
+                <tr>
+                    <td width="100" colspan="3">
+                        <div class="product-message">
+                            <div style="text-align:center;">
+                                <img v-bind:src="item.ProductImg" />
                             </div>
-                            <div>
-                                <img src="/imgs/icons/user2.png">
-                                <span>關注人數</span>
-                                <span>1,200</span>
-                            </div>
+                            <p>
+                                {{item.ProductName}}
+                            </p>  
                         </div>
-                        <div class="right">
-                            <button>+追蹤</button>
-                            <button>進入商店</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="padding-td"><p class="comment-title">@Resources.ToMultiLang("Comment")</p></td>
+                    <td class="padding-td">
+                        <textarea class="comment-area" rows="5" v-model="item.Content" v-on:input="calcNum(item)"></textarea>
+                        <div class="font-num"><b>{{item.fontNum}}</b>/1000</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="comment-title">@Resources.ToMultiLang("Image")</p></td>
+                    <td colspan="2" class="padding-td">
+                        <form id="Form1" enctype="multipart/form-data">
+                            <ul class="comment-img-box">
+                                <template v-for="(img,index2) in item.CommentImages">
+                                    <li style="display:inline-block;" v-if="!img.IsDeleted">
+                                        <img v-bind:id="'img'+index2+index" v-bind:src="img.ImageB" width="50" />
+                                        <b class="img-close" v-on:click="deleteImage(img,index,index2)">X</b>
+                                    </li>
+                                </template>
+                            </ul>
+                            <input type="file" multiple v-bind:id="'file'+index" v-bind:name="'file'+index" style="display:none;" v-on:change="upload(item,index)" />
+                            <input type="button" class="upload-btn" value='@Resources.ToMultiLang("Upload")' v-on:click="selectFile(item,index);" v-if="item.ImgSum < 1" />
+
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="comment-title">@Resources.ToMultiLang("Sorce")</p></td>
+                    <td colspan="2" class="padding-td">
+                        <star-rating v-model="item.Score"></star-rating>
+                    </td>
+                </tr>
+            </table>
         </div>
-
-        <hr>
+        <div style="text-align:center;">
+            <input type="button" value='@Resources.ToMultiLang("SaveM")' v-on:click="saveComment" class="btn comment-save" />
+        </div>
     </div>
 </div>
 
 @section scripts{
 	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
-	<script src="/js/page/detail.js" asp-append-version="true"></script>
+	<script src="/js/page/comment.js" asp-append-version="true"></script>
 }

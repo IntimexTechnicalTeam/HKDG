@@ -1,6 +1,6 @@
-ajaxPage( "proItem", "/js/components/proItem.js" );  
+ajaxPage( "ProItem", "/js/components/ProItem.js" );  
 
-var tempStr = '<div class="swiper proSwiper scrollbar" :class="declass">\
+var tempStr = '<div class="swiper proSwiper scrollbar" :class="declass" v-if="data.length">\
     <div class="swiper-wrapper">\
         <div class="swiper-slide" v-for="item in data">\
             <pro-item :data="item"></pro-item>\

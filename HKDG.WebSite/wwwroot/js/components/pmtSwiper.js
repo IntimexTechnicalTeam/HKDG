@@ -3,13 +3,13 @@ ajaxPage( "ProSwiper", "/js/components/ProSwiper.js" );
 var tempStr = '<div class="pmt-one" :class="declass">\
     <div class="util-title">\
         {{promotion.Name}}\
-        <a href="javascript:;" class="more-btn">更多 ></a>\
+        <a :href="link || \'/Product/Category\'" class="more-btn" v-if="more">{{comStr.More}} ></a>\
     </div>\
     <pro-swiper :declass="declass" :data="promotion.PrmtProductList" :options="options"></pro-swiper>\
 </div>';
 
 // 定义一个推廣產品輪播组件
-var pmtSwiper = {
+var PmtSwiper = {
     components: {
         'pro-swiper': ProSwiper
     },
@@ -21,18 +21,24 @@ var pmtSwiper = {
             default: () => {
                 return {};
             }
-        }
+        },
+        more: Boolean,  // 设置是否顯示更多按鈕
+        link: String // 設置更多按鈕的跳轉鏈接
     },
     data: function () {
         return {
-
+            IspType: IspType,
+            comStr: comStr
         }
     },
     template: tempStr,
     methods: {
 
     },
-    mounted() {
+    created() {
         
+    },
+    mounted() {
+
     }
 }

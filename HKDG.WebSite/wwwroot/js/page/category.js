@@ -4,44 +4,33 @@ createApp({
   },
   data() {
 		return {
+            catId: getQueryString("catId") || '', // 父級目錄Id
 			category: category
 		}
 	},
 	methods: {
 	    // 返回
 	    backPage: function() {
-	      location.href="/default/menu";
+	      location.href="/Default/Menu";
 	    },
+        // 加盟
+        joinIn: function() {
+        	showMessage('敬請期待')
+        },
 	    // 跳轉目錄產品頁
 	    pushPage: function(item) {
-	    	InstoreSdk.api.member.setUILanguage('C', function(data) {
-                if (data.Succeeded) {
-
-                    var href = window.location.href;
-                    if (href.indexOf("?") === -1) {
-                        if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
-                            href = setUrlParam(href, ["lang"], [e]);
-                        } else {
-                            href += "?lang=" + e;
-                        }
-
-                    } else {
-                        if (href.indexOf("?lang=") !== -1 || href.indexOf("&lang=") !== -1) {
-                            href = setUrlParam(href, ["lang"], [e]);
-                        } else {
-                            href += "&lang=" + e;
-                        }
-                    }
-                    window.location.href = href;
-                } else {
-                    console.log(data);
-                }
-            });
+            location.href = '/Product/CatProduct/' + item.Id;
 	    }
 	},
 	created() {
+        let _this = this;
+        if (this.catId) {
+            this.category = this.category.find(function(i) {
+                return i.Id === _this.catId;
+            }).Children;
+        }
 	},
 	mounted() {
-
+        console.log(this.category,'category');
 	}
 }).mount('#container')

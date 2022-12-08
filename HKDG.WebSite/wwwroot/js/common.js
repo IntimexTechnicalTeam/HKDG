@@ -1,4 +1,11 @@
-﻿var onBlock = false;
+﻿$(document).ajaxStart(function () {
+    showLoading();
+});
+$(document).ajaxStop(function () {
+    hideLoading();
+});
+
+var onBlock = false;
 
 var language = {
     E: {
@@ -29,7 +36,8 @@ function getCustUILanguage() {
 
 function getUILanguage() {
     //alert($("#pageLang").val());
-    return $("#pageLang").val();
+    // return $("#pageLang").val();
+    return lang;
 }
 
 function WSAjaxStart() {
@@ -61,7 +69,6 @@ function WSGet(url, data, success, error) {
         type: "get",
         url: url,
         data: data,
-        contentType: 'application/json',
         beforeSend: function (request) {
             //  request.setRequestHeader("Authorization", "Bearer " + accessToken);
             var userLanguage = getUILanguage();
@@ -87,10 +94,11 @@ function WSGet(url, data, success, error) {
                 // $.cookie("access_token", null, { path: "/" });
                 if (localStorage.getItem("logined") == 1) {
                     localStorage.setItem("logined", 0);
-                    window.location.href = "/account/login?status=timeout&returnUrl=" + window.location.pathname;
+                    // window.location.href = "/account/login?status=timeout&returnUrl=" + window.location.pathname;
                 } else {
                     // window.location.reload();
                 }
+                window.location.href = "/account/login?status=timeout&returnUrl=" + window.location.pathname;
                 return;
             }
             success(data, status);
@@ -118,7 +126,6 @@ function WSPost(url, data, success, error) {
         type: "post",
         url: url,
         data: data,
-        //contentType: 'application/json',
         beforeSend: function (request) {
             //  request.setRequestHeader("Authorization", "Bearer " + accessToken);
             var userLanguage = getUILanguage();
@@ -139,10 +146,11 @@ function WSPost(url, data, success, error) {
                 // $.cookie("access_token", null, { path: "/" });
                 if (localStorage.getItem("logined") == 1) {
                     localStorage.setItem("logined", 0);
-                    window.location.href = "/account/login?returnUrl=" + window.location.href;
+                    // window.location.href = "/account/login?returnUrl=" + window.location.href;
                 } else {
                     // window.location.reload();
                 }
+                window.location.href = "/account/login?returnUrl=" + window.location.href;
                 return;
             }
             success(data, status);
@@ -262,7 +270,7 @@ function showLoading(text, closeDelay) {
     //$("#loading").modal("show"); 
     // $.blockUI({ message: "<img width='100' src='/images/loading.gif' style='vertical-align:middle;'/>" + text });
     $.blockUI({ 
-        message: "<div class='window loading'><img src='/images/loading.gif' />" + text + "</div>", 
+        message: "<div class='window loading'><img src='/imgs/loading.gif' />" + text + "</div>", 
         blockMsgClass: "popBlock" 
     });
 
@@ -285,10 +293,10 @@ function hideLoading(delay) {
 
 
 function showInfo(message, sec, callback) {
-    showInfoExtend({ icon: "/Images/warn-icon.png", message: message, sec: sec, callback: callback });
+    showInfoExtend({ icon: "/imgs/warn-icon.png", message: message, sec: sec, callback: callback });
 }
 function showInfoSuccess(message, sec, callback) {
-    showInfoExtend({ icon: "/Images/tick-icon.png", message: message, sec: sec, callback: callback });
+    showInfoExtend({ icon: "/imgs/tick-icon.png", message: message, sec: sec, callback: callback });
 }
 // function showMessage(message) {
 //     $.blockUI({
@@ -546,7 +554,7 @@ function showConfirm (message, callback) {
     onBlock = true;
     var btn;
 
-    switch (getUILanguage()) {
+    switch (lang) {
         case 'E':
             btn = language.E; 
             break;
@@ -558,7 +566,7 @@ function showConfirm (message, callback) {
             break;
     }
 
-    if(plat_flag == 'D') {
+    if(platform == 'D') {
         $.blockUI({ 
             message: "<div style='padding: 35px 20px;'><div style='font-size: 18px;margin-bottom: 30px;'>" + message + "</div><input type='button' id='confirm' class='green_btn' value='" + btn.confirm + "' style='font-size: 15px;padding: 10px 25px;outline: none;border: 0;cursor: pointer;' /><input type='button' id='cancel' class='green_btn' value='" + btn.cancel + "' style='font-size: 15px;padding: 10px 25px;outline: none;border: 0;cursor: pointer; margin-left: 20px;' /></div>", 
             css: { top: '30%', left: '30%', width: '40%' },
@@ -603,7 +611,7 @@ function showAlert (message, callback) {
             break;
     }
 
-    if(plat_flag == 'D') {
+    if(platform == 'D') {
         $.blockUI({ 
             message: "<div style='padding: 35px 20px;'><div style='font-size: 18px;margin-bottom: 30px;'>" + message + "</div><input type='button' id='confirm' class='green_btn' value='" + btn.confirm + "' style='font-size: 15px;padding: 10px 25px;outline: none;border: 0;cursor: pointer;' /></div>", 
             css: { top: '30%', left: '30%', width: '40%' },
@@ -686,13 +694,13 @@ function showLoginDialog (returnUrl, callback) {
 
     if(platform == 'D') {
         $.blockUI({ 
-            message: "<div class='window login'><div><img src='/Images/login-icon.png' /></div><input type='button' id='login-btn' value='" + defaultMsg.Pleaselogin + "' /><span id='close-btn'></span></div>", 
+            message: "<div class='window login'><div><img src='/imgs/icons/login-icon.png' /></div><input type='button' id='login-btn' value='" + defaultMsg.Pleaselogin + "' /><span id='close-btn'></span></div>", 
             // css: { top: '30%', left: '30%', width: '40%' },
             blockMsgClass: "popBlock" 
         });
     } else {
         $.blockUI({ 
-            message: "<div class='window login'><div><img src='/Images/login-icon.png' /></div><input type='button' id='login-btn' value='" + defaultMsg.Pleaselogin + "' /><span id='close-btn'></span></div>", 
+            message: "<div class='window login'><div><img src='/imgs/icons/login-icon.png' /></div><input type='button' id='login-btn' value='" + defaultMsg.Pleaselogin + "' /><span id='close-btn'></span></div>", 
             // css: { top: '30%', left: '10%', width: '80%' } 
             blockMsgClass: "popBlock" 
         });

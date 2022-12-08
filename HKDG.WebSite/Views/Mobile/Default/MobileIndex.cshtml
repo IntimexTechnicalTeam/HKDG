@@ -5,12 +5,12 @@
 <div id="container" class="index-page">
     <div class="banner">
         <div class="cover">
-            <img src="https://img0.baidu.com/it/u=4013887901,2394335227&fm=253&fmt=auto&app=120&f=JPEG?w=1366&h=768">
+            <img :src="banner.ImgPath">
         </div>
         <div class="swiper bannerSwiper">
             <div class="swiper-wrapper">
-                <div class="swiper-slide" v-for="item in banner">
-                    <img v-bind:src="item.src">
+                <div class="swiper-slide" v-for="item in banner.BannerList">
+                    <img :src="item.Image">
                 </div>
             </div>
             <div class="swiper-button-prev"></div>
@@ -20,54 +20,55 @@
     </div>
 
     <div class="mid-box">
-    	<pmt-swiper declass="recommend" :options="reOption" :promotion="promotionList[0]"></pmt-swiper>
+    	<template v-for="(pmt,index) in promotionList">
+    		<pmt-swiper :declass="'pmt' + index" :options="reOption" :promotion="pmt" v-if="pmt.Type === 3" :more="pmt.Seq !== 1"></pmt-swiper>
 
-    	<div class="pmt-one category">
-	    	<div class="util-title">
-	            商品分類
-	        </div>
+    		<div class="pmt-one category" v-if="pmt.Seq === 1">
+		    	<div class="util-title">
+		            @Resources.ToMultiLang("ShopByProduct")
+		        </div>
 
-	        <div class="swiper proSwiper">
-	            <div class="swiper-wrapper">
-	                <div class="swiper-slide" v-for="(item,index) in proList">
-	                    <a href="javascript:;">服裝穿搭</a>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+		        <div class="swiper proSwiper">
+		            <div class="swiper-wrapper">
+		                <div class="swiper-slide" v-for="(item,index) in category">
+		                    <a :href="'/Product/CatProduct/' + item.Id">{{item.Name}}</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 
-    	<pmt-swiper declass="furniture" :options="ftOption" :promotion="promotionList[0]"></pmt-swiper>
+		    <div class="pmt-one brand" v-if="pmt.Type === 2">
+		    	<div class="util-title">
+		            {{pmt.Name}}
+		        </div>
 
-    	<div class="pmt-one brand">
-	    	<div class="util-title">
-	            品牌推薦
-	        </div>
+		        <div class="swiper proSwiper">
+		            <div class="swiper-wrapper">
+		                <div class="swiper-slide" v-for="(item,index) in pmt.MerchantList">
+		                    <a href="javascript:;">
+		                    	<div class="img-box">
+		                    		<img :src="item.LogoB">
+		                    	</div>
+		                    	
+		                    	<p>{{item.Name}}</p>
+		                    </a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 
-	        <div class="swiper proSwiper">
-	            <div class="swiper-wrapper">
-	                <div class="swiper-slide" v-for="(item,index) in proList">
-	                    <a href="javascript:;">
-	                    	<div class="img-box">
-	                    		<img src="https://img2.baidu.com/it/u=122191841,2456494415&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500">
-	                    	</div>
-	                    	
-	                    	<p>Traveler’s Art Journal</p>
-	                    </a>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-
-	    <pmt-layout :limit="6" :promotion="promotionList[0]"></pmt-layout>
-
-	    <pmt-layout :limit="6" :promotion="promotionList[0]"></pmt-layout>
-
-	    <pmt-swiper declass="furniture" :options="ftOption" :promotion="promotionList[0]"></pmt-swiper>
+		    <pmt-layout :limit="6" :promotion="pmt" v-if="pmt.Type === 4"></pmt-layout>
+    	</template>
     </div>
 </div>
 @section scripts{
-	<!-- <script src="~/js/components/proItem.js" asp-append-version="true"></script> -->
-	<script src="~/js/components/pmtSwiper.js" asp-append-version="true"></script>
-	<script src="~/js/components/pmtLayout.js" asp-append-version="true"></script>
+	<script type="text/javascript">
+		var promotion = @Html.Raw(ViewData["PromotionList"]); // 首頁推廣數據
+		var category = @Html.Raw(ViewData["Category"]); // 商品分類
+	</script>
+
+	<!-- <script src="~/js/components/ProItem.js" asp-append-version="true"></script> -->
+	<script src="~/js/components/PmtSwiper.js" asp-append-version="true"></script>
+	<script src="~/js/components/PmtLayout.js" asp-append-version="true"></script>
 	<script src="~/js/page/index.js" asp-append-version="true"></script>
 }

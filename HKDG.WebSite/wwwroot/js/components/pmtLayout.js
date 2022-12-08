@@ -1,4 +1,4 @@
-ajaxPage( "proItem", "/js/components/proItem.js" );  
+ajaxPage( "ProItem", "/js/components/ProItem.js" );  
 
 var tempStr = '<div class="pmt-one grid" :class="declass">\
     <div class="util-title">\
@@ -7,11 +7,11 @@ var tempStr = '<div class="pmt-one grid" :class="declass">\
     <div class="pro-list">\
         <pro-item v-for="item in promotion.PrmtProductList.slice(0,limit)" :data="item"></pro-item>\
     </div>\
-    <button class="more-btn">看更多</button>\
+    <a href="/Product/Category" class="more-btn">{{comStr.SeeMore}}</a>\
 </div>';
 
 // 定义一个推廣產品輪播组件
-var pmtLayout = {
+var PmtLayout = {
     components: {
         'pro-item': ProItem
     },
@@ -30,7 +30,8 @@ var pmtLayout = {
     },
     data: function () {
         return {
-
+            IspType: IspType,
+            comStr: comStr
         }
     },
     template: tempStr,

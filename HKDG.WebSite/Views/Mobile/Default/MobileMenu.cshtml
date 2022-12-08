@@ -3,14 +3,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="container" class="menu-page">
+<div id="container" class="menu-page" v-cloak>
     <div class="mid-box">
         <!-- Menu Bar -->
         <div class="menu-bar">
             <ul class="nav-list">
-                <li @@click="pushPage">擺檔</li>
-                <li>設計館</li>
-                <li>家居館</li>
+                <li v-for="item in menu" @@click="toUrl(item)">{{item.Name}}</li>
             </ul>
         </div>
 
@@ -20,10 +18,8 @@
 
 @section scripts{
     <script type="text/javascript">
-        // var IsNew = '@ViewBag.IsNew';
-        // var Category = @Html.Raw(ViewData["Category"]); // 产品目录
+        var menu = @Html.Raw(ViewData["MenubarDatas"]); // 菜單數據
     </script>
     <script type="text/javascript" src="/js/components/SysSwitch.js" asp-append-version="true"></script>
     <script type="text/javascript" src="/js/page/menu.js" asp-append-version="true"></script>
 }
-

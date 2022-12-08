@@ -9,21 +9,21 @@
 
     <form id="login-form">
       <div class="form-group">
-        <label>@Resources.ToMultiLang("AccountNo",ViewBag.Lang)</label>
+        <label>@Resources.ToMultiLang("AccountNo")</label>
         <input type="text" name="accountNo" placeholder="e.g. your@email.address" v-model="accountNo" @@keyup.enter="signIn" />
       </div>
       <div class="form-group password">
-        <label>密碼</label>
+        <label>@Resources.ToMultiLang("Password")</label>
         <input type="password" name="password" v-model="password" @@keyup.enter="signIn" />
-        <a href="javascript:;" class="forget">忘記密碼？</a>
+        <a href="javascript:;" class="forget">@Resources.ToMultiLang("ForgetPassword")？</a>
       </div>
 
       <div class="login-btns">
-        <button type="button" @@click="signIn">登入</button>
-        <span>或</span>
-        <button><img src="/imgs/icons/fb-green.png"> 以FACEBOOK賬號繼續</button>
+        <button type="button" @@click="signIn">@Resources.ToMultiLang("Login")</button>
+        <span>@Resources.ToMultiLang("or")</span>
+        <button><img src="/imgs/icons/fb-green.png"> @Resources.ToMultiLang("LoginasFacebook")</button>
 
-        <span>還沒加入擺檔？<a href="javascript:;">註冊</a></span>
+        <span>@Resources.ToMultiLang("NeverJoin")<a href="javascript:;" @@click="register">@Resources.ToMultiLang("Register")</a></span>
       </div>
     </form>
   </div>
@@ -36,6 +36,7 @@
       EnterCorrectEmail: '@Resources.ToMultiLang("EnterCorrectEmail",ViewBag.Lang)',
       EnterPWD: '@Resources.ToMultiLang("EnterPWD",ViewBag.Lang)'
     }
+    var targetUrl = '@ViewBag.ReturnUrl';
   </script>
   <script type="text/javascript" src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="/js/page/login.js" asp-append-version="true"></script>

@@ -1,6 +1,61 @@
 ﻿@{
-    
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" class="coupon-page">
+    <div class="mid-box">
+        <nav-tab></nav-tab>
 
+        <div class="nav-tab-content">
+        	<div class="favorite-box tabs">
+			    <div class="favorite-box-top">
+			        <div class="login-register-title merchant-title" v-bind:class="{'Favorite-title-now':nowTitle==0}" v-on:click="changeTitleM();">@Resources.ToMultiLang("MyFavorite")</div>
+			        <div class="login-register-title merchant-title" v-bind:class="{'Favorite-title-now':nowTitle==1}" v-on:click="changeTitleP();">@Resources.ToMultiLang("MyMerchant")</div>
+			        <div class="clear"></div>
+			    </div>
+			    <div class="favorite-box-content">
+			        <div v-show="nowTitle===0">
+			            <div class="favorite-one" v-for="d in favoriteList.Data">
+			                <a class="product-img" v-bind:href="getDetailLink(d.Code)">
+			                    <img v-bind:src="d.Imgs[2]" v-bind:alt="d.Name" />
+			                </a>
+			                <div class="favorite-one-messge">
+			                    <p class="product-title">{{d.Name}}</p>
+			                    <p class="product-code">{{d.Code}}</p>
+			                    <p class="merchant-name">{{d.MerchantName}}</p>
+			                    <p class="product-price"><span class="p-price-discount no_play">HKD{{d.SalePrice}}</span></p>
+			                </div>
+			                <div class="clear"></div>
+			                <div class="favorite-one-handle">
+			                    <a v-bind:href="getDetailLink(d.Code)">@Resources.ToMultiLang("AddToCart")</a>
+			                    <a href="javascript:;" v-on:click="removeFavorite($event,d)">@Resources.ToMultiLang("RemovefromFavorites")</a>
+			                </div>
+			            </div>
+			        </div>
+			        <div v-show="nowTitle===1" style="display:none;">
+			            <div class="favorite-one fav-merchant" v-for="d in MerchantsList">
+			                <a href="javascript:;" class="info">
+			                    <span class="img-box"><img v-bind:src="d.LogoS" v-bind:alt="d.Name" v-bind:title="d.Name" /></span>
+			                    <p class="merchant-name">{{d.Name}}</p>
+			                </a>
+			                <div class="favorite-one-handle">
+			                    <a v-bind:href="'/merchant/detail/'+d.Id">
+			                        @Resources.ToMultiLang("clickinmall")
+			                    </a>
+			                    <a href="javascript:;" v-on:click="removeFavMerchant($event,d)">
+			                        @Resources.ToMultiLang("RemovefromFavorites")
+			                    </a>
+			                </div>
+			                <div class="clear"></div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="/js/components/NavTab.js" asp-append-version="true"></script>
+	<script src="/js/page/myFavorite.js" asp-append-version="true"></script>
+}

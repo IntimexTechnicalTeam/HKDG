@@ -139,13 +139,7 @@
                             _this.log(data);
                             if (status === "success") {
                                 if (data.Succeeded) {
-                                    WSGet(addTimeStamp(_this.apiPath + "/member/GetMemberInfo"), {}, function () {
-                                        if (callback) {
-                                            callback(data);
-                                        }
-                                    }, function (e) {
-                                        alert(e);
-                                    });
+                                    callback(data);
                                 }
                                 else {
                                     if (callback) {
@@ -308,7 +302,7 @@
                  */
                 MemberApi.prototype.getMemberInfo = function (callback) {
                     var _this = this;
-                    WSPost(this.apiPath + "/Member/getMemberInfo", {}, function (data, status) {
+                    WSGet(this.apiPath + "/Member/getMemberInfo", {}, function (data, status) {
                         _this.log(data);
                         if (status === "success") {
                             if (data.Succeeded) {
@@ -500,7 +494,7 @@
                  */
                 MemberApi.prototype.getFavorite = function (callback) {
                     var _this = this;
-                    WSGet(this.apiPath + "/Member/GetFavorite", {}, function (data, status) {
+                    WSPost(this.apiPath + "/Member/GetFavorite", {}, function (data, status) {
                         _this.log(data);
                         if (status === "success") {
                             if (callback) {
@@ -531,7 +525,7 @@
                 ;
                 MemberApi.prototype.setCurrency = function (cur, callback) {
                     var _this = this;
-                    WSGet(this.apiPath + "/Member/SetCurrency", { currency: cur }, function (data, status) {
+                    WSGet(this.apiPath + "/Member/ChangeCurrencyCode", { CurrencyCode: cur }, function (data, status) {
                         _this.log(data);
                         if (data.Succeeded) {
                             if (callback) {
@@ -2023,9 +2017,19 @@
                     });
                 };
                 ;
-                ShoppingCartApi.prototype.addItem = function (prodId, prodCode, attr1, attr2, attr3, qty, kolId, callback, loginFun) {
+                /**
+                 *  加入購物車
+                 * @param ProductId  
+                 * @param ProdCode
+                 * @param Attr1
+                 * @param Attr2
+                 * @param Attr3
+                 * @param qty
+                 * @param KolId
+                 */
+                ShoppingCartApi.prototype.addItem = function (param, callback, loginFun) {
                     var _this = this;
-                    WSPost(this.apiPath + "/ShoppingCart/AddItem", { ProductId: prodId, ProdCode: prodCode, Attr1: attr1, Attr2: attr2, Attr3: attr3, qty: qty, KolId: kolId }, function (data, status) {
+                    WSPost(this.apiPath + "/ShoppingCart/AddItem", param, function (data, status) {
                         _this.log(data);
                         if (status === "success") {
                             if (callback) {
@@ -2139,7 +2143,7 @@
                 ;
                 ShoppingCartApi.prototype.getShopCartAsync = function (callback) {
                     var _this = this;
-                    WSGet(this.apiPath + "/ShoppingCart/GetShopCartAsync", {}, function (data, status) {
+                    WSPost(this.apiPath + "/ShoppingCart/GetShopCartAsync", {}, function (data, status) {
                         _this.log(data);
                         if (callback) {
                             callback(data);

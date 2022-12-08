@@ -1,5 +1,5 @@
 var tempStr = '<div class="rating" v-bind:class="{\'disabled\': disabled}">\
-    <span v-for="(item,index) in series" v-bind:class="{\'active\': modelValue===5-index}" @click="change(index)">☆</span>\
+    <span v-for="(item,index) in series" v-bind:class="{\'active\': Math.ceil(modelValue)===5-index}" @click="change(index)">☆</span>\
 </div>';
 
 // 定义一个五星評級组件

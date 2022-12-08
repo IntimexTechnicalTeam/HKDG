@@ -6,6 +6,21 @@
 
 <div class="text-center">
     这是Desktop-body
-    @Resources.ToMultiLang("PayType");
+    @Resources.ToMultiLang("PayType",ViewBag.Lang);
     @Resources.ToMultiLang("MemberName",ViewBag.Lang);
 </div>
+
+<script>
+    $(function () {
+
+        InstoreSdk.api.member.getMemberInfo(function (data) {
+            
+            if (data)
+            {
+                
+            }
+        
+        });
+    
+    });
+</script>

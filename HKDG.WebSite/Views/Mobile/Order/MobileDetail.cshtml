@@ -2,69 +2,222 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="container" class="order-page">
-    <div class="mid-box">
-        <div class="nav-tab-content">
-            <div class="nav-tab-title">
-                <p>我的訂單</p>
+<div id="container" class="order-detail-page" v-cloak>
+    <!--main-content-->
+    <div id="main-content">
+        <p class="page-title">@Resources.ToMultiLang("MyOrder")</p>
+        <div class="mid-box">
+	        <div class="favorite-box order-box order-detail-box order-detail-box-only">
+	            <div class="total-order-num">
+	                <span>@Resources.ToMultiLang("OrderNumber") : {{order.OrderNO}}</span>
+	                <span>@Resources.ToMultiLang("OrderDateTime") : {{order.CreateAt}}</span>
+	            </div>
+	            <div class="merchant-order-box" v-for="(mo,index) in merchantOrder_t">
+	                <div class="merchant-order-title">
+	                    <span>{{index+1}}</span>
+	                    <span>{{mo.name}}</span>
+	                </div>
+	                <div class="favorite-box-content" v-for="o in mo.orderlist">
+	                    <div class="order-one order-one-detail">
+	                        <div class="order-one-title">
+	                            <span class="order-num">@Resources.ToMultiLang("SubOrderNo") : {{o.DeliveryNo}}</span>
+	                            <span class="order-address" v-if="o.Address||o.Address1||o.Address2||o.Address3">@Resources.ToMultiLang("Address") : {{o.Country+','+o.Province+','+o.Address+' '+o.Address1+' '+o.Address2+' '+o.Address3}}</span>
+	                            <span v-if="o.DeliveryTypeCode == 'D'">@Resources.ToMultiLang("DeliveryMethod") : @Resources.ToMultiLang("Posting"),{{o.ExpressServiceName}}</span>
+	                            <span v-else-if="o.DeliveryTypeCode == 'P'">@Resources.ToMultiLang("DeliveryMethod") : @Resources.ToMultiLang("CounterCollection"),{{o.ExpressServiceName}}</span>
+	                            <span v-else-if="o.DeliveryTypeCode == 'Z'">@Resources.ToMultiLang("DeliveryMethod") : @Resources.ToMultiLang("iPostalStation"),{{o.ExpressServiceName}}</span>
+	                            <div class="clear"></div>
+	                        </div>
+	                        <div class="favorite-one" v-for="item in o.DeliveryItems">
+	                            <a class="product-img" href="javascript:;">
+	                                <img v-bind:src="item.Product.Imgs[2]" v-bind:alt="item.Product.Name" />
+	                            </a>
+	                            <div class="favorite-one-messge">
+	                                <p class="product-title">{{item.Product.Name}}</p>
+	                                <p class="product-code">{{item.Product.Code}}</p>
+	                                <p class="product-price">
+	                                    <span class="p-price-discount">{{item.Product.Currency.Code}} {{priceFormat(item.Product.TotalPrice.toString(),2)}}</span>
+	                                </p>
+	                                <p class="order-one-detail-quantity">
+	                                    <!-- <span v-if="item.AttrType1">
+	                                        {{item.AttrType1.Name}} :
+	                                        <strong>{{item.AttrName1}}</strong>
+	                                    </span>
+	                                    <span v-if="item.AttrType2">
+	                                        {{item.AttrType2.Name}} :
+	                                        <strong>{{item.AttrName2}}</strong>
+	                                    </span>
+	                                    <span v-if="item.AttrType3">
+	                                        {{item.AttrType3.Name}} :
+	                                        <strong>{{item.AttrName3}}</strong>
+	                                    </span> -->
+
+	                                    <p v-for="attr in item.Product.AttrValues">
+	                                        {{attr.AttrName}} :
+	                                        <strong>{{attr.Desc}}</strong>
+	                                    </p>
+
+	                                    <span>
+	                                        @Resources.ToMultiLang("Qty") :
+	                                        <strong>{{item.Qty}}</strong>
+	                                    </span>
+	                                </p>
+	                            </div>
+	                            <div class="clear"></div>
+
+	                            <div class="order-detail-handle">
+	                                <a class="order-one-refundList" href="javascript:;" v-on:click="refundListOpen($event)" data-open="0" v-if="!item.HasReturned && o.IsCalmeDate==true && o.StatusCode ==4 && item.Product.IsSalesReturn==false && showReturnBtn && !item.IsFree">@Resources.ToMultiLang("ReturnOfGoods")</a>
+	                                <a class="alReturn grey-btn" v-if="item.HasReturned" v-bind:href="'/order/RefundDetail/'+item.ReturnOrderId">@Resources.ToMultiLang("ReturnedGoods")</a>
+	                                <a class="order-review" v-on:click="comment(o)" v-if="o.StatusCode == 4 && !item.IsFree">@Resources.ToMultiLang("Comment")</a>
+	                                <a class="order-find" v-on:click="orderCheckWindow(o.TrackingNo)" v-if="order.StatusCode == 3 || order.StatusCode == 4">@Resources.ToMultiLang("TrackOrders")</a>
+
+	                                <div class="clear"></div>
+	                            </div>
+
+	                            <div class="refundList-content1">
+
+	                                <div class="login-register-content editrefund-content">
+	                                    <div class="form-group">
+	                                        <label for="returnType">@Resources.ToMultiLang("RefundOption"):</label>
+	                                        <div class="">
+	                                            <div class="normal-select">
+	                                                <select value="" name="returnType" id="returnType" v-model="selectReturnType">
+	                                                    <option v-for="rtl in returnTypeList" v-bind:value="rtl.Id">{{rtl.Text}}</option>
+	                                                </select>
+	                                            </div>
+	                                        </div>
+	                                        <div class="clear"></div>
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label for="editrefund-text">@Resources.ToMultiLang("Message"):</label>
+	                                        <div class="editrefund-box">
+	                                            <textarea class="editrefund-text" id="editrefund-text" maxlength="500" v-model="returnText"></textarea>
+	                                            <p>@Resources.ToMultiLang("maxInput500")</p>
+	                                        </div>
+	                                        <div class="clear"></div>
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label>@Resources.ToMultiLang("Image"):</label>
+	                                        <div>
+	                                            <ul class="return-img-box">
+	                                                <li style="display:inline-block;" v-for="(img,index) in ImagesSrc">
+	                                                    <img v-bind:src="img.path" width="50" />
+	                                                    <strong class="img-close" v-on:click="deleteImage(img,index)">X</strong>
+	                                                </li>
+	                                            </ul>
+	                                            <label v-bind:for="'file'+index" hidden>upload：</label>
+	                                            <input type="file" multiple v-bind:id="'file'+index" v-bind:name="'file'+index" style="display:none;" v-on:change="upload(item,index)" />
+	                                            <input type="button" class="upload-btn" value='@Resources.ToMultiLang("Upload")' v-on:click="selectFile(item,index);" v-if="ImagesSrc.length<5" />
+	                                        </div>
+	                                        <div class="clear"></div>
+	                                    </div>
+	                                </div>
+	                                <div class="btn-box split-btn-box">
+	                                    <input type="submit" class="btn green-btn" value='@Resources.ToMultiLang("Confirm")' v-on:click="returnSure(order.OrderId,item.SkuId,o.Id)" />
+	                                    <a href="javascript:;" class="btn green-btn" v-on:click="refundListOut($event)">@Resources.ToMultiLang("Back")</a>
+	                                </div>
+
+	                            </div>
+	                            <div class="give-icon" v-if="item.IsFree">@Resources.ToMultiLang("Gifts")</div>
+	                        </div>
+	                    </div>
+	                    <div class="order-box-price">
+	                        <p><span>@Resources.ToMultiLang("merchantSubtotal")</span><span>{{order.Currency.Code}}{{priceFormat(o.TotalPrice.toString(),2)}}</span></p>
+
+	                        <span v-for="(dis,index1) in o.Discounts" v-if="o.Discounts && o.Discounts.length>0 && dis.CouponType==1">
+	                            <p>
+	                                <span>{{dis.DiscountTypeName}}</span>
+	                                <span> - {{order.Currency.Code}} {{priceFormat(dis.DiscountPrice.toString(),2)}}</span>
+	                            </p>
+	                        </span>
+
+	                        <p><span>@Resources.ToMultiLang("DeliveryCharge")</span><span>{{order.Currency.Code}}{{priceFormat(o.Freight.toString(),2)}}</span></p>
+
+	                        <span v-for="(dis,index1) in o.Discounts" v-if="o.Discounts && o.Discounts.length>0 && dis.CouponType==2">
+	                            <p>
+	                                <span>{{dis.DiscountTypeName}}</span>
+	                                <span> - {{order.Currency.Code}} {{priceFormat(dis.DiscountPrice.toString(),2)}}</span>
+	                            </p>
+	                        </span>
+
+	                        <p><span>@Resources.ToMultiLang("merchantTotal")</span><span>{{order.Currency.Code}}{{priceFormat(o.DiscountTotalAmount.toString(),2)}}</span></p>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="order-detail-calc" v-if="order.OrderNO">
+	                <p>
+	                    <span>@Resources.ToMultiLang("CartSubtotal")</span>
+	                    <strong>{{order.Currency.Code}} {{priceFormat(order.DiscountTotalPrice.toString(),2)}}</strong>
+	                </p>
+
+	                <span v-for="(dis1,index2) in order.Discounts" v-if="order.Discounts && order.Discounts.length>0 && dis1.CouponType == 1 && dis1.DiscountType != 4">
+	                    <p>
+	                        <span>{{dis1.DiscountTypeName}}</span>
+	                        <span> - {{order.Currency.Code}} {{priceFormat(dis1.DiscountPrice.toString(),2)}}</span>
+	                    </p>
+	                </span>
+
+	                <p>
+	                    <span>@Resources.ToMultiLang("DeliveryCharge")</span>
+	                    <strong>{{order.Currency.Code}} {{priceFormat(order.DiscountDeliveryCharge.toString(),2)}}</strong>
+	                </p>
+
+	                <span v-for="(dis1,index2) in order.Discounts" v-if="order.Discounts && order.Discounts.length>0 && dis1.CouponType == 2">
+	                    <p>
+	                        <span>{{dis1.DiscountTypeName}}</span>
+	                        <span> - {{order.Currency.Code}} {{priceFormat(dis1.DiscountPrice.toString(),2)}}</span>
+	                    </p>
+	                </span>
+
+	                <span v-for="(dis1,index2) in order.Discounts" v-if="order.Discounts && order.Discounts.length>0 && dis1.CouponType == 1 && dis1.DiscountType == 4">
+	                    <p>
+	                        <span>{{dis1.DiscountTypeName}}</span>
+	                        <span> - {{order.Currency.Code}} {{priceFormat(dis1.DiscountPrice.toString(),2)}}</span>
+	                    </p>
+	                </span>
+
+	                <p>
+	                    <span>@Resources.ToMultiLang("Total")</span>
+	                    <strong>{{order.Currency.Code}} {{priceFormat(order.DiscountTotalAmount.toString(),2)}}</strong>
+	                </p>
+	                <p class="order-detail-calc-status order-detail-calc-notprocess">
+	                    <span>@Resources.ToMultiLang("Status")</span>
+	                    <strong>{{order.StatusName}}</strong>
+	                </p>
+	            </div>
+	            <!---->
+	            <div class="btn-box">
+	                <a class="btn green-btn" href="/order/List">@Resources.ToMultiLang("Back")</a>
+	                <a v-show="order.IsPay==false" class="btn payNow" href="javascript:;" v-on:click="pay();return false;" v-if="order.StatusCode == 0">@Resources.ToMultiLang("PayNow")</a>
+	            </div>
+	        </div>
+        </div>
+    </div>
+    <!--main-content-->
+    <div class="detail-login-box"></div>
+    <div class="sellout-window detail-login order-check-box">
+        <strong class="login-checkout-delete login-close" v-on:click="closeWindow()">X</strong>
+        <div class="order-check">
+            <div class="title">
+                <span>@Resources.ToMultiLang("Date") & @Resources.ToMultiLang("Time")</span><span>@Resources.ToMultiLang("DeliveryStatus")</span>
             </div>
-            <div class="order-tab">
-                <a href="javascript:;" class="active">待付款</a>
-                <a href="javascript:;">處理中</a>
-                <a href="javascript:;">待收貨</a>
-                <a href="javascript:;">已完成</a>
-                <a href="javascript:;">已取消</a>
-            </div>
-            <div class="order-list">
-                <div class="order-one">
-                    <span class="status" v-if="!status">待付款</span>
-                    <span class="status" v-else>運輸中</span>
-                    <div class="merchant" title="Traveler’s Art Journal">
-                        <img src="/imgs/icons/store.png">
-                        <span>Traveler’s Art Journal <b>›</b></span>
-                    </div>
-                    <div class="pro-list">
-                        <div class="pro-one">
-                            <div class="img-box">
-                                <img src="https://img2.baidu.com/it/u=3094149767,177600321&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1668186000&t=e5b23c961185843076ceb25061a9dff3">
-                            </div>
-                            <div class="pro-info">
-                                <p class="pro-name">香港插畫絲巾 | 古典約依印花</p>
-                                <p class="pro-attr">
-                                    <span>靛藍色</span>
-                                    <span>精品</span>
-                                    <span class="pro-num"> x 1</span>
-                                </p>
-                            </div>
-                            <div class="pro-price">HKD $288</div>
-                        </div>
-                    </div>
-                    <div class="sub-sum">
-                        <p>含運費及折扣</p>
-                        <div>
-                            <span>（共2件）</span>
-                            <span>金額小計： </span>
-                            <span>HKD $556</span>
-                        </div>
-                        <button>評分及確認收貨</button>
-                    </div>
-                    <div class="evaluate-box">
-                        <div class="evaluate-rating">
-                            <label>為設計館評價：</label>
-                            <star-rating v-model="rating"></star-rating>
-                        </div>
-                        <div class="evaluate-text">
-                            <textarea placeholder="請為本店的留下評價"></textarea>
-                        </div>
-                        <button>簽收</button>
-                    </div>
-                </div>
+            <div v-if="orderSearchList!=null&&orderSearchList.Details!=null&&orderSearchList.Details.length>0">
+                <p>
+                    <span>{{orderSearchList.Details[0].MessageTime}}</span>
+                    <span>{{orderSearchList.Details[0].Message}}</span>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
 @section scripts{
-	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
-	<script src="/js/page/orderlist.js" asp-append-version="true"></script>
+	<script type="text/javascript">
+        var orderId = "@ViewBag.OrderId";
+        var isOld = false;
+        var jsMessage = {
+            ReturnRequestSubmit: '@Resources.ToMultiLang("ReturnRequestSubmit")',
+            ImgsExceed5: '@Resources.ToMultiLang("ImgsExceed5")'
+        }
+    </script>
+    <script type="text/javascript" src="/js/page/orderdetail.js" asp-append-version="true"></script>
 }

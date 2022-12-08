@@ -2,6 +2,9 @@
 
     var IsMobile = ViewBag.IsMobile;
     var IspType = ViewBag.IspType;                  //运营类型    
+    var Lang = ViewBag.Lang;
+    var CurrencyCode = ViewBag.CurrencyCode;
+    var BuyDong = ViewBag.BuyDong; // 摆档Domain
 }
 <html lang="en">
 <head>
@@ -10,6 +13,8 @@
     <title>@ViewData["Title"] - HKDG.WebSite</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="~/lib/dropload/dropload.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HKDG.WebSite.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" href=@Url.Content(Intimex.Utility.PathUtil.GetCss(IsMobile)) asp-append-version="true" />
 </head>
@@ -34,14 +39,49 @@
     </footer>
     
     <script src="~/lib/vue/vue.global.js"></script>
+    <script src="~/lib/vuex/vuex.global.js"></script>
+    <script src="~/js/store/index.js"></script>
     <script type="text/javascript">
-        const { createApp } = Vue
+        const { createApp } = Vue;
+        var IspType = '@IspType' || 'DG';
+        var platform = '@IsMobile'.toLowerCase() == 'true' ? 'M' : 'D';
+        var lang = '@Lang';
+        var currency = '@CurrencyCode';
+        var BuyDong = '@BuyDong'
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        if (typeof fbq === 'undefined') {
+            ! function(f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function() {
+                    n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '2728438780745036');
+            fbq('track', 'PageView');
+        }
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.cookie.js"></script>
+    <script src="~/lib/jquery/dist/jquery.blockUI.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/swiper/swiper-bundle.min.js"></script>
+    <script src="~/lib/dropload/dropload.min.js"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/sdk.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
