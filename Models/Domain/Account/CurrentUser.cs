@@ -28,6 +28,8 @@ namespace Domain
                 
             }
         }
+
+        public string FromUrl { get; set; } = string.Empty;
     }
 
 

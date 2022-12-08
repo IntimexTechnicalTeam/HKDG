@@ -21,7 +21,13 @@ namespace HKDG.WebSite.Controllers
             if (returnUrl.IndexOf("?") >-1) returnUrl += $"&access_token={CurrentUser.LoginSerialNO}";
             else returnUrl += $"?access_token={CurrentUser.LoginSerialNO}";
 
-            HttpContext.Response.Headers.Add("Authorization", $"Bearer {CurrentUser.LoginSerialNO}");
+            //returnUrl += "&FromUrl="+ HttpContext.Request.Host.ToString();
+
+            var user = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO);
+            user.FromUrl = HttpContext.Request.Host.ToString();
+            await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", CurrentUser.LoginSerialNO, user);
+
+            HttpContext.Response.Headers.Add("Authorization", $"Bearer {CurrentUser.LoginSerialNO}");           
             HttpContext.Response.Redirect(returnUrl);
             return new EmptyResult();
         }
