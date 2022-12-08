@@ -1,9 +1,7 @@
-﻿using Enums;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
+    [LanguageFilter]
     public class MerchantController :   BaseMvcController
     {
         IMerchantBLL merchantBLL;

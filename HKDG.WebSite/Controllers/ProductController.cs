@@ -1,6 +1,7 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
+    [LanguageFilter]
     public class ProductController : BaseMvcController
     {
         IProductCatalogBLL productCatalogBLL;
@@ -64,7 +65,7 @@
                 return RedirectToAction("Index", "Default");
 
             ViewBag.Key = key;         
-            return GetActionResult("Search", key);
+            return GetActionResult("Search");
 
         }
 

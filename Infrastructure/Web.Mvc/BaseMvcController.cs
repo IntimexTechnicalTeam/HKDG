@@ -2,6 +2,7 @@
 using Domain;
 using Enums;
 using HKDG.BLL;
+using Intimex.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Web.Framework;
 using Web.Jwt;
@@ -206,6 +209,7 @@ namespace Web.Mvc
             ViewBag.Lang = CurrentUser.Lang;
             ViewBag.CurrencyCode = CurrentUser.CurrencyCode;
             ViewBag.BuyDong = Configuration["BuyDongWeb"];
+
             if (IsMobile)
             {
                 return View("Mobile" + viewName);
@@ -213,20 +217,6 @@ namespace Web.Mvc
             else
             {
                 return View(viewName);
-            }
-        }
-
-        protected ActionResult GetActionResult(string viewName, object model)
-        {
-            ViewBag.IsMobile = IsMobile;
-            ViewBag.Lang = CurrentUser.Lang;
-            if (IsMobile)
-            {
-                return View("Mobile" + viewName, model);
-            }
-            else
-            {
-                return View(viewName, model);
             }
         }
 

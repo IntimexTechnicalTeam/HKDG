@@ -1,8 +1,7 @@
-﻿using HKDG.BLL;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
+    [LanguageFilter]
     public class OrderController : BaseMvcController
     {
         public OrderController(IComponentContext service) : base(service)

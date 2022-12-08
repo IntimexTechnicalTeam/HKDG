@@ -4,6 +4,7 @@ using Enums;
 namespace HKDG.WebSite.Controllers
 {
     [Hidden]
+    [LanguageFilter]
     public class AccountController : BaseMvcController
     {
         IInteractMessageBLL interactMessageBLL;

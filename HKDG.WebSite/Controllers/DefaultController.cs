@@ -1,9 +1,7 @@
-﻿using HKDG.BLL;
-using WebCache;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
+    [LanguageFilter]
     public class DefaultController : BaseMvcController
     {
         IIspProviderBLL ispProviderBLL;
