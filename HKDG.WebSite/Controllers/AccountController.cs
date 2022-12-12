@@ -1,7 +1,4 @@
-﻿using Castle.Core.Internal;
-using Enums;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
     public class AccountController : BaseMvcController
@@ -34,10 +31,10 @@ namespace HKDG.WebSite.Controllers
             }
 
             var returnUrl = HttpContext.Request.QueryString.Value ?? "";
-            if (!returnUrl.IsNullOrEmpty() && !returnUrl.Contains("login"))
+            if (!returnUrl.IsEmpty() && !returnUrl.Contains("login"))
             {
                 returnUrl = returnUrl.Split("returnUrl=")?[1] ?? "";
-                ViewBag.ReturnUrl = returnUrl;
+                TempData["ReturnUrl"] = returnUrl;
             }
 
             return GetActionResult("Login");
