@@ -1,6 +1,6 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
-    [Hidden]
+   [Hidden]
     public class ProductController : BaseMvcController
     {
         IProductCatalogBLL productCatalogBLL;
@@ -19,7 +19,7 @@
         /// <param name="Id"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("Product/Category/{IspType?}")]
+        [HttpGet("Product/Category/{IspType?}")]  
         public async Task<IActionResult> Category(string IspType)
         {
             await InitViewPage(IspType);

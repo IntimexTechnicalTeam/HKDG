@@ -1,4 +1,9 @@
-﻿using System.Security.Principal;
+﻿using log4net;
+using Microsoft.AspNetCore.Mvc;
+using Model;
+using System.Security.Principal;
+using static AutoMapper.Internal.ExpressionFactory;
+using Member = Model.Member;
 
 namespace HKDG.BLL
 {
@@ -76,5 +81,72 @@ namespace HKDG.BLL
             return user;
         }
 
+        public async Task<SystemResult> FBLogin(LoginInput input, bool thirdLinkUp = true)
+        {
+            var result = new SystemResult();
+            if (thirdLinkUp)
+            {
+                var mInfo = await baseRepository.GetModelAsync<Member>(x => x.Account == input.Account);
+                if (mInfo == null)
+                {
+                    result.Message = Resources.Message.AccountNotExist;
+                    result.ReturnValue = 1001;//  不存在會員
+                    return result;
+                }
+
+                if (!mInfo.IsApprove)
+                {
+                    result.Message = Resources.Message.AccountIsNotActive;
+                    result.ReturnValue = 1002; //your account has not be activated
+                    return result;
+                }
+                if (!mInfo.IsActive)
+                {
+                    result.Message = Resources.Message.AccountDisabled;
+                    result.ReturnValue = 1003;//your account is locked
+                    return result;
+                }
+                if (mInfo.IsDeleted)
+                {                   
+                    result.Message = Resources.Message.AccountDisabled;
+                    result.ReturnValue = 1005;// your account is deleted
+                    return result;
+                }
+
+                UnitOfWork.IsUnitSubmit = true;
+                var loginDatetime = DateTime.Now;
+               
+                mInfo.LastLogin = loginDatetime;
+
+               await baseRepository.UpdateAsync(mInfo);
+
+                var flag = await baseRepository.AnyAsync<MemberAccount>(x => x.MemberId == mInfo.Id);
+                if (!flag) {
+
+                    MemberAccount memberAccount = new MemberAccount();
+                    memberAccount.Id = Guid.NewGuid();
+                    memberAccount.MemberId = mInfo.Id;                  
+                    memberAccount.CreateBy = mInfo.Id;
+                    memberAccount.IsActive = true;
+                    memberAccount.IsDeleted = false;
+                    memberAccount.Fun = 0;
+                    await baseRepository.InsertAsync(memberAccount);
+                }
+
+                MemberLoginRecord record = new MemberLoginRecord();
+                record.Id = Guid.NewGuid();
+                record.MemberId = mInfo.Id;
+                record.LoginTime = loginDatetime;
+                record.LoginFrom =  AppTypeEnum.WebSite;
+                await baseRepository.InsertAsync(record);
+ 
+                UnitOfWork.Submit();
+
+                result.Succeeded = true;
+                result.ReturnValue = mInfo;
+            }
+
+            return result;
+        }
     }
 }

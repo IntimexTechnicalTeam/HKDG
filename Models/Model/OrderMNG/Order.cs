@@ -134,6 +134,10 @@
         /// 过期时间
         /// </summary>
         //public DateTime ExpireDate { get; set; }
+
+        public bool IsKol = false;
+
+        public bool IsBD { get; set; } = true;
     }
 
 

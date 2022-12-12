@@ -151,5 +151,8 @@
 
         public List<Guid> skuList { get; set; } = new List<Guid>();
 
+        public bool IsKol { get; set; } = false;
+
+        public bool IsBD { get; set; } = true;
     }
 }

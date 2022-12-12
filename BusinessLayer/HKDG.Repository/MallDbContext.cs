@@ -263,7 +263,7 @@
 
         public virtual DbSet<ArrivalNotify> ArrivalNotifies { get; set; }   
 
-
+        public virtual DbSet<ThirdpartyLinkup> ThirdpartyLinkups { get; set; }
 
 
 

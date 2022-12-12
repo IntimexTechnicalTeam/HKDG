@@ -1,4 +1,4 @@
-﻿using log4net;
+﻿using MemberInfo = Domain.MemberInfo;
 
 namespace HKDG.BLL
 {
@@ -815,6 +815,48 @@ namespace HKDG.BLL
             member.OptOutPromotion = false;
             await baseRepository.UpdateAsync(member);
             return true;
+        }
+
+        public async Task<SystemResult<Member>> ThirdpartyLogin(ThirdpartyActView extAccount)
+        {
+            var result = new SystemResult<Member>();
+           var linkupList =  await baseRepository.GetListAsync<ThirdpartyLinkup>(x => x.ExternalAccId == extAccount.ExternalAccId && x.Type.ToInt() == extAccount.ExternalType && x.IsActive && !x.IsDeleted);
+            Member user = null;
+            var mappingEntity = linkupList .OrderByDescending(x => x.CreateDate).FirstOrDefault();
+            if (mappingEntity != null)
+            {
+                user = await baseRepository.GetModelAsync<Member>(x => x.Id == mappingEntity.MemberId);
+            }
+            else
+            {
+                Member memberEntity = null;//有机会传入的邮箱为空，就用FBId判断
+                if (!string.IsNullOrEmpty(extAccount.UserName))
+                {
+                    memberEntity = await baseRepository.GetModelAsync<Member>(x => x.Account == extAccount.UserName && !x.IsDeleted);
+                }
+                if (!string.IsNullOrEmpty(extAccount.ExternalAccId) && string.IsNullOrEmpty(extAccount.UserName))
+                {                  
+                    memberEntity = await baseRepository.GetModelAsync<Member>(x => x.Account == extAccount.ExternalAccId && !x.IsDeleted);
+                }
+
+                if (memberEntity != null)
+                {
+                    extAccount.UserName = memberEntity.Account;
+                    ThirdpartyLinkup linkupEntity = new ThirdpartyLinkup()
+                    {
+                        Id = Guid.NewGuid(),
+                        MemberId = memberEntity.Id,
+                        Type = (ThridpartyType)extAccount.ExternalType,
+                        ExternalAccId = extAccount.ExternalAccId
+                    };
+                    await baseRepository.InsertAsync(linkupEntity);
+                    user = await baseRepository.GetModelAsync<Member>(x => x.Id == memberEntity.Id);
+                }
+            }
+
+            result.Succeeded = true;
+            result.ReturnValue = user;
+            return result;
         }
     }
 }

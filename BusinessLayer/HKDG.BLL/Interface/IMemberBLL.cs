@@ -106,6 +106,7 @@
         Task<bool> Subscribe(string email);
 
         Task<bool> Unsubscribe(string email);
-      
+
+        Task<SystemResult<Member>> ThirdpartyLogin(ThirdpartyActView extAccount);
     }
 }
