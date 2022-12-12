@@ -62,16 +62,16 @@ namespace HKDG.WebSite.Areas
             var thirdLinkUp = await memberBLL.ThirdpartyLogin(model);
             var result = new SystemResult();
 
-            //if (string.IsNullOrEmpty(model.UserName))//用于处理Email为空的情况
-            //{
-            //    model.UserName = model.ExternalAccId;
-            //}
+            if (string.IsNullOrEmpty(model.UserName))//用于处理Email为空的情况
+            {
+                model.UserName = model.ExternalAccId;
+            }
 
             var input = new LoginInput { Account = thirdLinkUp.ReturnValue.Account, Password = model.Password };
             result = await loginBLL.FBLogin(input);
             if (result.Succeeded)
             {
-                var mUser = result.ReturnValue as MemberDto;
+                var mUser = (AutoMapperExt.MapTo<MemberDto>(result.ReturnValue));
 
                 var userInfo = AutoMapperExt.MapTo<CurrentUser>(mUser);
                 userInfo.Id = mUser.Id;

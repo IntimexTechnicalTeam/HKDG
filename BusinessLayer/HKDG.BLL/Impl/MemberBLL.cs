@@ -820,7 +820,7 @@ namespace HKDG.BLL
         public async Task<SystemResult<Member>> ThirdpartyLogin(ThirdpartyActView extAccount)
         {
             var result = new SystemResult<Member>();
-           var linkupList =  await baseRepository.GetListAsync<ThirdpartyLinkup>(x => x.ExternalAccId == extAccount.ExternalAccId && x.Type.ToInt() == extAccount.ExternalType && x.IsActive && !x.IsDeleted);
+           var linkupList =  await baseRepository.GetListAsync<ThirdpartyLinkup>(x => x.ExternalAccId == extAccount.ExternalAccId && (int)x.Type == extAccount.ExternalType && x.IsActive && !x.IsDeleted);
             Member user = null;
             var mappingEntity = linkupList .OrderByDescending(x => x.CreateDate).FirstOrDefault();
             if (mappingEntity != null)
