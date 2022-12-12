@@ -33,8 +33,8 @@
             var returnUrl = HttpContext.Request.QueryString.Value ?? "";
             if (!returnUrl.IsEmpty() && !returnUrl.Contains("login"))
             {
-                returnUrl = returnUrl.Split("returnUrl=")?[1] ?? "";
-                TempData["ReturnUrl"] = returnUrl;
+                returnUrl = returnUrl.Split("returnUrl=")?[1] ?? "";                
+                SetTempData("ReturnUrl,", returnUrl);
             }
 
             return GetActionResult("Login");

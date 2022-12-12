@@ -240,6 +240,13 @@ namespace Web.Mvc
             ViewData[key] = json;
         }
 
+        public virtual void SetTempData<T>(string key, T t)
+        { 
+            if (t==null) t = default(T);
+            var json = JsonUtil.ToJson(t);
+            TempData[key] = json;
+        }
+
         /// <summary>
         /// 设置ViewBag.IspType
         /// </summary>
