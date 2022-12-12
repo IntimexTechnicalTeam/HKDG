@@ -82,7 +82,7 @@ function WSGet(url, data, success, error) {
             403: function () {
                 //$.cookie("access_token", null, { path: "/" });
                 // setTimeout(function () { window.location.href = window.location.href; }, 5000);
-                window.location.href = "/account/login?status=timeout&returnUrl=" + window.location.pathname;
+                window.location.href = "/account/login?returnUrl=" + window.location.pathname;
             },
             500: function (xhr, status, text) {
                 console.log("statusCode=500");
@@ -98,7 +98,7 @@ function WSGet(url, data, success, error) {
                 } else {
                     // window.location.reload();
                 }
-                window.location.href = "/account/login?status=timeout&returnUrl=" + window.location.pathname;
+                window.location.href = "/account/login?returnUrl=" + window.location.pathname;
                 return;
             }
             success(data, status);

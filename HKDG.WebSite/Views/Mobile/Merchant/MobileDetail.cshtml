@@ -62,9 +62,9 @@
                     <option selected disabled hidden>@Resources.ToMultiLang("AllPros")</option>
                     <option>option1</option>
                 </select>
-                <select>
-                    <option selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
-                    <option>option1</option>
+                <select v-model="pager.OrderBy" @@change="changeQuery">
+                    <option value="" selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
+                    <option :value="item.value" v-for="item in sortType">{{item.name}}</option>
                 </select>
                 <select>
                     <option selected disabled hidden>@Resources.ToMultiLang("Price")</option>
@@ -100,7 +100,7 @@
         var MerchantProdData = @Html.Raw(ViewData["MerchantProdData"]); // 商家產品數據
 
         var jsMessage = {
-          // CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess",ViewBag.Lang)'
+          // CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess")'
         }
     </script>
 	<script src="/js/components/StarRating.js" asp-append-version="true"></script>

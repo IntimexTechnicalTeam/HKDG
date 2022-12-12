@@ -54,6 +54,10 @@ createApp({
                 }
             });
 		},
+        // 忘記密碼
+        forget: function () {
+            window.location.href = "/TranView/GoTo?returnUrl=" + BuyDong + "/account/forgetpassword";
+        },
         // 註冊
         register: function () {
             window.location.href = "/TranView/GoTo?returnUrl=" + BuyDong + "/account/register";

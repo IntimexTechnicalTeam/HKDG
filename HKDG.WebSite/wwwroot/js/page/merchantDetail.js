@@ -35,12 +35,25 @@ createApp({
         totalRecord: MerchantProdData.TotalRecord || 0,  // 當前商家產品總數量
         totalPage: MerchantProdData.TotalPage || 1, // 當前商家產品總頁數
         termsDtls: '', // 當前查閱條款內容
+        sortType: [{  // 排序類型數據
+          name: '新上架優先',
+          value: 'New'
+        }, {
+          name: '價錢由高至低',
+          value: 'HighPrice'
+        }, {
+          name: '價錢由低至高',
+          value: 'LowPrice'
+        }, {
+          name: '熱門產品優先',
+          value: 'HotSale'
+        }],
         pager: { // 分頁數據
           Page: 1,
-          PageSize: 12,
+          PageSize: 10,
           MerchantId: MerchantDetail.MerchantId,
           Key: '',
-          OrderBy: 'New'
+          OrderBy: 'New' // 排序
         }
   		}
 	},
@@ -91,6 +104,15 @@ createApp({
     readTerms: function (type) {
       this.termsDtls = type === 1 ? this.merchantData.TandC : this.merchantData.ReturnTerms;
       this.$refs.terms.openDialog();
+    },
+    // 更改查詢條件
+    changeQuery: function () {
+      this.merProData = [];
+      this.pager.Page = 1;
+      this.totalPage = 1;
+      this.totalRecord = 0;
+
+      this.getMerchantPro();
     }
 	},
 	created() {
