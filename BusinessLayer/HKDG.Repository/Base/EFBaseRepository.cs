@@ -1,4 +1,6 @@
-﻿namespace HKDG.Repository
+﻿using Web.Framework;
+
+namespace HKDG.Repository
 {
     public class EFBaseRepository : BaseRepository
     {
@@ -385,35 +387,21 @@
         }
 
         /// <summary>
-        /// 异步返回带总条数的查询列表
+        /// 异步返回带总条数的查询分页列表
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="parameters"></param>
+        /// <param name="sql">自定义sql</param>
+        /// <param name="pageInfo">分页对象</param>
+        /// <param name="parameters">条件参数对象</param>
         /// <returns></returns>
-        public override async Task<PageData<T>> GetPageListAsync<T>(string sql, params SqlParameter[] parameters) 
-        {   var result = new PageData<T>();
+        public override async Task<PageData<T>> GetPageListAsync<T>(string sql, PageInfo pageInfo, params SqlParameter[] parameters) 
+        {   
+            var result = new PageData<T>();
             var sqlCount = $"select count(1) from ({sql}) as t";
             result.TotalRecord = await UnitWork.DataContext.Database.IntFromSqlAsync(sqlCount, parameters);
 
             var pList = parameters.Select(s => new SqlParameter { Value = s.Value, ParameterName = s.ParameterName }).ToArray();
-            result.Data = await UnitWork.DataContext.Database.SqlQueryAsync<T>(sql, pList.ToArray());
-            return result;
-        }
-
-        /// <summary>
-        /// 异步返回带总条数的分页查询列表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="pageInfo"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public override async Task<PageData<T>> GetPageListAsync<T>(string sql, PageInfo pageInfo, params SqlParameter[] parameters)
-        {
-            var result = await GetPageListAsync<T>(sql, parameters);
-            if (pageInfo != null) result.Data = result.Data.Skip(pageInfo.Offset).Take(pageInfo.PageSize).ToList();
-
+            result.Data = await UnitWork.DataContext.Database.SqlQueryAsync<T>(sql,pageInfo, pList.ToArray());
             return result;
         }
 

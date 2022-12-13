@@ -34,7 +34,8 @@
             if (!returnUrl.IsEmpty() && !returnUrl.Contains("login"))
             {
                 returnUrl = returnUrl.Split("returnUrl=")?[1] ?? "";                
-                SetTempData("ReturnUrl,", returnUrl);
+                //SetTempData("ReturnUrl", returnUrl);
+                ViewBag.ReturnUrl = returnUrl;
             }
 
             return GetActionResult("Login");

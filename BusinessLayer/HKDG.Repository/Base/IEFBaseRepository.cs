@@ -115,9 +115,8 @@
 
         #endregion
 
-        public abstract Task<PageData<T>> GetPageListAsync<T>(string sql, params SqlParameter[] parameters)  where T : class,new();
-
         public abstract Task<PageData<T>> GetPageListAsync<T>(string sql, PageInfo pageInfo, params SqlParameter[] parameters) where T : class, new();
+
 
         public abstract Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> param);
 
@@ -320,8 +319,6 @@
         Task<List<T>> GetListAsync<T>(string sql, List<SqlParameter> param) where T : class,new();
 
         #endregion
-
-        Task<PageData<T>> GetPageListAsync<T>(string sql, params SqlParameter[] parameters) where T : class, new();
 
         Task<PageData<T>> GetPageListAsync<T>(string sql, PageInfo pageInfo, params SqlParameter[] parameters) where T : class, new();
 

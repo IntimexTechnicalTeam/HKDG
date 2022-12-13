@@ -240,11 +240,17 @@ namespace Web.Mvc
             ViewData[key] = json;
         }
 
-        public virtual void SetTempData<T>(string key, T t)
+        public virtual void SetTempData<T>(string key, T t) where T : class ,new()
         { 
             if (t==null) t = default(T);
             var json = JsonUtil.ToJson(t);
             TempData[key] = json;
+        }
+
+        public virtual void SetTempData(string key,string value)
+        {
+            if (value.IsEmpty()) value = default(string);
+            TempData[key] = value;
         }
 
         /// <summary>

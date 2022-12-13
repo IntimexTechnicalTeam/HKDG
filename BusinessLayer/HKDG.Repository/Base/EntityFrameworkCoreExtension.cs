@@ -84,6 +84,13 @@ namespace HKDG.Repository
 
         }
 
+        public static async Task<List<T>> SqlQueryAsync<T>(this DatabaseFacade facade, string sql, PageInfo pageInfo,params object[] parameters) where T : class, new()
+        {
+            var dt = await SqlQueryAsync(facade, sql, parameters);
+            return dt.DataTableToList<T>().Skip(pageInfo.Offset).Take(pageInfo.PageSize).ToList();
+
+        }
+
         static async Task<DataTable> SqlQueryAsync(this DatabaseFacade facade, string sql, params object[] parameters)
         {
             var command = CreateCommand(facade, sql, out DbConnection conn, parameters);
