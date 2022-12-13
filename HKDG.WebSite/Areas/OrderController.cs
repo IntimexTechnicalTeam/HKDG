@@ -1,4 +1,5 @@
-﻿using Web.Mvc.Filters;
+﻿using Intimex.Common;
+using Web.Mvc.Filters;
 using WebCache;
 using WS.ECShip.Model.MailTracking;
 
@@ -100,6 +101,16 @@ namespace HKDG.WebSite.Areas
             var result = new SystemResult<MailTrackingInfo>();
             var data = orderBLL.GetOrderMailTrackingInfo(trackingNo);
             result.ReturnValue = data;
+            result.Succeeded = true;
+            return result;
+        }
+
+        [HttpGet("GetReturnType")]
+        [ProducesResponseType(typeof(SystemResult<List<KeyValue>>), 200)]
+        public async Task<SystemResult<List<KeyValue>>> GetReturnType()
+        {
+            var result = new SystemResult<List<KeyValue>>();
+            result.ReturnValue = await orderBLL.GetReturnOrderTypeComboSrc();
             result.Succeeded = true;
             return result;
         }

@@ -1,72 +1,82 @@
-﻿using Newtonsoft.Json;
+﻿using CSRedis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Web.Framework;
 
 namespace WebCache
 {
-    public class CacheClient
+    public static  class CacheClient
     {
+       
         /// <summary>
-        /// 异步设置缓存并返回对应缓存数据  (Hash)
+        /// 缓存壳，获取Hash数据时如果缓存没有，则先执行委托获取到数据到再写入到缓存中，最后返回Hash数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="field"></param>
         /// <param name="getDataAsync"></param>
-        /// <param name="timeOutSecond">key_sign过期时间（秒）</param>
         /// <returns></returns>
-        public static async Task<T> CacheShellAsync<T>(string key, string field, Func<Task<T>> getDataAsync, int timeOutSecond = 3600)
+        public static async Task<T> CacheShellAsync<T>( string key, string field, Func<Task<T>> getDataAsync)
+        {
+           
+            var cacheValue = await RedisHelper.HGetAsync<T>(key, field);
+            if (cacheValue == null)
+            {
+                cacheValue = await getDataAsync();
+                await RedisHelper.HSetAsync(key, field, cacheValue);
+            }
+
+            return cacheValue;
+        }
+
+        /// <summary>
+        /// 缓存壳，获取Hash数据时如果缓存没有，则先执行委托获取到数据到再写入到缓存中，最后返回Hash数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="field"></param>
+        /// <param name="getDataAsync"></param>
+        /// <param name="timeOutSecond"></param>
+        /// <returns></returns>
+        public static async Task<T> CacheShellAsync<T>(string key, string field,  Func<Task<T>> getDataAsync, int timeOutSecond = 3600)
         {
             string cacheSign = $"{key}_sign";                                                   //使用sign来防缓存雪崩
             var sign = await RedisHelper.GetAsync(cacheSign);
             if (sign != null)                           //未过期，直接返回。
             {
-                var cacheValue = await RedisHelper.HGetAsync(key, field);
-                if (cacheValue != null)
-                {
-                    return JsonConvert.DeserializeObject<T>(cacheValue);
-                }
-                var result = await getDataAsync();
-                await RedisHelper.HSetAsync(key, field, result);               //不用管ret是不是空值，防止缓存穿透
-                return result;
+                var cacheValue = await RedisHelper.HGetAsync<T>(key, field);
+                if (cacheValue ==null)  cacheValue = await getDataAsync();
+                await RedisHelper.HSetAsync(key, field, cacheValue);               //不用管cacheValue是不是空值，防止缓存穿透
+                return cacheValue;
             }
             else
             {
-                var result = await getDataAsync();
+                var cacheValue = await getDataAsync();
                 await RedisHelper.SetAsync(cacheSign, "Just a key sign", timeOutSecond);      //设置缓存标签和过期时间       
-                await RedisHelper.HSetAsync(key, field, result);                        //不用管ret是不是空值,直接放在缓存中,防止缓存穿透
-                return result;
+                await RedisHelper.HSetAsync(key, field, cacheValue);                                        //不用管cacheValue是不是空值,直接放在缓存中,防止缓存穿透
+                return cacheValue;
             }
         }
 
+
         /// <summary>
-        /// 设置缓存并返回对应缓存数据  (Hash)
+        ///  缓存壳，获取string数据时如果缓存没有，则先执行委托获取到数据到再写入到缓存中，最后返回string数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        /// <param name="field"></param>
-        /// <param name="getDataAsync"></param>
-        /// <param name="timeOutSecond">key_sign过期时间（秒）</param>
+        ///<param name="getDataAsync"></param>
+        /// <param name="timeOutSecond">过期时间（秒），默认3600</param>
         /// <returns></returns>
-        public static T CacheShell<T>(string key, string field, T getDataAsync, int timeOutSecond = 3600)
+        public static async Task<T> CacheShellAsync<T>(string key, Func<Task<T>> getDataAsync, int timeOutSecond = 3600)
         {
-            string cacheSign = $"{key}_sign";                                                   //使用sign来防缓存雪崩
-            var sign = RedisHelper.Get(cacheSign);
-            if (sign != null)                   //未过期，直接返回。
+            var cacheValue = await RedisHelper.GetAsync<T>(key);
+            if (cacheValue == null)
             {
-                var cacheValue = RedisHelper.HGet(key, field);
-                return JsonConvert.DeserializeObject<T>(cacheValue);
+                cacheValue = await getDataAsync();
+                if (cacheValue != null) await RedisHelper.SetAsync(key,cacheValue, timeOutSecond);
             }
-            else
-            {
-                var result = getDataAsync;
-                RedisHelper.Set(cacheSign, "Just a key sign", timeOutSecond);                            //设置缓存标签和过期时间
-                RedisHelper.HSet(key, field, result);                                               //不用管ret是不是空值,直接放在缓存中,防止缓存穿透
-                return result;
-            }
+
+            return cacheValue;
         }
 
     }
