@@ -183,7 +183,7 @@ createApp({
         pay: function() {
             // window.open("/payment/" + this.order.PMCode + "/" + orderId + "/" + this.order.PMCode, "_self");
 
-            window.location.href = "/TranView/GoTo?returnUrl=" + BuyDong + "/payment/" + this.order.PMCode + "/" + orderId + "/" + this.order.PMCode;
+            transitBD("/payment/" + this.order.PMCode + "/" + orderId + "/" + this.order.PMCode);
         },
         comment: function(order) {
             window.open("/product/Comment/" + order.Id, "_self");

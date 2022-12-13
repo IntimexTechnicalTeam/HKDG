@@ -1,7 +1,6 @@
 createApp({
 	data() {
 	  return {
-	  	BuyDong: BuyDong,
 	    show: true, // 控制公告是否顯示
 	    sysAnnounce: LatesNotice.SystemNotice,
 	    searchType: 0, // 搜索類型
@@ -55,6 +54,14 @@ createApp({
                     addtocartS(result.Message, '/imgs/warn-icon.png');
                 }
             });
+        },
+        // 跳轉購物車
+        pushCart: function () {
+            if (this.logined) {
+                transitBD('/account/shoppingcart');
+            } else {
+                location.href = '/Account/Login';
+            }
         }
 	},
 	created() {

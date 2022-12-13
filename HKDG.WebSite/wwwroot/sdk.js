@@ -174,7 +174,7 @@
                  */
                 MemberApi.prototype.fbLogin = function (model, callback) {
                     var _this = this;
-                    WSPost("/account/FBLogin", model, function (data, status) {
+                    WSPost("/api/account/FBLogin", model, function (data, status) {
                         _this.log(data);
                         if (status === "success") {
                             if (data.Succeeded) {
@@ -2915,7 +2915,7 @@
                 UploadFileApi.prototype.uploadFiles = function (files, callback) {
                     var _this = this;
                     WSAjaxSP({
-                        url: this.apiPath + "/FileUpload/UploadFile",
+                        url: this.apiPath + "/FileUpload",
                         type: 'post',
                         dataType: 'json',
                         cache: false,

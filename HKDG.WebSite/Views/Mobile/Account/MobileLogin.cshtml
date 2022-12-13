@@ -36,7 +36,7 @@
       EnterCorrectEmail: '@Resources.ToMultiLang("EnterCorrectEmail")',
       EnterPWD: '@Resources.ToMultiLang("EnterPWD")'
     }
-    var targetUrl = '@ViewBag.ReturnUrl';
+    var targetUrl = '@Html.Raw(ViewBag.ReturnUrl)';
   </script>
   <script type="text/javascript" src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
   <script type="text/javascript" src="/js/fbLogin.js" asp-append-version="true"></script>

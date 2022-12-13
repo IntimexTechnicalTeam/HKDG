@@ -171,3 +171,8 @@ function FixedHeader () {
       }
     }
 }
+
+// 轉跳擺檔
+function transitBD (url) {
+    location.href = "/TranView/GoTo?returnUrl=" + BuyDong + url + "?IsBD=false";
+}
