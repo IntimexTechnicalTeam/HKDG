@@ -52,15 +52,15 @@
         [Column(Order = 10)]
         public decimal Refund { get; set; }
 
-        ///// <summary>
-        ///// 退換單明細
-        ///// </summary>
-        //public virtual ICollection<ReturnOrderDetail> ReturnOrderDetails { get; set; }
+        /// <summary>
+        /// 退換單明細
+        /// </summary>
+        public virtual ICollection<ReturnOrderDetail> ReturnOrderDetails { get; set; }
 
-        ///// <summary>
-        ///// 退換單留言列表
-        ///// </summary>
-        //public virtual ICollection<ReturnOrderMessage> ReturnOrderMsgs { get; set; }
+        /// <summary>
+        /// 退換單留言列表
+        /// </summary>
+        public virtual ICollection<ReturnOrderMessage> ReturnOrderMsgs { get; set; }
 
         //[NotMapped]
         //public string OrderNo { get; set; }

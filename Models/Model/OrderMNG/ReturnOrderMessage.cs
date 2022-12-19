@@ -11,7 +11,10 @@
         [Required]
         [Column(Order = 3)]
         public Guid ROrderId { get; set; }
-        
+
+        [ForeignKey("ROrderId")]
+        public virtual ReturnOrder ReturnOrderInfo { get; set; }
+
         /// <summary>
         /// 消息
         /// </summary>

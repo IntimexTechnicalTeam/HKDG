@@ -2878,7 +2878,7 @@ namespace HKDG.BLL
         public async Task<List<KeyValue>> GetReturnOrderTypeComboSrc()
         {
             var query = codeMasterBLL.GetCodeMasters(CodeMasterModule.System, CodeMasterFunction.ReturnOrderType);
-            var result = query.Select(s => new KeyValue { Id = s.Id.ToString(), Text = s.Description }).ToList();
+            var result = query.Select(s => new KeyValue { Id = s.Value, Text = s.Description }).ToList();
             return result;
         }
 

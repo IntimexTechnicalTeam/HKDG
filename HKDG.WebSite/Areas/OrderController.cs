@@ -1,4 +1,5 @@
-﻿using Intimex.Common;
+﻿using Domain;
+using Intimex.Common;
 using Web.Mvc.Filters;
 using WebCache;
 using WS.ECShip.Model.MailTracking;
@@ -82,9 +83,71 @@ namespace HKDG.WebSite.Areas
         [LoginAuthorize]
         [HttpPost("CreateReturnOrder")]
         [ProducesResponseType(typeof(SystemResult<NewReturnOrder>), 200)]
-        public async Task<SystemResult<NewReturnOrder>> CreateReturnOrder([FromForm] NewReturnOrder rOrder)
+        public async Task<SystemResult<NewReturnOrder>> CreateReturnOrder([FromBody] NewReturnOrder rOrder)
         {
-             var result = await orderBLL.CreateReturnOrder(rOrder);
+            foreach (var item in rOrder.Items)
+            {
+                foreach (var attImg in item.AttachImages)
+                {
+                    if (!string.IsNullOrEmpty(attImg.ImageSName))
+                    {
+                        string newImgSName = Guid.NewGuid() + Path.GetExtension(attImg.ImageSName);
+                        attImg.NewImageSName = newImgSName;
+                    }
+                    else
+                    {
+                        attImg.NewImageSName = string.Empty;
+                    }
+                    if (!string.IsNullOrEmpty(attImg.ImageBName))
+                    {
+                        string newImgBName = Guid.NewGuid() + Path.GetExtension(attImg.ImageBName);
+                        attImg.NewImageBName = newImgBName;
+                    }
+                    else
+                    {
+                        attImg.NewImageBName = string.Empty;
+                    }
+                }
+            }
+
+            var result = await orderBLL.CreateReturnOrder(rOrder);
+
+            Guid rOrderId = result.ReturnValue.Id;
+            List<string> files = new List<string>();
+
+            foreach (var item in result.ReturnValue.Items)
+            {
+                if (item.AttachImages?.Count > 0)
+                {                   
+                    string merchantId = item.MerchantId.ToString();
+                    var tempPhysicalPath = PathUtil.GetPhysicalPath(Globals.Configuration["UploadPath"], merchantId, FileFolderEnum.TempPath);
+                    var targetPhysicalPath = PathUtil.GetPhysicalPath(Globals.Configuration["UploadPath"],merchantId, FileFolderEnum.ROrderImage) + rOrderId;
+                    //var relPath = PathUtil.GetRelativePath(merchantId, FileFolderEnum.ROrderImage) + "/" + rOrderId;
+
+                    foreach (var attImg in item.AttachImages)
+                    {
+                        if (!string.IsNullOrEmpty(attImg.ImageSName))
+                        {
+                            string imgSName = attImg.ImageSName;
+                            string imgSNewName = attImg.NewImageSName;
+                            var tmpFileSPath = tempPhysicalPath + "\\" + imgSName;
+                            Intimex.Utility.FileUtil.MoveFile(tmpFileSPath, targetPhysicalPath, imgSNewName);
+                            //files.Add(relPath + "/" + imgSNewName);
+                        }
+
+                        if (!string.IsNullOrEmpty(attImg.ImageBName))
+                        {
+                            string imgBName = attImg.ImageBName;
+                            string imgBNewName = attImg.NewImageBName;
+                            var tmpFileSPath = tempPhysicalPath + "\\" + imgBName;
+                            Intimex.Utility.FileUtil.MoveFile(tmpFileSPath, targetPhysicalPath, imgBNewName);
+                            //files.Add(relPath + "/" + imgBNewName);
+                        }
+                    }
+                }
+            }
+
+
             result.Succeeded = true;
             return result;
         }

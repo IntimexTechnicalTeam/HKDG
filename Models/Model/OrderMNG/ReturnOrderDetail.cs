@@ -11,7 +11,10 @@
         [Required]
         [Column(Order = 3)]
         public Guid ROrderId { get; set; }
-        
+
+        [ForeignKey("ROrderId")]
+        public virtual ReturnOrder ReturnOrderInfo { get; set; }
+
         /// <summary>
         /// Sku Id
         /// </summary>
@@ -60,5 +63,7 @@
         [Required]
         [Column(Order = 10)]
         public Guid OrderDeliveryId { get; set; }
+
+        public virtual ICollection<ReturnOrderImage> ReturnOrderImgs { get; set; }
     }
 }
