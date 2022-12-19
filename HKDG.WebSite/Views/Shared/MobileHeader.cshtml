@@ -42,7 +42,7 @@
         	<a href="/account/MyMessage">
         		<img src="/imgs/icons/notice.png">
         	</a>
-        	<a :href="'/TranView/GoTo?returnUrl=' + BuyDong + '/account/shoppingcart'" class="cart">
+        	<a href="javascript:;" class="cart" @@click="pushCart">
         		<img src="/imgs/icons/cart.png">
 
                 <strong v-if="totalNum">{{totalNum}}</strong>

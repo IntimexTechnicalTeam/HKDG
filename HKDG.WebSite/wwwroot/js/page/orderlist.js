@@ -44,7 +44,7 @@ createApp({
       InstoreSdk.api.order.getPageOrder(this.pager.pageSize, this.pager.page, this.status.value, "", function (result) {
         console.log(result,'獲取訂單信息')
           if (result.Succeeded) {
-            _this.orders = result.ReturnValue.Data;
+            _this.orders = _this.orders.concat(result.ReturnValue.Data);
 
             if (_this.pager.page === 1 && _this.orders.length) {
               _this.$nextTick(() => {

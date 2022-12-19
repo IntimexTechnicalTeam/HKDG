@@ -122,6 +122,14 @@ const app = createApp({
         },
         // 添加/取消收藏
         addToFavorite: function(p, flag) { // flag: 1 => 收藏商家其他產品 ，2 => 收藏喜歡推薦產品
+          // Auth驗證
+          if (!this.logined) {
+            location.href = "/Account/Login?returnUrl=" + location.pathname + "?fav=1";
+
+            return;
+          }
+
+
           var _this = this;
           var proId = flag ? p.ProductId : p.Id;
           if (p.IsFavorite) {
@@ -183,6 +191,24 @@ const app = createApp({
             _this.$nextTick(fbpAddToCart);
           }
 
+          // Auth驗證
+          if (!this.logined) {
+            let query = {};
+            let keys = Object.keys(this.proAttr);
+            let last = keys[keys.length-1];
+
+            for(var key in this.proAttr) {
+              // query += key + '=' + this.proAttr[key].Id + (key === last ? '' : '&');
+              query[key] = this.proAttr[key].Id;
+            }
+
+
+            location.href = "/Account/Login?returnUrl=" + location.pathname + "?attr=" + JSON.stringify(query) + "&qty=" + this.buyQty + (flag === 1 ? "&buy=1" : "");
+
+            return;
+          }
+
+
           let param = {
             ProductId: this.proData.Id,
             ProdCode: this.proData.Code,
@@ -193,13 +219,16 @@ const app = createApp({
             KolId: getQueryString('KolId') || ''
           };
 
-          console.log(param, 'param')
+          console.log(param, 'param');
+          // console.log(this.proData.AttrList, 'proData.AttrList');
+          // console.log(JSON.stringify(this.proAttr), 'JSON.stringify');
+          // return;
 
           InstoreSdk.api.shoppingCart.addItem(param, function(data) {
             if (data.Succeeded) {
                 console.log(data,'加入購物車');
                 if (flag === 1) {
-                  window.location.href = "/TranView/GoTo?returnUrl=" + BuyDong + "/account/ShoppingCart";
+                  transitBD('/account/ShoppingCart');
                 } else {
                   addtocartS(data.Message, '/imgs/icons/add-cart.png');
                   loadItems();
@@ -526,6 +555,31 @@ const app = createApp({
               return false;
           });
         },
+        // 匹配url傳參自動操作
+        matchQuery: function () {
+          let attr = getQueryString('attr') ? JSON.parse(getQueryString('attr')) : '';
+          let fav = getQueryString('fav');
+          let buy = getQueryString('buy') === '1' ? 1 : 0;
+          let _this = this;
+          if (attr) {
+            this.proData.AttrList.forEach((item)=> {
+              let value = attr['attr' + item.Seq];
+              if (value) {
+                item.selected = value;
+
+                _this.proAttr['attr' + item.Seq] = item.Values.find(function(i) { return i.Id === value; });
+              }
+            });
+
+            this.buyQty = Number(getQueryString('qty'));
+
+            this.addToCart(buy);
+
+            history.replaceState(null, document.title, location.pathname);
+          } else if (fav) {
+            this.addToFavorite(this.proData);
+          }
+        },
         // 价格格式化
         PriceFormat: function (value) {
           return PriceFormat(value);
@@ -536,6 +590,8 @@ const app = createApp({
       Name: '為你推介',
       PrmtProductList: this.relateProd || []
     };
+
+    this.matchQuery();
 	},
 	mounted() {
     console.log(this.proData,'產品數據');
