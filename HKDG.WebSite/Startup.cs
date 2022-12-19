@@ -14,6 +14,29 @@ namespace HKDG.WebSite
 {
     public class Startup
     {
+        /// <summary>
+        /// 注册Json文件
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="path"></param>
+        public static void AddJsonFile(WebApplicationBuilder builder,params string[] path)
+        {
+            foreach (var item in path)
+            {
+                builder.Configuration.AddJsonFile(item, optional: true, reloadOnChange: true).AddEnvironmentVariables();
+            }
+        }
+
+        /// <summary>
+        /// 注册Nlog日志组件
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void AddNLog(WebApplicationBuilder builder)
+        {
+            builder.Logging.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            NLog.LogManager.LoadConfiguration("Config/nlog.config");
+        }
+
         // 在IServiceCollection容器中注册全局设置
         public static void ConfigureServices(WebApplicationBuilder builder)
         {

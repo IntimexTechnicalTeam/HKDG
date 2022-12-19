@@ -1,8 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("Config/appsettings.json", optional: true, reloadOnChange: true).AddEnvironmentVariables();
-builder.Logging.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-NLog.LogManager.LoadConfiguration("Config/nlog.config");
+Startup.AddJsonFile(builder, "Config/appsettings.json");
+Startup.AddNLog(builder);
 
 //第一种注入
 //builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule<AutofacRegisterModuleFactory>());
