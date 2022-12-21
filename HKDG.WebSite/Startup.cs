@@ -12,33 +12,35 @@ using Web.Swagger;
 
 namespace HKDG.WebSite
 {
-    public class Startup
+    public static class Startup
     {
         /// <summary>
         /// 注册Json文件
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="path"></param>
-        public static void AddJsonFile(WebApplicationBuilder builder,params string[] path)
+        public static WebApplicationBuilder AddJsonFile(this WebApplicationBuilder builder,params string[] path)
         {
             foreach (var item in path)
             {
                 builder.Configuration.AddJsonFile(item, optional: true, reloadOnChange: true).AddEnvironmentVariables();
             }
+            return builder;
         }
 
         /// <summary>
         /// 注册Nlog日志组件
         /// </summary>
         /// <param name="builder"></param>
-        public static void AddNLog(WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddNLog(this WebApplicationBuilder builder)
         {
             builder.Logging.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
             NLog.LogManager.LoadConfiguration("Config/nlog.config");
+            return builder;
         }
 
         // 在IServiceCollection容器中注册全局设置
-        public static void ConfigureServices(WebApplicationBuilder builder)
+        public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
@@ -93,11 +95,14 @@ namespace HKDG.WebSite
 
             builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));    //此句是为了解决视图视获取从后台传来的数据的时候，中文乱码无法解码
             builder.Services.AddUEditorService("Config/config.json");
-        }
 
-        // 设置 HTTP request pipeline 
-        public static void ConfigurePipeLine(IApplicationBuilder app, WebApplicationBuilder builder)
+            return builder;
+        }
+      
+        public static WebApplication ConfigureApp(this WebApplicationBuilder builder ,Func<WebApplicationBuilder, IApplicationBuilder> func)
         {
+            var app = func.Invoke(builder);
+
             Globals.Services = app.ApplicationServices;
             Globals.Configuration = builder.Configuration;
 
@@ -136,6 +141,8 @@ namespace HKDG.WebSite
             app.UseAuthorization();         //这个必须在UseRouting 和 UseEndpoints 之间
 
             app.UseEndpoints(endpoints => { endpoints = endpoints.BindEndPoints(); });
+
+            return (WebApplication)app;
         }
 
         /// <summary>
@@ -169,9 +176,14 @@ namespace HKDG.WebSite
             });
         }
 
-        public static void RegisterSetting()
+        /// <summary>
+        /// 注入全局设置
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static WebApplication ConfigureSetting(this WebApplication app)
         {            
-            var baseRepository = Globals.Services.Resolve<IBaseRepository>();
+            var baseRepository = app.Services.Resolve<IBaseRepository>();
             var master = baseRepository.GetModel<CodeMaster>(x => x.Module == CodeMasterModule.Setting.ToString() 
                          && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "MemTokenExpire")?.Value ?? "";
 
@@ -181,7 +193,8 @@ namespace HKDG.WebSite
                     Setting.MemberAccessTokenExpire = time;
             }
 
-            Setting.BuyDongWebUrl = Globals.Configuration["BuyDongWebUrl"];
+            Setting.BuyDongWebUrl = app.Configuration["BuyDongWebUrl"];
+            return app;
         }
     }
 }

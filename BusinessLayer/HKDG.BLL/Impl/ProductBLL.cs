@@ -2177,8 +2177,8 @@ namespace HKDG.BLL
             summary.ProductId = product.Id;
             summary.ApproveType = product.Status;
             summary.MerchantNo = mchInfo?.MerchNo ?? string.Empty;
-            summary.MerchantNameId = mchInfo.NameTransId;
-            summary.MerchantName = translationRepository.GetDescForLang(mchInfo.NameTransId, CurrentUser.Lang);
+            summary.MerchantNameId = mchInfo?.NameTransId ?? Guid.Empty ;
+            summary.MerchantName = translationRepository.GetDescForLang(summary.MerchantNameId, CurrentUser.Lang);
             summary.IsGS1 = MerchantType.GS1 == mchInfo?.MerchantType ? true : false;
             summary.PurchaseCounter = statistic == null ? 0 : statistic.PurchaseCounter;
             summary.VisitCounter = statistic == null ? 0 : statistic.VisitCounter;
