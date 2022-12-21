@@ -398,9 +398,11 @@ namespace HKDG.BLL
             query = query.Skip(cond.Offset).Take(cond.PageSize);
 
             var list = AutoMapperExt.MapToList<HotProduct, Product>(query.ToList());
+            list.ForEach(x => {
+                x.MerchantId = query.ToList().FirstOrDefault(y => y.Code == x.Code).MchId;           
+            });
 
             result.Data = list.Select(s => productBLL.GenProductSummary(s)).ToList();
-
             return result;
         }
 
