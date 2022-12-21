@@ -167,7 +167,7 @@ namespace HKDG.Admin
         {            
             var baseRepository = app.Services.Resolve<IBaseRepository>();
             var master = baseRepository.GetModel<CodeMaster>(x => x.Module == CodeMasterModule.Setting.ToString() 
-                         && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "MemTokenExpire")?.Value ?? "";
+                         && x.Function == CodeMasterFunction.Time.ToString() && x.Key == "UserTokenExpire")?.Value ?? "";
 
             if (!master.IsEmpty())
             {
