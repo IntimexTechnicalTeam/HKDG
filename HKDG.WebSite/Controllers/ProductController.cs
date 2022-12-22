@@ -23,11 +23,6 @@
         public async Task<IActionResult> Category(string IspType)
         {
             await InitViewPage(IspType);
-
-            var result = await productCatalogBLL.GetCatalogAsync();
-            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
-            SetViewData("Category", result);
-
             return GetActionResult("Category");
         }
 
@@ -76,11 +71,7 @@
 
             ViewBag.CatId = catId;
             await InitViewPage(IspType);
-            
-            var result = await productCatalogBLL.GetCatalogAsync();
-            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
-            SetViewData("Category", result);
-
+         
             var catalog =await productCatalogBLL.GetCatalogById(catId);
             SetViewData("CurrentCatalog", catalog);
 

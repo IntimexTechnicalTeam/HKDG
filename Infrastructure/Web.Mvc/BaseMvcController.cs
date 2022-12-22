@@ -26,7 +26,7 @@ namespace Web.Mvc
         ICustomMenuBLL customMenuBLL;
         IIspProviderBLL ispProviderBLL;
         IInteractMessageBLL interactMessageBLL;
-
+        IProductCatalogBLL productCatalogBLL;
         /// <summary>
         /// 默认注入AutoFac的IComponentContext
         /// </summary>
@@ -37,6 +37,7 @@ namespace Web.Mvc
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
             customMenuBLL = Services.Resolve<ICustomMenuBLL>();
             interactMessageBLL = Services.Resolve<IInteractMessageBLL>();
+            productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
         }
 
         IConfiguration _configuration;
@@ -230,6 +231,7 @@ namespace Web.Mvc
             await InitIspType(IspType);
             await InitMenusAsync(ViewBag.IspType);
             await InitLastNotice();
+            await InitCategory();
         }
 
         public virtual void SetViewData<T>(string key, T t)
@@ -281,6 +283,14 @@ namespace Web.Mvc
         {
             var data = await interactMessageBLL.GetLatesNoticeAsync();
             SetViewData("LatesNotice", data);
+        }
+
+        public async Task InitCategory()
+        {
+            var result = await productCatalogBLL.GetCatalogAsync();
+            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
+            SetViewData("Category", result);
+
         }
     }
 }

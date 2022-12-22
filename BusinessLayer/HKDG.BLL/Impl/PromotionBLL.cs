@@ -379,6 +379,7 @@ namespace HKDG.BLL
                 item.OriginalPrice = item.OriginalPrice + item.MarkupPrice;
                 item.SalePrice = item.SalePrice + item.MarkupPrice;
 
+                item.Imgs = RedisHelper.HGet<List<HotProductImage>>(PreHotType.Hot_ProductImage.ToString(), item.Code).Select(s => s.ImagePath).ToList();
                 //await GetCornermarker(item, newProductDay, hotProductFlag, feeProFlag);
             }
 

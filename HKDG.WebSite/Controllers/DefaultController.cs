@@ -31,11 +31,6 @@
      
             var promotionList = await promotionBLL.ShowPromotionList(cond);
             SetViewData("PromotionList", promotionList);
-
-            var result = await productCatalogBLL.GetCatalogAsync();
-            result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
-            SetViewData("Category", result);
-
             SetViewData("User", CurrentUser);
 
             return GetActionResult("Index");
@@ -49,10 +44,6 @@
             //var cond = new PromotionCond { IspType = IspType, ShowBanner = true, ShowProduct = true, ShowMerchant = false };
             //var promotionList = await promotionBLL.ShowPromotionList(cond);
             //SetViewData("PromotionList", promotionList);
-
-            //var result = await productCatalogBLL.GetCatalogAsync();
-            //result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
-            //SetViewData("Category", result);
 
             return GetActionResult("Menu");
         }

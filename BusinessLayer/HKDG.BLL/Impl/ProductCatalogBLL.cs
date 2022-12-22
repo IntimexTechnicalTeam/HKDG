@@ -60,6 +60,9 @@
         {
 
             var dbCatalog = await baseRepository.GetModelByIdAsync<ProductCatalog>(catID);
+
+            if (dbCatalog == null) throw new BLException(" the catalog is not exist");
+
             var catalog = AutoMapperExt.MapTo<ProductCatalog,ProductCatalogDto>(dbCatalog);
 
             var catalogView = GenProductCatalogInfo(catalog);
