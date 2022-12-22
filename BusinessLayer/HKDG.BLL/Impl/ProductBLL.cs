@@ -186,32 +186,32 @@ namespace HKDG.BLL
             var product = baseRepository.GetModelById<Product>(prodID);
             if (product != null)
             {
-                var dbproductImage = baseRepository.GetModelById<ProductImage>(product.DefaultImage);
-                if (dbproductImage != null)
-                {
-                    var imageItems = baseRepository.GetList<ProductImageList>(x => x.ImageID == dbproductImage.Id).OrderBy(o => o.Type).ToList();
-                    var fileServer = string.Empty;
-                    var activeImages = imageItems.Where(p => p.Path != null && p.Path != "").OrderBy(o => o.Type).ToList();
-                    foreach (var item in imageItems)
+                    var dbproductImage = baseRepository.GetModelById<ProductImage>(product.DefaultImage);
+                    if (dbproductImage != null)
                     {
-                        if (!string.IsNullOrEmpty(item.Path))
+                        var imageItems = baseRepository.GetList<ProductImageList>(x => x.ImageID == dbproductImage.Id).OrderBy(o => o.Type).ToList();
+                        var fileServer = string.Empty;
+                        var activeImages = imageItems.Where(p => p.Path != null && p.Path != "").OrderBy(o => o.Type).ToList();
+                        foreach (var item in imageItems)
                         {
-                            productImages.Add(fileServer + item.Path);
+                            if (!string.IsNullOrEmpty(item.Path))
+                            {
+                                productImages.Add(fileServer + item.Path);
+                            }
+                            else
+                            {
+                                productImages.Add(fileServer + imageItems[activeImages.Count - 1].Path);
+                            }
                         }
-                        else
+                        if (productImages.Count < 8)//如果圖片不夠8個尺寸，最最大的尺寸補齊8張
                         {
-                            productImages.Add(fileServer + imageItems[activeImages.Count - 1].Path);
+                            int startI = productImages.Count;
+                            for (int i = startI; i < 8; i++)
+                            {
+                                productImages.Add(fileServer + imageItems[startI - 1].Path);
+                            }
                         }
                     }
-                    if (productImages.Count < 8)//如果圖片不夠8個尺寸，最最大的尺寸補齊8張
-                    {
-                        int startI = productImages.Count;
-                        for (int i = startI; i < 8; i++)
-                        {
-                            productImages.Add(fileServer + imageItems[startI - 1].Path);
-                        }
-                    }
-                }
             }
             return productImages;
         }

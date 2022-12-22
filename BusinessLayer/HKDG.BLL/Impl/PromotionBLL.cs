@@ -8,6 +8,7 @@ namespace HKDG.BLL
         private Dictionary<PrmtLayoutType, PromotionCond> dicLayOutType = new Dictionary<PrmtLayoutType, PromotionCond>();
 
         ICodeMasterBLL codeMasterBLL;
+        IProductBLL productBLL;
 
         public PromotionBLL(IServiceProvider services) : base(services)
         {
@@ -18,6 +19,7 @@ namespace HKDG.BLL
             dicLayOutType.Add(PrmtLayoutType.MerchantProLayout, new PromotionCond { ShowBanner = false, ShowMerchant = true, ShowProduct = true });
 
             codeMasterBLL = Services.Resolve<ICodeMasterBLL>();
+            productBLL = Services.Resolve<IProductBLL>();
         }
 
         /// <summary>
@@ -379,7 +381,7 @@ namespace HKDG.BLL
                 item.OriginalPrice = item.OriginalPrice + item.MarkupPrice;
                 item.SalePrice = item.SalePrice + item.MarkupPrice;
 
-                item.Imgs = RedisHelper.HGet<List<HotProductImage>>(PreHotType.Hot_ProductImage.ToString(), item.Code).Select(s => s.ImagePath).ToList();
+                item.Imgs =await productBLL.GetProductImages(item.ProductId,item.Code);
                 //await GetCornermarker(item, newProductDay, hotProductFlag, feeProFlag);
             }
 
