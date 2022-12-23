@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     //[ServiceFilter(typeof(AdminApiAuthorizeAttribute))]
-    public class SystemMenuController : BaseApiController
+    public class SystemMenuController: WebController
     {
         ISystemMenuBLL _menuBLL;
         ISettingBLL _settingBLL;

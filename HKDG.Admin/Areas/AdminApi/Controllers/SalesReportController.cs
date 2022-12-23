@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.ReportModule)]
     [ApiController]
-    public class SalesReportController : BaseApiController
+    public class SalesReportController: WebController
     {
         ISalesReportBLL salesReportBLL;
         IMemberBLL memberBLL;

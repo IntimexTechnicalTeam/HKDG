@@ -6,7 +6,7 @@
     /// <summary>
     /// 計劃任務
     /// </summary>
-    public class ScheduleJobController : BaseApiController
+    public class ScheduleJobController: WebController
     {
         
         IScheduleJobBLL ScheduleJobBLL;

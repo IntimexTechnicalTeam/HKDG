@@ -4,7 +4,7 @@
     /// 商家管理 Controller
     /// </summary> 
     [LanguageResource]
-    public class MerchantController : BaseMvcController
+    public class MerchantController : WebController
     {
         public MerchantController(IComponentContext service) : base(service)
         {

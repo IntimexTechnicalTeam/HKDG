@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     //[ServiceFilter(typeof(AdminApiAuthorizeAttribute))]
-    public class PaymentController : BaseApiController
+    public class PaymentController: WebController
     {
         IPaymentBLL _paymentBLL;
 

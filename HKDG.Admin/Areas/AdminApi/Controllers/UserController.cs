@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class UserController : BaseApiController
+    public class UserController: WebController
     {
         IUserBLL userBLL;
 

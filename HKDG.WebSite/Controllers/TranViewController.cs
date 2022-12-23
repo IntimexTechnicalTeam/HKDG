@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-
-namespace HKDG.WebSite.Controllers
+﻿namespace HKDG.WebSite.Controllers
 {
-    public class TranViewController : BaseMvcController
+    public class TranViewController : WebController
     {
         public TranViewController(IComponentContext service) : base(service)
         {

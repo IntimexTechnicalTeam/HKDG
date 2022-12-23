@@ -6,7 +6,7 @@
     /// <summary>
     /// 計劃任務
     /// </summary>
-    public class AuditTrailController : BaseApiController
+    public class AuditTrailController: WebController
     {
 
         public IAuditTrailBLL AuditTrailBLL;

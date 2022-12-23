@@ -5,7 +5,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.SystemModule)]
-    public class EmailController : BaseApiController
+    public class EmailController: WebController
     {
         public ILogBLL logBLL;
 

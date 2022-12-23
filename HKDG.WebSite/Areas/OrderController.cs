@@ -1,14 +1,11 @@
-﻿using Domain;
-using Intimex.Common;
-using Web.Mvc.Filters;
-using WebCache;
+﻿using Intimex.Common;
 using WS.ECShip.Model.MailTracking;
 
 namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : BaseApiController
+    public class OrderController : WebController
     {
         IOrderBLL orderBLL;
         

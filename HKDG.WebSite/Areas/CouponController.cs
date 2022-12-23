@@ -4,7 +4,7 @@ namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CouponController : BaseApiController
+    public class CouponController : WebController
     {
         ICouponBLL  couponBLL;
         public CouponController(IComponentContext service) : base(service)

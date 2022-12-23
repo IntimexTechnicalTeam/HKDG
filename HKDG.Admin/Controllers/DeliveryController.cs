@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-
-namespace HKDG.Admin.Controllers
+﻿namespace HKDG.Admin.Controllers
 {
 
     /// <summary>
     /// 產品Controller
     /// </summary>
     [LanguageResource]
-    public class DeliveryController : BaseMvcController
+    public class DeliveryController : WebController
     {
         public DeliveryController(IComponentContext service) : base(service)
         {

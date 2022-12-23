@@ -5,7 +5,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.DeliveryModule)]
-    public class DeliveryController : BaseApiController
+    public class DeliveryController: WebController
     {
         IDeliveryBLL DeliveryBLL;
 

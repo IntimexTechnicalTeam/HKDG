@@ -2,7 +2,7 @@
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FileUploadController : BaseApiController
+    public class FileUploadController : WebController
     {
         public FileUploadController(IComponentContext services) : base(services)
         {

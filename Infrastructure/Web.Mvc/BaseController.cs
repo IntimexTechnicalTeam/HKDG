@@ -1,7 +1,4 @@
 ﻿using Autofac;
-using Domain;
-using Enums;
-using HKDG.BLL;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
-using Web.Jwt;
+using Web.Framework;
 
 namespace Web.Mvc
 {
-    public abstract class BaseApiController : Controller
+    public abstract class BaseController : Controller
     {
         public IComponentContext Services;
 
@@ -22,9 +18,9 @@ namespace Web.Mvc
         /// 默认注入AutoFac的IComponentContext
         /// </summary>
         /// <param name="service"></param>
-        public BaseApiController(IComponentContext services)
+        public BaseController(IComponentContext service)
         {
-            this.Services = services;          
+            this.Services = service;         
         }
 
         IConfiguration _configuration;
@@ -94,48 +90,11 @@ namespace Web.Mvc
 
         public string GetClientIP
         {
-            get {
+            get
+            {
 
                 return CurrentContext.HttpContext.GetClientIP();
             }
-        }
-
-        public IJwtToken _jwtToken;
-        public IJwtToken jwtToken
-        {
-            get
-            {
-                if (_jwtToken == null)
-                {
-                    _jwtToken = Services.Resolve<IJwtToken>();
-                }
-                return this._jwtToken;
-            }
-        }
-        public ILoginBLL _loginBLL;
-        public ILoginBLL loginBLL
-        {
-            get
-            {
-                if (_loginBLL == null)
-                {
-                    _loginBLL = Services.Resolve<ILoginBLL>();
-                }
-                return this._loginBLL;
-            }
-        }
-
-        public ICurrencyBLL _currencyBLL;
-        public ICurrencyBLL currencyBLL {
-            get
-            {
-                if (_currencyBLL == null)
-                {
-                    _currencyBLL = Services.Resolve<ICurrencyBLL>();
-                }
-                return this._currencyBLL;
-            }
-
         }
 
         IHostEnvironment _hostEnvironment;
@@ -151,27 +110,27 @@ namespace Web.Mvc
             }
         }
 
-        CurrentUser _currentUser;
-        public CurrentUser CurrentUser
+        public string AutoGenerateNumber(string perfix = "BD")
         {
-            get
-            {
-                string token = CurrentContext?.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Substring("Bearer ".Length).Trim() ?? "";
-                if (token.IsEmpty() || token =="undefined") token = CurrentContext?.HttpContext.Request?.Cookies["access_token"]?.ToString() ?? "";
-
-                //_currentUser = jwtToken.BuildUser(token, _currentUser, x => (loginBLL.AdminLogin(new UserDto { Id = Guid.Parse(_currentUser.UserId) })).Result);
-
-                _currentUser = RedisHelper.HGet<CurrentUser>($"{CacheKey.CurrentUser}", token);
-
-                if (_currentUser == null) _currentUser = new CurrentUser();
-                _currentUser.IspType = Configuration["IspType"];
-                return _currentUser;
-            }
+            return $"{perfix}{IdGenerator.NewId}";
         }
 
-        //public string AutoGenerateNumber(string perfix = "BD")
-        //{
-        //    return $"{perfix}{IdGenerator.NewId}";
-        //}
+        /// <summary>
+        /// 是否为移动设备
+        /// </summary>
+        public bool IsMobile => ToolUtil.IsMobile(Request.Headers["User-Agent"].ToString());
+
+        public virtual ActionResult GetActionResult(string viewName)
+        {
+            
+            if (IsMobile)
+            {
+                return View("Mobile" + viewName);
+            }
+            else
+            {
+                return View(viewName);
+            }
+        }
     }
 }

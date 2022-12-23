@@ -8,7 +8,7 @@ namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MerchantController : BaseApiController
+    public class MerchantController : WebController
     {
          IProductBLL productBLL;
 

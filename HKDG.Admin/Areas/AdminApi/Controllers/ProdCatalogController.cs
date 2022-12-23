@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class ProdCatalogController : BaseApiController
+    public class ProdCatalogController: WebController
     {
         IProductCatalogBLL productCatalogBLL;
 

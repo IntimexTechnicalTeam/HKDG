@@ -1,7 +1,7 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
-    public class AccountController : BaseMvcController
+    public class AccountController : WebController
     {
         IInteractMessageBLL interactMessageBLL;
 

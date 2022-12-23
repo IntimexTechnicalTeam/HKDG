@@ -5,7 +5,7 @@
     /// 產品Controller
     /// </summary>
     [LanguageResource]
-    public class PaymentmethodController : BaseMvcController
+    public class PaymentmethodController : WebController
     {
         public PaymentmethodController(IComponentContext service) : base(service)
         {

@@ -10,7 +10,7 @@ namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MemberController : BaseApiController
+    public class MemberController : WebController
     {
         IMemberBLL memberBLL;
         IJwtToken jwtToken;

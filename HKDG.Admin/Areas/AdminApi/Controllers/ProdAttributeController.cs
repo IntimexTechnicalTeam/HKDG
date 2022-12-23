@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class ProdAttributeController : BaseApiController
+    public class ProdAttributeController: WebController
     {
         IAttributeBLL attributeBLL;
         public ProdAttributeController(IComponentContext services) : base(services)

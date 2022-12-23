@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.SystemModule)]
     [ApiController]
-    public class MailServerController : BaseApiController
+    public class MailServerController: WebController
     {
         IMailServerBLL _mailServerBLL;
 

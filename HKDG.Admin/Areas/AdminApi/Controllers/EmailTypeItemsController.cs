@@ -6,7 +6,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     //[ServiceFilter(typeof(AdminApiAuthorizeAttribute))]
-    public class EmailTypeItemsController : BaseApiController
+    public class EmailTypeItemsController: WebController
     {
         IEmailTemplateBLL _emailTemplateBLL;
         ICodeMasterBLL _codeMasterBLL;

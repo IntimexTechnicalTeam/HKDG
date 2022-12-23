@@ -6,7 +6,7 @@
     /// </summary>
     // [ActionAuthorize(Module = ModuleConst.ProductModule)]
     [LanguageResource]
-    public class CodeMasterController : BaseMvcController
+    public class CodeMasterController : WebController
     {
         public CodeMasterController(IComponentContext service) : base(service)
         {

@@ -5,7 +5,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.SystemModule)]
-    public class CodeMasterController : BaseApiController
+    public class CodeMasterController: WebController
     {
         ICodeMasterBLL CodeMasterBLL;
 

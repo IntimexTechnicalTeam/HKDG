@@ -5,7 +5,7 @@
     /// </summary>
     // [ActionAuthorize(Module = ModuleConst.IventoryModule)]
     [LanguageResource]
-    public class InventoryController : BaseMvcController
+    public class InventoryController : WebController
     {
         public InventoryController(IComponentContext service) : base(service)
         {

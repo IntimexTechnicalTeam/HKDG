@@ -1,7 +1,7 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
-    public class MerchantController :   BaseMvcController
+    public class MerchantController :   WebController
     {
         IMerchantBLL merchantBLL;
 

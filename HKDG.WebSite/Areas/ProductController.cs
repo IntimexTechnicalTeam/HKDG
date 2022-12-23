@@ -2,7 +2,7 @@
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : BaseApiController
+    public class ProductController : WebController
     {
         IProductBLL productBLL;
 

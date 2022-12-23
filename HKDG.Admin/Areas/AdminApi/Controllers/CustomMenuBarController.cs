@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.SystemModule)]
     [ApiController]
-    public class CustomMenuBarController : BaseApiController
+    public class CustomMenuBarController: WebController
     {
         ICustomMenuBLL _customMenuBLL;
         ISettingBLL _settingBLL;

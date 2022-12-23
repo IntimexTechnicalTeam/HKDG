@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class SysCustomizationController : BaseApiController
+    public class SysCustomizationController: WebController
     {
         ICodeMasterBLL codeMasterBLL;
         ISettingBLL settingBLL;

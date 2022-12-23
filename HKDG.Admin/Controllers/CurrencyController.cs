@@ -6,7 +6,7 @@
     /// </summary>
     // [ActionAuthorize(Module = ModuleConst.ProductModule)]
     [LanguageResource]
-    public class CurrencyController : BaseMvcController
+    public class CurrencyController : WebController
     {
         public CurrencyController(IComponentContext service) : base(service)
         {

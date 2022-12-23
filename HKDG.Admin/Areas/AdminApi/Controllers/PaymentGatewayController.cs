@@ -5,7 +5,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.SystemModule)]
-    public class PaymentGatewayController : BaseApiController
+    public class PaymentGatewayController: WebController
     {
         IPaymentGatewayBLL _paymentGatewayBLL;
 

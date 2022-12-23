@@ -1,7 +1,7 @@
 ﻿namespace HKDG.Admin.Controllers
 {
     [LanguageResource]
-    public class DefaultController : BaseMvcController
+    public class DefaultController : WebController
     {
         public DefaultController(IComponentContext service) : base(service)
         {

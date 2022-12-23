@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.OrderModule)]
-    public class OrderController : BaseApiController
+    public class OrderController: WebController
     {
         public IOrderBLL OrderBLL;
         public IDealProductQtyCacheBLL DealProductQtyCacheBLL;

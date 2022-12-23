@@ -1,16 +1,8 @@
-﻿using HKDG.BLL;
-using Intimex.Utility;
-using Model;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using Web.Jwt;
-using Web.Mvc.Filters;
-
-namespace HKDG.WebSite.Areas
+﻿namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductCommentController : BaseApiController
+    public class ProductCommentController : WebController
     {
         IProductCommentBLL  productCommentBLL;
 

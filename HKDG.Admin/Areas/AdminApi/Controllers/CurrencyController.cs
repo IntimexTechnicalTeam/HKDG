@@ -6,7 +6,7 @@
     /// <summary>
     /// 計劃任務
     /// </summary>
-    public class CurrencyController : BaseApiController
+    public class CurrencyController: WebController
     {
 
         ICurrencyBLL CurrencyBLL;

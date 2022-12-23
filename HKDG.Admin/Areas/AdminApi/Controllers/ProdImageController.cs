@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.ProductModule)]
     [ApiController]
-    public class ProdImageController : BaseApiController
+    public class ProdImageController: WebController
     {
         public IProductImageBLL productImageBLL;
 

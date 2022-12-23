@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class MemberGroupController : BaseApiController
+    public class MemberGroupController: WebController
     {
         public IMemberGroupBLL MemberGroupBLL { get; set; }
         public MemberGroupController(IComponentContext services) : base(services)

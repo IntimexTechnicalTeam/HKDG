@@ -5,7 +5,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class RoleController : BaseApiController
+    public class RoleController: WebController
     {
         private IRoleBLL roleBLL;
         private IPermissionBLL permissionBLL;

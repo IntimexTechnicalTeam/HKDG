@@ -4,13 +4,17 @@ namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : BaseApiController
+    public class AccountController : WebController
     {
         IMemberBLL memberBLL;
-        
+        ICurrencyBLL currencyBLL;
+        ILoginBLL  loginBLL;
+
         public AccountController(IComponentContext service) : base(service)
         {            
             memberBLL = this.Services.Resolve<IMemberBLL>();
+            currencyBLL = Services.Resolve<ICurrencyBLL>();
+            loginBLL = Services.Resolve<ILoginBLL>();
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class PermissionController : BaseApiController
+    public class PermissionController: WebController
     {
         IPermissionBLL _permissionBLL;
 

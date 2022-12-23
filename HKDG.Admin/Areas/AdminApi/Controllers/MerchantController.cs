@@ -3,7 +3,7 @@
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class MerchantController : BaseApiController
+    public class MerchantController: WebController
     {
         IMerchantBLL merchantBLL;
         ISettingBLL settingBLL;

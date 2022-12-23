@@ -1,7 +1,7 @@
 ﻿namespace HKDG.WebSite.Controllers
 {
     [Hidden]
-    public class DefaultController : BaseMvcController
+    public class DefaultController : WebController
     {
         IIspProviderBLL ispProviderBLL;
         IPromotionBLL promotionBLL;

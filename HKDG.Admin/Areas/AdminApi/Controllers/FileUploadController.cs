@@ -5,7 +5,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class FileUploadController : BaseApiController
+    public class FileUploadController: WebController
     {
         public FileUploadController(IComponentContext services) : base(services)
         {

@@ -2,7 +2,7 @@
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AddressController : BaseApiController
+    public class AddressController : WebController
     {
          IDeliveryAddressBLL deliveryAddressBLL;
 

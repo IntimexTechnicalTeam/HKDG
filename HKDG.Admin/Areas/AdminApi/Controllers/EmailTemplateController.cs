@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     //[ServiceFilter(typeof(AdminApiAuthorizeAttribute))]
-    public class EmailTemplateController : BaseApiController
+    public class EmailTemplateController: WebController
     {
         IEmailTemplateBLL _emailTemplateBLL;
 

@@ -1,7 +1,7 @@
 ﻿namespace HKDG.Admin.Controllers
 {
     [LanguageResource]
-    public class OrderController : BaseMvcController
+    public class OrderController : WebController
     {
         public OrderController(IComponentContext service) : base(service)
         {

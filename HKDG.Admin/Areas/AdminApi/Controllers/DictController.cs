@@ -8,7 +8,7 @@ namespace HKDG.Admin.Areas.AdminAPI.Controllers
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.PersonalSetting)]
-    public class DictController : BaseApiController
+    public class DictController: WebController
     {
         public ICodeMasterBLL codeMasterBLL;
         public ISettingBLL settingBLL;

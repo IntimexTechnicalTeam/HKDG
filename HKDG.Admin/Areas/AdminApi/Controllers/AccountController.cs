@@ -5,12 +5,14 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     [Area("AdminApi")]
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
-    public class AccountController : BaseApiController
+    public class AccountController : WebController
     {
         IUserBLL userBLL;
+        ILoginBLL loginBLL;
         public AccountController(IComponentContext services) : base(services)
         {
             userBLL = Services.Resolve<IUserBLL>();
+            loginBLL= Services.Resolve<ILoginBLL>();
         }
 
         /// <summary>

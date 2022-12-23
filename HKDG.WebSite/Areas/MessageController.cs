@@ -7,7 +7,7 @@ namespace HKDG.WebSite.Areas
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MessageController : BaseApiController
+    public class MessageController : WebController
     {
         IEmailerBLL emailerBLL;
         IArrivalNotifyBLL arrivalNotifyBLL;

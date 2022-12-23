@@ -1,6 +1,6 @@
 ﻿namespace HKDG.Admin.Controllers
 {
-    public class ReportsController : BaseMvcController
+    public class ReportsController : WebController
     {
         public ReportsController(IComponentContext service) : base(service)
         {

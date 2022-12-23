@@ -5,7 +5,7 @@
     /// 產品Controller
     /// </summary>
     [LanguageResource]
-    public class EmailTemplateController : BaseMvcController
+    public class EmailTemplateController : WebController
     {
         public EmailTemplateController(IComponentContext service) : base(service)
         {

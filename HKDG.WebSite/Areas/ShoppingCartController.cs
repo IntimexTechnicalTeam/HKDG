@@ -4,7 +4,7 @@ namespace HKDG.WebSite.Controllers.Areas
 {
     [Route("api/[controller]")]
     [LoginAuthorize]
-    public class ShoppingCartController : BaseApiController
+    public class ShoppingCartController : WebController
     {
         public IShoppingCartBLL shoppingCartBLL;
  

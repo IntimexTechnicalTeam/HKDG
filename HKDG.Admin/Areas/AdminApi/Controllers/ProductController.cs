@@ -7,7 +7,7 @@ namespace HKDG.Admin.Areas.AdminApi.Controllers
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.ProductModule)]
     [ApiController]
-    public class ProductController : BaseApiController
+    public class ProductController: WebController
     {
         IProductBLL productBLL;
         IAttributeBLL attributeBLL;

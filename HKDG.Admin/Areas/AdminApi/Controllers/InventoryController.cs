@@ -8,7 +8,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [AdminApiAuthorize(Module = ModuleConst.IventoryModule, Modules = new string[] { })]
     [ApiController] 
-    public class InventoryController : BaseApiController
+    public class InventoryController: WebController
     {
         public IUserBLL UserBLL;
         public IInventoryBLL InventoryBLL;

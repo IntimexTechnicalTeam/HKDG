@@ -4,7 +4,7 @@
     [Route("AdminApi/[controller]/[action]")]
     [ApiController]
     [AdminApiAuthorize(Module = ModuleConst.MemberModule)]
-    public class MemberController : BaseApiController
+    public class MemberController: WebController
     {
         public IMemberBLL memberBLL;
 

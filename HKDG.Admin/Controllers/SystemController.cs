@@ -5,7 +5,7 @@
     /// 產品Controller
     /// </summary>
     [LanguageResource]
-    public class SystemController : BaseMvcController
+    public class SystemController : WebController
     {
         public SystemController(IComponentContext service) : base(service)
         {

@@ -1,7 +1,7 @@
 ﻿namespace HKDG.Admin.Controllers
 {
     // [ActionAuthorize(Module = ModuleConst.PersonalSetting)]
-    public class PersonalController : BaseMvcController
+    public class PersonalController : WebController
     {
         public PersonalController(IComponentContext service) : base(service)
         {
