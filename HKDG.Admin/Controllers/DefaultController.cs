@@ -9,7 +9,7 @@
 
         public IActionResult Index()
         {
-            ViewBag.Lang = Language.C;
+            ViewBag.Lang = CurrentUser.Lang;
             ViewBag.UserName = CurrentUser?.Email;
             ViewBag.IspType = CurrentUser.IspType;
             

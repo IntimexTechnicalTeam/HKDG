@@ -22,8 +22,8 @@ namespace HKDG.BLL
             if (currentUser.IsLogin)
                 await baseRepository.UpdateAsync(user);
 
-            var cacheUser = await RedisHelper.HGetAsync<User>($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO);
-            if (cacheUser != null) { cacheUser.Language = Lang; };
+            var cacheUser = await RedisHelper.HGetAsync<CurrentUser>($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO);
+            if (cacheUser != null) { cacheUser.Lang = Lang; };
 
             await RedisHelper.HSetAsync($"{CacheKey.CurrentUser}", currentUser.LoginSerialNO, cacheUser);
 

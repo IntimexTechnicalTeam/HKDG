@@ -39,7 +39,7 @@ namespace Web.Mvc
             if (!await BaseAuthority.CheckUserToken(context, next, mUser))
             {
                 context.HttpContext.DeleteCookie("access_token");
-                context.HttpContext.Response.Redirect("/Accont/Login");
+                context.HttpContext.Response.Redirect("/Account/Login");
                 return;
             }
 
