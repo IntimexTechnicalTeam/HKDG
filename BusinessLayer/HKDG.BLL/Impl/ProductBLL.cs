@@ -3205,7 +3205,7 @@ namespace HKDG.BLL
 
                 attrImg.ImageItems = new List<string>();
 
-                var addiImageItems = Img.ImageItems.OrderBy(d => d.Type).ToList();
+                var addiImageItems = Img.ImageItems?.OrderBy(d => d.Type).ToList() ?? new List<ProductImageList>();
 
                 foreach (var item2 in addiImageItems)
                 {
