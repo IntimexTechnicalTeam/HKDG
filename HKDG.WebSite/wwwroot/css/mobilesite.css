@@ -167,8 +167,8 @@ p.errorTip {
   overflow-y: auto;
 }
 
-.dlg-body > p,
-.dlg-body > span {
+.dlg-body p,
+.dlg-body span {
   font-size: 1.2rem;
 }
 
@@ -475,6 +475,13 @@ p.errorTip {
   align-items: center;
 }
 
+.bannerSwiper .swiper-slide > a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
 .bannerSwiper .swiper-slide img {
   display: block;
   width: 100%;
@@ -632,6 +639,11 @@ p.errorTip {
     bottom: 0.3rem;
 }
 
+.pro-item .fav-btn.fav {
+  background: url(/imgs/icons/heart2.png) no-repeat center center;
+  background-size: contain;
+}
+
 .pro-item.layout2 {
   background: #f6f5f5;
 }
@@ -737,6 +749,7 @@ p.errorTip {
   overflow: hidden;
   padding-top: 1rem;
   position: relative;
+  box-sizing: border-box;
 }
 
 .pmt-one.category .proSwiper .swiper-slide > a::before {
@@ -1135,6 +1148,7 @@ p.errorTip {
   left: 50%;
   transform: translate(-50%, -50%);
   box-sizing: border-box;
+  box-shadow: 0 0 5px rgb(0 0 0 / 15%);
 }
 
 .login-box .logo {
@@ -1371,6 +1385,7 @@ form#login-form {
   font-size: 1.2rem;
   color: #276643;
   margin: 0 0.3rem;
+  vertical-align: middle;
 }
 
 .rating-box .rating {
@@ -1496,12 +1511,12 @@ form#login-form {
   text-decoration: underline;
 }
 
-.btn-box {
+.pro-btn-box {
   display: flex;
   justify-content: space-between;
 }
 
-.btn-box button {
+.pro-btn-box button {
   width: 100%;
   font-size: 1.2rem;
   font-family: 'HanyiSentyPailouArch';
@@ -1509,21 +1524,21 @@ form#login-form {
   border-radius: 5px;
 }
 
-.btn-box button:first-child {
+.pro-btn-box button:first-child {
   color: #758b7d;
   background-color: #fff;
 }
 
-.btn-box button:last-child {
+.pro-btn-box button:last-child {
   color: #fff;
   background-color: #758b7d;
 }
 
-.btn-box button:not(:last-child) {
+.pro-btn-box button:not(:last-child) {
   margin-right: 4%;
 }
 
-.btn-box button[disabled] {
+.pro-btn-box button[disabled] {
   background-color: #bdbdbd;
   border-color: #bdbdbd;
 }
@@ -1910,6 +1925,7 @@ form#login-form {
   border: 0;
   border-radius: 5px;
   padding: 0.2rem;
+  outline: none;
 }
 
 .screen-box .screen-list select:not(:last-child) {

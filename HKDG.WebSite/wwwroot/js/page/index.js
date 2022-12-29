@@ -8,39 +8,17 @@ createApp({
 	  return {
 	  	banner: null,
 	  	promotionList: [],
-	  	proList: [{
-	  		Currency: {
-	  			Code: 'HKD'
-	  		},
-	  		Currency2: {
-				Code: 'USD'
-	  		},
-	  		Code: 'Code',
-	  		Name: 'Name',
-	  		Imgs: [
-	  		'https://img2.baidu.com/it/u=1904742041,1902077588&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1666458000&t=5b1c7ebe20152288cc841bca0e24d7ca', 
-	  		'https://img2.baidu.com/it/u=3936366904,3589428500&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1666458000&t=a52bc0c2c2e9ef7d17c05f2f0a2e3d5d',
-	  		'https://img2.baidu.com/it/u=3936366904,3589428500&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1666458000&t=a52bc0c2c2e9ef7d17c05f2f0a2e3d5d'
-	  		],
-	  		MerchantName: 'Traveler’s Art Journal',
-	  		OriginalPrice: 1000,
-	  		SalePrice: 888,
-	  		SalePrice2: 777,
-	  		HasDiscount: true,
-	  		IsEventProduct: false,
-	  		IconType: 0
-	  	}],
 	  	category: category, // 商品分類
 	  	reOption: {
             autoHeight: true, //高度随内容变化
-            slidesPerView : 2.2,  
+            slidesPerView : IsMobile ? 2.2 : 4,  
             spaceBetween: 10,
             scrollbar: {
 				el: '.swiper-scrollbar',
 			}
         },
 	  	ftOption: {
-            slidesPerView: 2.2,
+            slidesPerView: IsMobile ? 2.2 : 4,
 	        grid: {
 	          rows: 2,
 	        },
@@ -55,6 +33,7 @@ createApp({
 		initBanner: function () {
 			var swiper = new Swiper(".bannerSwiper", {
 		        spaceBetween: 10,
+		        slidesPerView: IsMobile ? 1 : 3,
 		        loop: true,
 		        loopAdditionalSlides: 2,
 		        autoplay: {
@@ -73,15 +52,21 @@ createApp({
 		},
 		initCatSwiper: function () {
 			var swiper = new Swiper(".category .proSwiper", {
-		        slidesPerView : 9,  
-                spaceBetween: 10
+		        slidesPerView : IsMobile ? 9 : 12,  
+                spaceBetween: IsMobile ? 10 : 20,
+                scrollbar: IsMobile ? false : {
+                    el: '.swiper-scrollbar'
+                }
 		    });
 		},
 		initBrandSwiper: function () {
 			var swiper = new Swiper(".brand .proSwiper", {
 				autoHeight: true,
-		        slidesPerView : 3.5,  
-                spaceBetween: 15
+		        slidesPerView :  IsMobile ? 3.5 : 6,  
+                spaceBetween: 15,
+                scrollbar: IsMobile ? false : {
+                    el: '.swiper-scrollbar'
+                }
 		    });
 		}
 	},

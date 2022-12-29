@@ -22,7 +22,7 @@ function loadPage (dom, totalpage, callback) {
             domClass   : 'dropload-down',
             domRefresh : '<div class="dropload-refresh"></div>',
             domLoad    : '<div class="dropload-load"><span class="loading"></span></div>',
-            domNoData  : '<div class="dropload-noData">我是有底線的~</div>'
+            domNoData  : '<div class="dropload-noData">暫無更多</div>'
         },
         loadDownFn: function(me){
             page++;
@@ -128,6 +128,35 @@ function GetHttpRequest()
         return new ActiveXObject("MsXml2.XmlHttp") ;  
 }  
 
+// 引入外部js或第三方js
+async function LoadScript (src, async, id, site) { // site -> 'head', js在<head>標籤內引入； 'body'，js在<body>標籤內引入
+    return new Promise((resolve, reject) => {
+        if (!isInclude(src)) {
+          const oScript = document.createElement('script');
+          oScript.type = 'text/javascript';
+          oScript.src = src;
+
+          if (async) {
+            oScript.async = true;
+          }
+
+          if (id) {
+            oScript.id = id;
+          }
+
+          switch (site) {
+            case 'head':
+              document.getElementsByTagName('head')[0].appendChild(oScript);
+              break;
+            default:
+              document.body.appendChild(oScript);
+          }
+
+          resolve(true);
+        }
+    });
+}
+
 // js內同步引入外部js
 function ajaxPage(sId, url){  
     var oXmlHttp = GetHttpRequest() ;  
@@ -175,4 +204,46 @@ function FixedHeader () {
 // 轉跳擺檔
 function transitBD (url) {
     location.href = "/TranView/GoTo?returnUrl=" + BuyDong + url + "?IsBD=false";
+}
+
+// 導航跳轉邏輯處理
+function toUrl (n) {
+    if (n.Type < 0) return;
+
+    let link;
+    let flag; // 是否最後執行跳轉
+    switch (n.Type) {
+        case 0: // 鏈接 => 0
+            if (!n.IsNewWin && n.Url) {
+                window.location.href = n.Url;
+            } else if (n.IsNewWin && n.Url) {
+                window.open(n.Url);
+            }
+            break;
+        case 1: // cms目錄
+            link = '/product/CatProduct?catId=' + n.Value.Id;
+            break;
+        case 2: // cms內容
+            // link = '/CMS/content/' + n.Value.Id;
+            transitBD('/CMS/content/' + n.Value.Id);
+            flag = true;
+            break;
+        case 4: // 產品目錄
+            if (platform === 'M') {
+                link = '/Product/Category';
+            } else if (!(n.Level === 1 && guidEmpty(n.Value.Id))) {
+                link = '/product/Category?catId=' + n.Value.Id;
+            }
+            // link = '/product/Category?catId=' + n.Value.Id;
+            break;
+    }
+
+    if (link && !flag) {
+        window.location.href = link;
+    }
+}
+
+// 判斷guid值是否有效
+function guidEmpty(value) {
+  return value === '00000000-0000-0000-0000-000000000000';
 }

@@ -23,7 +23,7 @@
             <div class="swiper-pagination"></div>
 
             <!-- 視頻/圖片切換按鈕 -->
-            <div class="vAndi" >
+            <div class="vAndi" v-if="videoUrl">
                 <div class="vAndiCont">
                     <div class="videoBtn SWactive" >
                         @Resources.ToMultiLang("video")
@@ -80,7 +80,7 @@
                 <a href="javascript:;" @@click="readTerms(1)">@Resources.ToMultiLang("RARPolicy")</a>
                 <a href="javascript:;" @@click="readTerms(2)">@Resources.ToMultiLang("ShipmentPolicy")</a>
             </div>
-            <div class="btn-box">
+            <div class="pro-btn-box">
                 <button v-if="btnStatus === 1" @@click="$refs.notify.openDialog();">@Resources.ToMultiLang("NotifyMe")</button>
                 <button v-if="btnStatus === 2" @@click="cancelNotifyMe">@Resources.ToMultiLang("NotifyMeCancel")</button>
                 <button v-if="btnStatus === 3" disabled>@Resources.ToMultiLang("SoldOut")</button>
@@ -130,7 +130,7 @@
                   <p class="total-sum">{{comments.length}}@Resources.ToMultiLang("CommentsNum")</p>
                   <div class="rating-box">
                     <star-rating v-model="proData.Score" disabled></star-rating>
-                    <span>{{proData.Score.toFixed(1)}}分</span>
+                    <span>{{proData.Score.toFixed(1)}}@Resources.ToMultiLang("Points")</span>
                   </div>
 
                   <div class="comments-list">
@@ -147,7 +147,7 @@
 
                       <div class="rating-box">
                         <star-rating v-model="item.Score" disabled></star-rating>
-                        <span>{{item.Score.toFixed(1)}}分</span>
+                        <span>{{item.Score.toFixed(1)}}@Resources.ToMultiLang("Points")</span>
                       </div>
 
                       <p class="comments-text">

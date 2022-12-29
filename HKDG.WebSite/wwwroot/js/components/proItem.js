@@ -26,7 +26,7 @@ var tempStr = '<div class="pro-item">\
                 <p class="now-price">{{data.Currency.Code}} {{data.SalePrice}}</p>\
                 <p class="now-price currency2" v-if="data.Currency2">{{data.Currency2.Code}} {{data.SalePrice2}}</p>\
             </div>\
-            <span class="fav-btn" @click.prevent="addToFavorite"></span>\
+            <span class="fav-btn" :class="{\'fav\': data.IsFavorite}" @click.prevent="addToFavorite"></span>\
         </div>\
     </a>\
 </div>';
@@ -42,7 +42,7 @@ var ProItem = {
     },
     template: tempStr,
     methods: {
-        // 加入收藏
+        // 加入/取消收藏
         addToFavorite: function () {
             console.log('addToFavorite');
             let _this = this;

@@ -1,26 +1,83 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-
-   
+	ViewData["Title"] = "Home Page";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div id="container" class="index-page" v-cloak>
+    <div class="banner" v-if="Object.keys(banner).length">
+        <div class="cover">
+            <img :src="banner.ImgPath">
+        </div>
+        <div class="banner-box">
+	        <div class="swiper bannerSwiper" v-if="banner.BannerList && banner.BannerList.length">
+	            <div class="swiper-wrapper">
+	                <div class="swiper-slide" v-for="item in banner.BannerList">
+	                	<a :href="item.Url || 'javascript:;'" :target="item.Url ? '_blank' : ''">
+	                    	<img :src="item.Image">
+	                	</a>
+	                </div>
+	            </div>
+	            
+	            <div class="swiper-pagination"></div>
+	        </div>
+	        <div class="swiper-button-prev"></div>
+	        <div class="swiper-button-next"></div>
+    	</div>
+    </div>
 
-<div class="text-center">
-    这是Desktop-body
-    @Resources.ToMultiLang("PayType",ViewBag.Lang);
-    @Resources.ToMultiLang("MemberName",ViewBag.Lang);
+    <div class="mid-box">
+    	<template v-for="(pmt,index) in promotionList">
+    		<pmt-swiper :declass="'pmt' + index" :options="pmt.Seq === 1 ? reOption : ftOption" :promotion="pmt" v-if="pmt.Type === 3" :more="pmt.Seq !== 1"></pmt-swiper>
+
+    		<div class="pmt-one category" :class="{'zh': lang!=='E'}" v-if="pmt.Seq === 1">
+		    	<div class="util-title">
+		            @Resources.ToMultiLang("ShopByProduct")
+		        </div>
+
+		        <div class="swiper proSwiper">
+		            <div class="swiper-wrapper">
+		                <div class="swiper-slide" v-for="(item,index) in category">
+		                    <a :href="'/Product/CatProduct/' + item.Id">{{item.Name}}</a>
+		                </div>
+		            </div>
+		        </div>
+
+		        <div class="swiper-scrollbar"></div>
+		    </div>
+
+		    <div class="pmt-one brand" v-if="pmt.Type === 2">
+		    	<div class="util-title">
+		            {{pmt.Name}}
+		        </div>
+
+		        <div class="swiper proSwiper">
+		            <div class="swiper-wrapper">
+		                <div class="swiper-slide" v-for="(item,index) in pmt.MerchantList">
+		                    <a href="javascript:;">
+		                    	<div class="img-box">
+		                    		<img :src="item.LogoB">
+		                    	</div>
+		                    	
+		                    	<p>{{item.Name}}</p>
+		                    </a>
+		                </div>
+		            </div>
+
+		            <div class="swiper-scrollbar"></div>
+		        </div>
+		    </div>
+
+		    <pmt-layout :limit="6" :promotion="pmt" v-if="pmt.Type === 4"></pmt-layout>
+    	</template>
+    </div>
 </div>
+@section scripts{
+	<script type="text/javascript">
+		var promotion = @Html.Raw(ViewData["PromotionList"]); // 首頁推廣數據
+		var category = @Html.Raw(ViewData["Category"]); // 商品分類
+	</script>
 
-<script>
-    $(function () {
-
-        InstoreSdk.api.member.getMemberInfo(function (data) {
-            
-            if (data)
-            {
-                
-            }
-        
-        });
-    
-    });
-</script>
+	<!-- <script src="~/js/components/ProItem.js" asp-append-version="true"></script> -->
+	<script src="~/js/components/PmtSwiper.js" asp-append-version="true"></script>
+	<script src="~/js/components/PmtLayout.js" asp-append-version="true"></script>
+	<script src="~/js/page/index.js" asp-append-version="true"></script>
+}

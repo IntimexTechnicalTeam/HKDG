@@ -1,5 +1,267 @@
 ﻿@{
-
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-dddeatads
+
+<link rel="stylesheet" href="/lib/viewer/viewer.min.css" />
+
+<div id="container" class="pro-dtl-page" v-cloak>
+	<div class="mid-box">
+		<div class="pro-dtl-box">
+	    <div class="pro-preview-box">
+        <div class="swiper proPreview">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="(item,index) in proData.AdditionalImages" v-on:click="ImgViewer2(index)">
+              <img :src="item[2]" />
+            </div>
+          </div>
+
+          <div class="video-play" v-on:click="videoplay()" v-if="videoUrl && !isPlayVideo">
+            <img src="/imgs/icons/video.png" alt="video-play" />
+          </div>
+
+          <div class="pro-video-box" v-if="videoUrl && isPlayVideo">
+            <iframe width="100%" height="100%" v-bind:src="videoUrl" title="video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+            <div class="video-stop" v-on:click="videostop()">
+              <strong>X</strong>
+            </div>
+          </div>
+
+          <!-- 屬性圖片 -->
+          <div class="attr-img" v-if="isViewAttrImg">
+            <img v-bind:src="prodAttrImg.ImageItems[1]" v-bind:relImg="prodAttrImg.ImageItems[2]" v-bind:bigImg="prodAttrImg.ImageItems[2]" v-if="Object.keys(prodAttrImg).length" v-on:click="ImgViewer2" />
+
+            <button v-on:click="isViewAttrImg = false;">@Resources.ToMultiLang("Back")</button>
+          </div>
+        </div>
+
+        <div class="thumbs-box">
+          <div thumbsSlider="" class="swiper proThumbs">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" v-for="item in proData.AdditionalImages" v-on:click="videostop();isViewAttrImg = false;">
+                <img :src="item[0]" />
+              </div>
+            </div>
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+
+
+        <!-- 圖片查看器 -->
+        <ul class="glass-viewer" hidden>
+          <li v-for="(imgs,index) in proData.AdditionalImages" v-bind:data-num="index" v-if="!isViewAttrImg">
+            <img v-bind:src="imgs[0]" v-bind:relImg="imgs[2]" v-bind:bigImg="imgs[1]" v-bind:title="proData.Name" v-bind:alt="proData.Name" v-on:click="videostop()"/>
+          </li>
+
+          <img v-bind:src="prodAttrImg.ImageItems[0]" v-bind:relImg="prodAttrImg.ImageItems[2]" v-bind:bigImg="prodAttrImg.ImageItems[1]" v-on:click="videostop()" v-else />
+        </ul>
+	    </div>
+
+      <div class="pro-panel">
+          <p class="pro-name">{{proData.Name}}</p>
+          <p class="old-price" v-if="proData.HasDiscount">{{proData.Currency.Code}} {{PriceFormat(proData.OriginalPrice + attrPrice)}}</p>
+          <p class="sale-price">{{proData.Currency.Code}} {{PriceFormat(proData.SalePrice + attrPrice)}}</p>
+          <p class="sale-price" v-if="proData.Currency2">{{proData.Currency2.Code}} {{PriceFormat(proData.SalePrice2 + attrPrice2)}}</p>
+          <div class="rating-box">
+              <star-rating v-model="proData.Score" disabled></star-rating>
+              <span>{{proData.Score.toFixed(1)}}</span>
+              <span>(20)</span>
+          </div>
+          <div class="attr-group">
+              <div class="attr-one" v-for="attr in proData.AttrList">
+                  <label>{{attr.Name}}</label>
+                  <div class="options">
+                      <span v-for="val in attr.Values" v-bind:class="{'selected': val.Id === attr.selected }" @@click="selectAttr(attr, val)">{{val.Name}}</span>
+                  </div>
+              </div>
+          </div>
+          <div class="number-box">
+              <label>
+                  @Resources.ToMultiLang("Qty") 
+                  <span> 
+                      (@Resources.ToMultiLang("Pro_MinPurQty") {{proData.MinPurQty}} @Resources.ToMultiLang("Pro_piece")<template v-if="proData.SaleQuota"> - @Resources.ToMultiLang("Pro_SaleQuota") {{proData.SaleQuota}} @Resources.ToMultiLang("Pro_piece")</template>)
+                  </span>
+              </label>
+
+              <div class="input-number">
+                  <span role="button" @@click="updateQty(2)">-</span>
+                  <input type="number" v-model.number.lazy="buyQty" oninput="if(value.length>4) value=value.slice(0,4);value=value.replace(/[^\d]/g, '')" @@change="updateQty"  />
+                  <span role="button" @@click="updateQty(1)">+</span>
+              </div>
+          </div>
+          <div class="related-dtls">
+              <p class="tips">@Resources.ToMultiLang("ProDTips")</p>
+              <a href="javascript:;" @@click="readTerms(1)">@Resources.ToMultiLang("RARPolicy")</a>
+              <a href="javascript:;" @@click="readTerms(2)">@Resources.ToMultiLang("ShipmentPolicy")</a>
+          </div>
+          <div class="pro-btn-box">
+              <button v-if="btnStatus === 1" @@click="$refs.notify.openDialog();">@Resources.ToMultiLang("NotifyMe")</button>
+              <button v-if="btnStatus === 2" @@click="cancelNotifyMe">@Resources.ToMultiLang("NotifyMeCancel")</button>
+              <button v-if="btnStatus === 3" disabled>@Resources.ToMultiLang("SoldOut")</button>
+              <button v-if="btnStatus === 4" disabled>@Resources.ToMultiLang("OffShelves")</button>
+              <button v-if="btnStatus === 5" disabled>@Resources.ToMultiLang("Comingsoon")</button>
+              <button v-if="btnStatus === 6" @@click="addToCart">@Resources.ToMultiLang("AddToCart")</button>
+              <button v-if="btnStatus === 6" @@click="addToCart(1)">@Resources.ToMultiLang("BuyNow")</button>
+          </div>
+          <div class="fav-box">
+              <button @@click="addToFavorite(proData)">
+                  <img v-bind:src="proData.IsFavorite ? '/imgs/icons/heart2.png' : '/imgs/icons/heart.png'">
+                  @Resources.ToMultiLang("AddFavorite")
+              </button>
+          </div>
+          <div class="share-box">
+              <span>@Resources.ToMultiLang("ShareTo")</span>
+              
+              <a href="javascript:;" class="whatsapp" onclick="sharewhatpdoduct()"></a>
+              <a href="javascript:;" class="fb" onclick="shareToFaceBook()"></a>
+              <a href="javascript:;" class="link" onclick="copyUrl(jsMessage.CopiedSuccess)"></a>
+          </div>
+      </div>
+    </div>
+
+        <div class="pro-introduce">
+          <div class="tabs">
+            <a href="javascript:;" v-bind:class="{'active': !tabType}" @@click="tabType = 0;">@Resources.ToMultiLang("ProductDetail")</a>
+            <a href="javascript:;" v-bind:class="{'active': tabType}" @@click="tabType = 1;">@Resources.ToMultiLang("UserReviews")</a>
+          </div>
+
+          <div class="tab-content" v-show="!tabType">
+            <div class="tab-title">
+              <p>@Resources.ToMultiLang("ProductDetail")</p>
+            </div>
+            
+            <div class="content details">
+                <div v-html="proData.Detail" v-if="proData.Detail"></div>
+                <div class="none" v-else>
+                    @Resources.ToMultiLang("NoProDtls")
+                </div>
+            </div>
+          </div>
+
+          <div class="tab-content" v-show="tabType">
+            <div class="tab-title">
+              <p>@Resources.ToMultiLang("UserReviews")</p>
+            </div>
+            <div class="content comments">
+                <template v-if="comments.length">
+                  <p class="total-sum">{{comments.length}}@Resources.ToMultiLang("CommentsNum")</p>
+                  <div class="rating-box">
+                    <star-rating v-model="proData.Score" disabled></star-rating>
+                    <span>{{proData.Score.toFixed(1)}}@Resources.ToMultiLang("Points")</span>
+                  </div>
+
+                  <div class="comments-list">
+                    <div class="comment-one" v-for="(item,index) in comments">
+                      <div class="user">
+                        <div class="avatar">
+                          <img src="/imgs/icons/user3.png">
+                        </div>
+                        <div class="info">
+                          <span>{{item.MemberName}}</span>
+                          <span>{{item.CreateDate}}</span>
+                        </div>
+                      </div>
+
+                      <div class="rating-box">
+                        <star-rating v-model="item.Score" disabled></star-rating>
+                        <span>{{item.Score.toFixed(1)}}@Resources.ToMultiLang("Points")</span>
+                      </div>
+
+                      <p class="comments-text">
+                        {{item.Content}}
+                      </p>
+
+                      <div class="galley" :id="'galley'+index">
+                        <ul class="comments-imgs pictures">
+                            <li v-for="i in item.CommentImages" @@click="ImgViewer(index)">
+                              <img :data-original="i.ImageB" :src="i.ImageS">
+                            </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div class="more-btn" v-if="comments.length > pager.pageSize">
+                        <a href="javascript:;" @@click="loadComments">@Resources.ToMultiLang("More") ></a>
+                    </div>
+                  </div>
+                </template>
+
+                <div class="none" v-else>
+                    @Resources.ToMultiLang("ToComment")
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="about-merchant">
+            <p class="util-title">@Resources.ToMultiLang("AboutBrand")</p>
+            <div class="merchant-box">
+                <div class="img-box">
+                    <img src="https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500">
+                </div>
+                <div class="merchant-info">
+                    <p class="merchant-name">{{merchantData.MerchantName}}</p>
+                    <div class="merchant-bottom">
+                        <div class="left">
+                            <div>
+                                <img src="/imgs/icons/star.png">
+                                <span>@Resources.ToMultiLang("Comment")</span>
+                                <span>{{merchantData.Score.toFixed(1)}}</span>
+                            </div>
+                            <div>
+                                <img src="/imgs/icons/user2.png">
+                                <span>@Resources.ToMultiLang("FollowNum")</span>
+                                <span>1,200</span>
+                            </div>
+                        </div>
+                        <div class="right">
+                            <button @@click="addFavMerchant">{{merchantData.IsFavorite ? '@Resources.ToMultiLang("CancelTrack")' : '@Resources.ToMultiLang("Track")'}}</button>
+                            <button @@click="enterStore">@Resources.ToMultiLang("clickinmall")</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <pro-swiper declass="merchant-pro" :data="merchantData.ProductList"></pro-swiper>
+        </div>
+
+        <hr>
+
+        <pmt-swiper declass="recommend" :promotion="pmtRelateProd" more v-if="pmtRelateProd.PrmtProductList.length"></pmt-swiper>
+    </div>
+
+    <!-- 消息彈窗 -->
+    <bd-dialog ref="terms">
+        <div v-html="termsDtls"></div>
+    </bd-dialog>
+
+    <!-- 返貨電郵通知彈窗 -->
+    <bd-dialog class="notify" type="sumbit" confirmtext='@Resources.ToMultiLang("Confirm")' canceltext='@Resources.ToMultiLang("CancelM")' ref="notify" @@confirm="addNotifyMe">
+        <p class="text">@Resources.ToMultiLang("HaveGoodsEmail")</p>
+
+        <input name="sellout-email" type="email" class="sellout-email" id="sellout-email" v-model="selloutEmail" />
+    </bd-dialog>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var ProudctDetail = @Html.Raw(ViewData["ProudctDetail"]); // 产品數據
+        var MerchantDetail = @Html.Raw(ViewData["MerchantDetail"]); // 商家數據
+        var RelateProd = @Html.Raw(ViewData["RelateProd"]); // 相關產品數據
+
+        var jsMessage = {
+          CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess")',
+          PlsSelectAttr: '@Resources.ToMultiLang("PlsSelectAttr")',
+          EnterEmailForSubscribe: '@Resources.ToMultiLang("EnterEmailForSubscribe")'
+        }
+    </script>
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+    <script src="/js/components/PmtSwiper.js" asp-append-version="true"></script>
+    <script src="/js/components/BdDialog.js" asp-append-version="true"></script>
+    <script src="/js/share.js" asp-append-version="true"></script>
+    <script src="/lib/viewer/viewer.min.js" asp-append-version="true"></script>
+    <script src="/lib/md5/md5.js" asp-append-version="true"></script>
+	<script src="/js/page/detail.js" asp-append-version="true"></script>
+}

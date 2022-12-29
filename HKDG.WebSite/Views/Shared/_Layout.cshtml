@@ -11,7 +11,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HKDG.WebSite</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> -->
     <link rel="stylesheet" href="~/lib/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="~/lib/dropload/dropload.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.css" asp-append-version="true" />
@@ -45,6 +45,7 @@
         const { createApp } = Vue;
         var IspType = '@IspType' || 'DG';
         var platform = '@IsMobile'.toLowerCase() == 'true' ? 'M' : 'D';
+        var IsMobile = '@IsMobile'.toLowerCase() == 'true' ? true : false;
         var lang = '@Lang';
         var currency = '@CurrencyCode';
         var BuyDong = '@BuyDong'
@@ -81,7 +82,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.cookie.js"></script>
     <script src="~/lib/jquery/dist/jquery.blockUI.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="~/lib/swiper/swiper-bundle.min.js"></script>
     <script src="~/lib/dropload/dropload.min.js"></script>
     <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>

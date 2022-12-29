@@ -76,6 +76,7 @@ createApp({
             if (n.Type < 0) return;
 
             let link;
+            let flag;
             switch (n.Type) {
                 case 0: // 鏈接 => 0
                     if (!n.IsNewWin && n.Url) {
@@ -88,14 +89,16 @@ createApp({
                     link = '/product/CatProduct?catId=' + n.Value.Id;
                     break;
                 case 2: // cms內容
-                    link = '/CMS/content/' + n.Value.Id;
+                    // link = '/CMS/content/' + n.Value.Id;
+                    transitBD('/CMS/content/' + n.Value.Id);
+                    flag = true;
                     break;
                 case 4: // 產品目錄
                     link = '/product/Category?catId=' + n.Value.Id;
                     break;
             }
 
-            if (link) {
+            if (link && !flag) {
                 window.location.href = link;
             }
         }

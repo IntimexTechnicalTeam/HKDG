@@ -1,6 +1,122 @@
-﻿
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" class="order-page" v-cloak>
+    <div class="mid-box">
+        <nav-tab></nav-tab>
+        <div class="nav-tab-content">
+            <div class="nav-tab-title">
+                <p>@Resources.ToMultiLang("MyOrder")</p>
+            </div>
+            <div class="order-tab">
+                <a href="javascript:;" v-for="item in statusData" :class="{'active': item.value === status.value}" @@click="selectSort(item)">{{item.name}}</a>
+            </div>
 
+            <div class="order-list" v-if="orders.length">
+                <div class="order-one" v-for="item in orders" @@click="orderDtl(item)">
+                    <span class="status" v-if="!item.Status">@Resources.ToMultiLang("Unpaid")</span>
+                    <span class="status" v-else-if="item.Status === 1">@Resources.ToMultiLang("InTransit")</span>
+                    <span class="status" v-else-if="item.Status === 4">@Resources.ToMultiLang("SignedIn")</span>
+                    <span class="status" v-else-if="item.Status === 5 || item.Status === 6 || item.Status === 7">@Resources.ToMultiLang("Cancelled")</span>
+
+                    <div class="orderNo">
+                        <span>@Resources.ToMultiLang("OrderNumber"): {{item.OrderNO}}</span>
+                    </div>
+
+                    <div class="order-time">
+                        @Resources.ToMultiLang("OrderDateTime"): {{item.CreateDate}}
+                    </div>
+
+                    <div class="sub-sum">
+                        <p>@Resources.ToMultiLang("InFreightDiscount")</p>
+                        <div>
+                            <span>（@Resources.ToMultiLang("InTotal"){{item.TotalQty}}@Resources.ToMultiLang("InPieces")）</span>
+                            <span>@Resources.ToMultiLang("ProductSubTotal")： </span>
+                            <span>{{item.Currency.Code}} {{item.DiscountTotalAmount}}</span>
+                        </div>
+                        <button v-if="status.value === 3 && !item.isRating" @@click="signFor(item)">@Resources.ToMultiLang("ScoreReceipt")</button>
+                    </div>
+                    <div class="evaluate-box" v-if="status.value === 3 && item.isRating">
+                        <div class="evaluate-rating">
+                            <label>為設計館評價：</label>
+                            <star-rating v-model="item.rating"></star-rating>
+                        </div>
+                        <div class="evaluate-text">
+                            <textarea placeholder='@Resources.ToMultiLang("StoreComment")'></textarea>
+                        </div>
+                        <button>@Resources.ToMultiLang("SignFor")</button>
+                    </div>
+                </div>
+            </div>
+
+            @*<!-- <div class="order-list" v-if="orders.length">
+                <div class="order-one" v-for="item in orders" @@click="orderDtl(item)">
+                    <span class="status" v-if="!item.Status">@Resources.ToMultiLang("Unpaid")</span>
+                    <span class="status" v-else-if="item.Status === 1">@Resources.ToMultiLang("InTransit")</span>
+                    <span class="status" v-else-if="item.Status === 4">@Resources.ToMultiLang("SignedIn")</span>
+                    <span class="status" v-else-if="item.Status === 5 || item.Status === 6 || item.Status === 7">@Resources.ToMultiLang("Cancelled")</span>
+
+                    <div class="merchant" title="Traveler’s Art Journal">
+                        <img src="/imgs/icons/store.png">
+                        <span>Traveler’s Art Journal <b>›</b></span>
+                    </div>
+                    <div class="pro-list">
+                        <div class="pro-one">
+                            <div class="img-box">
+                                <img src="https://img2.baidu.com/it/u=3094149767,177600321&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1668186000&t=e5b23c961185843076ceb25061a9dff3">
+                            </div>
+                            <div class="pro-info">
+                                <p class="pro-name">香港插畫絲巾 | 古典約依印花</p>
+                                <p class="pro-attr">
+                                    <span>靛藍色</span>
+                                    <span>精品</span>
+                                    <span class="pro-num"> x 1</span>
+                                </p>
+                            </div>
+                            <div class="pro-price">HKD $288</div>
+                        </div>
+                    </div>
+                    <div class="sub-sum">
+                        <p>@Resources.ToMultiLang("InFreightDiscount")</p>
+                        <div>
+                            <span>（@Resources.ToMultiLang("InTotal"){{item.TotalQty}}@Resources.ToMultiLang("InPieces")）</span>
+                            <span>@Resources.ToMultiLang("ProductSubTotal")： </span>
+                            <span>{{item.Currency.Code}} {{item.DiscountTotalAmount}}</span>
+                        </div>
+                        <button v-if="status.value === 3 && !item.isRating" @@click="signFor(item)">@Resources.ToMultiLang("ScoreReceipt")</button>
+                    </div>
+                    <div class="evaluate-box" v-if="status.value === 3 && item.isRating">
+                        <div class="evaluate-rating">
+                            <label>為設計館評價：</label>
+                            <star-rating v-model="item.rating"></star-rating>
+                        </div>
+                        <div class="evaluate-text">
+                            <textarea placeholder='@Resources.ToMultiLang("StoreComment")'></textarea>
+                        </div>
+                        <button>@Resources.ToMultiLang("SignFor")</button>
+                    </div>
+                </div>
+            </div> -->*@
+
+            <div class="none" v-else>
+                @Resources.ToMultiLang("NoOrder")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var jsMessage = {
+          All: '@Resources.ToMultiLang("All")',
+          Unpaid: '@Resources.ToMultiLang("Unpaid")',
+          Receiving: '@Resources.ToMultiLang("Receiving")',
+          Completed: '@Resources.ToMultiLang("Completed")',
+          Cancelled: '@Resources.ToMultiLang("Cancelled")'
+        }
+    </script>
+    <script src="/js/components/NavTab.js" asp-append-version="true"></script>
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+	<script src="/js/page/orderlist.js" asp-append-version="true"></script>
+}

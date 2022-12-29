@@ -7,6 +7,10 @@
 	<div class="mid-box">
 		<nav-tab></nav-tab>
 		<div class="nav-tab-content">
+			<div class="nav-tab-title">
+                <p>@Resources.ToMultiLang("LatestNews")</p>
+            </div>
+			
 			<ul class="msg-list" v-if="message.length">
 				<li class="msg-item" tabindex="-1" v-for="item in message" @@click="viewDtls">
 					<div class="img-box">

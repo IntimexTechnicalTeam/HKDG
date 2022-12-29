@@ -1,11 +1,105 @@
-﻿
-<div>
-	这是Desktop-Header @DateTime.Now.ToString();
-	ssss --- 
- 
+﻿<div id="header" v-cloak>
+	<!-- 系統公告 -->
+    <div class="announcement_box" v-if="show && sysAnnounce.length">
+        <div id="announcement" class="swiper mid-box">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="item in sysAnnounce">
+                <a href="javascript:;">
+                    <span>{{item.Content}}</span>
+                </a>
+            </div>
+          </div>
+          <span class="close-btn" @@click="closeAnnounce">×</span>
+        </div>
+    </div>
+
+    <div class="header-box mid-box">
+        <a href="javascript:;" class="logo" @@click="goHome()">
+            <img src="/imgs/logo.png" alt="logo" />
+        </a>
+
+        <div class="header-menu">
+	    	<ul>
+	    		<li v-for="item in menu">
+	    			<a href="javascript:;" @@click="toUrl(item)" @@mouseover="checkSub(item)">
+	    				{{item.Name}}
+	    			</a>
+
+	    			<div class="sub-menu" v-if="isSubCat || item.Childs">
+						<div class="join-in" @@click="joinIn" v-if="isSubCat">
+							<img src="/imgs/icons/join.png"> 
+							<span>@Resources.ToMultiLang("JoinDesign")</span>
+						</div>	
+
+						<ul v-if="isSubCat">
+							<li v-for="cat in category"><a :href="'/Product/CatProduct/' + cat.Id">{{cat.Name}}</a></li>
+						</ul>
+
+						<ul v-else>
+							<li v-for="c in item.Childs"><a href="javascript:;" @@click="toUrl(c)">{{c.Name}}</a></li>
+						</ul>
+					</div>
+	    		</li>
+	    	</ul>
+    	</div>
+
+        <div class="right-box">
+	        <div class="mix-search-box" >
+	            <div class="search-input-box">
+	                @*<select class="search-type" v-model="searchType">
+	                    <option value="0">產品</option>
+	                    <option value="1">商家</option>
+	                </select>*@
+
+	                <input type="text" id="key" name="key" placeholder="搜尋" v-model="searchKey" @@keyup.enter="goSearch">
+
+	                <span class="search-btn" v-on:click="goSearch"></span>
+	            </div>
+	        </div>
+
+	        <div class="handle-group">
+	        	<a href="/account/MemberInfo">
+	        		<img :src="logined ? '/imgs/icons/user3.png' : '/imgs/icons/user.png'">
+	        	</a>
+	        	<a href="/account/MyMessage">
+	        		<img src="/imgs/icons/notice.png">
+	        	</a>
+	        	<a href="javascript:;" class="cart" @@click="pushCart">
+	        		<img src="/imgs/icons/cart.png">
+
+	                <strong v-if="totalNum">{{totalNum}}</strong>
+	        	</a>
+
+	        	<sys-switch></sys-switch>
+	        </div>
+        </div>
+    </div>
 </div>
-<script>
 
-	var dd = '@ViewBag.IspType';
+<script type="text/javascript">
+    var defaultMsg = {
+        Login: '@Resources.ToMultiLang("Login")',
+        Pleaselogin: '@Resources.ToMultiLang("Pleaselogin")'
+    };
 
+     var comStr = {
+        Close: '@Resources.ToMultiLang("Close")',
+        Pleaselogin: '@Resources.ToMultiLang("Pleaselogin")',
+        PersonalInfo: '@Resources.ToMultiLang("PersonalInfo")',
+        Coupon: '@Resources.ToMultiLang("Coupon")',
+        Message: '@Resources.ToMultiLang("Message")',
+        MyOrder: '@Resources.ToMultiLang("MyOrder")',
+        MyFavorite: '@Resources.ToMultiLang("MyFavorite")',
+        More: '@Resources.ToMultiLang("More")',
+        SeeMore: '@Resources.ToMultiLang("SeeMore")',
+        HotSale: '@Resources.ToMultiLang("HotSale")',
+        NewLaunch: '@Resources.ToMultiLang("NewLaunch")',
+        Discounted: '@Resources.ToMultiLang("Discounted")',
+        Confirm: '@Resources.ToMultiLang("Confirm")',
+        CurrencyTips: '@Resources.ToMultiLang("CurrencyTips")'
+    };
+    
+    var LatesNotice = @Html.Raw(ViewData["LatesNotice"]); // 最新公告
+    var menu = @Html.Raw(ViewData["MenubarDatas"]); // 菜單數據
+    var category = @Html.Raw(ViewData["Category"]); // 产品目录
 </script>

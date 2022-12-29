@@ -1,3 +1,5 @@
+var testImgs = ["https://img1.baidu.com/it/u=4076402559,3294297196&fm=253&fmt=auto&app=138&f=PNG?w=500&h=500","https://img1.baidu.com/it/u=3133082447,1921267555&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500","https://img2.baidu.com/it/u=2286725608,1362072907&fm=253&fmt=auto&app=138&f=JPEG?w=518&h=500","https://img2.baidu.com/it/u=3363028075,1655932363&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=800","https://img0.baidu.com/it/u=2323958649,17793350&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=485","https://img2.baidu.com/it/u=646701517,2138740410&fm=253&fmt=auto&app=120&f=JPEG?w=806&h=800"];
+
 const app = createApp({
     components: {
         'star-rating': StarRating,
@@ -41,7 +43,10 @@ const app = createApp({
             attrKey: '', // 匹配選中的產品屬性圖片的key值
             prodAttrImg: {}, // 匹配選中的產品屬性圖片數據
             isViewAttrImg: false, // 預覽圖片是否為產品屬性圖片
-            preSwiper: null // 產品圖片預覽輪播
+            preSwiper: null, // 產品圖片預覽輪播
+            isPlayVideo: false, // 是否正在播放視頻
+            viewer: null, // 產品附加圖片查看器
+            curPicIndex: 0
   		}
 	},
 	methods: {
@@ -64,16 +69,36 @@ const app = createApp({
         },
         // 初始化產品圖片預覽
         initPreview: function () {
-          this.preSwiper = new Swiper(".proPreview", {
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            },
-            pagination: {
-              el: '.swiper-pagination',
-              type: 'fraction'
-            }
-          });
+          if (IsMobile) {
+            this.preSwiper = new Swiper(".proPreview", {
+              navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+              },
+              pagination: {
+                el: '.swiper-pagination',
+                type: 'fraction'
+              }
+            });
+          } else {
+            var swiper = new Swiper(".proThumbs", {
+              spaceBetween: 10,
+              slidesPerView: 5,
+              freeMode: true,
+              watchSlidesProgress: true,
+            });
+            var swiper2 = new Swiper(".proPreview", {
+              spaceBetween: 10,
+              navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+              },
+              thumbs: {
+                swiper: swiper,
+              },
+            });
+          }
+
         },
         // 選擇產品屬性
         selectAttr: function (attr, val) {
@@ -373,6 +398,35 @@ const app = createApp({
                 // movable: false
             });
         },
+        // 点击图片放大浏览
+        ImgViewer2: function (index) {
+          if (this.isViewAttrImg) {
+            this.curPicIndex = 0;
+          } else {
+            this.curPicIndex = index;
+          } 
+
+          if (this.viewer) this.viewer.destroy();
+
+          let _this = this;
+          setTimeout(() => {
+              _this.initViewer();
+          }, 500);
+        },
+        // 初始化放大鏡圖片查看器
+        initViewer: function () { // 0 => 附加圖片查看器, 1 => 屬性圖片查看器
+            var galley = document.querySelector('.glass-viewer');
+            this.viewer = new Viewer(galley, {
+                url: 'relImg',
+                title: false,
+                transition: true,
+                toolbar: true,
+                loop: false
+                // movable: false
+            });
+
+            this.viewer.view(this.curPicIndex);
+        },
         // 閱讀相關條款 type 類型 (退貨及退款條款 -> 1, 運送及運費條款 -> 2)
         readTerms: function (type) {
           this.termsDtls = type === 1 ? this.proData.MerchantInfo.MerchantTerms : this.proData.MerchantInfo.ReturnTerms;
@@ -501,11 +555,8 @@ const app = createApp({
             if (this.AttrKey) {
                 this.proData.ProdAttrImgs.forEach((item) => {
                     if (item.AttrKey === _this.AttrKey) {
-                        $('.detail-p-big-img img').attr({ 'src': item.ImageItems[1], 'relImg': item.ImageItems[2], 'type': '1'});
-                        this.prodAttrImg = item;
-                        if (platform === 'M') {
-                            _this.isViewAttrImg = true;
-                        }
+                        _this.prodAttrImg = item;
+                        _this.isViewAttrImg = true;
                     }
                 });
             }
@@ -554,6 +605,12 @@ const app = createApp({
               $(".video_btn").show();
               return false;
           });
+        },
+        videostop: function() {
+            this.isPlayVideo = false;
+        },
+        videoplay: function() {
+            this.isPlayVideo = true;
         },
         // 匹配url傳參自動操作
         matchQuery: function () {
