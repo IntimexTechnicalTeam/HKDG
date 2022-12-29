@@ -164,11 +164,28 @@ namespace HKDG.BLL
             foreach (var item in result.Data)
             {
                 GetCornermarker(item);
+                if (CurrentUser.IsLogin)
+                {
+                    string favKey = CacheKey.Favorite.ToString();
+                    string favField = CurrentUser.UserId;
+                    var favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
+                    //读数据库,回写缓存
+                    if (favoriteData == null)
+                    {
+                        favoriteData = await productFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
+                        if (favoriteData != null)
+                        {
+                            await productFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                        }
+                    }
+                    item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
+                }
             }
 
             CurrencyMoneyConversion(result.Data);
             MatchEventCode(result.Data);
 
+          
             return result;
         }
 
@@ -3138,8 +3155,7 @@ namespace HKDG.BLL
                 attrImg.ProductCode = ProductCode;
                 var productImageList = (await baseRepository.GetListAsync<ProductImageList>(x => x.ImageID == Img.Id)).OrderBy(o => o.Type).ToList();
                 var activeImages = productImageList.Where(p => p.Path != null && p.Path != "").OrderBy(d => d.Type).ToList();
-                var maxIndex = activeImages.Count - 1;
-                attrImg.ImageItems = new List<string>();
+                var maxIndex = activeImages.Count - 1;              
                 if (productImageList.Count >= 8)
                 {
                     if (!string.IsNullOrEmpty(productImageList[0].Path))
@@ -3203,11 +3219,8 @@ namespace HKDG.BLL
                 attrImg.Side = Img.Side;
                 attrImg.ProductCode = ProductCode;
 
-                attrImg.ImageItems = new List<string>();
-
-                var addiImageItems = Img.ImageItems?.OrderBy(d => d.Type).ToList() ?? new List<ProductImageList>();
-
-                foreach (var item2 in addiImageItems)
+                var productImageList = (await baseRepository.GetListAsync<ProductImageList>(x => x.ImageID == Img.Id)).OrderBy(o => o.Type).ToList();
+                foreach (var item2 in productImageList)
                 {
                     attrImg.ImageItems.Add(fileServer + item2.Path);
                 }
@@ -3339,27 +3352,23 @@ namespace HKDG.BLL
             foreach (var item in returnData.Data)
             {
                 item.MerchantName = mchList.Values.FirstOrDefault(x => x.MchId == item.MerchantId)?.MerchantName ?? "";
-                item.Imgs = GetProductImages(item.ProductId);               
+                item.Imgs = GetProductImages(item.ProductId);
                 GetCornermarker(item);
-            }
 
-            if (CurrentUser.IsLogin)
-            {
-                string favKey = CacheKey.Favorite.ToString();
-                string favField = CurrentUser.UserId;
-                favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
-                //读数据库,回写缓存
-                if (favoriteData == null)
+                if (CurrentUser.IsLogin)
                 {
-                    favoriteData = await productFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
-                    if (favoriteData != null)
+                    string favKey = CacheKey.Favorite.ToString();
+                    string favField = CurrentUser.UserId;
+                    favoriteData = await RedisHelper.HGetAsync<Favorite>(favKey, favField);
+                    //读数据库,回写缓存
+                    if (favoriteData == null)
                     {
-                        await productFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                        favoriteData = await productFavoriteService.GetDataSourceAsync(Guid.Parse(CurrentUser.UserId));
+                        if (favoriteData != null)
+                        {
+                            await productFavoriteService.SetDataToHashCache(Guid.Parse(CurrentUser.UserId), favoriteData);
+                        }
                     }
-                }
-
-                foreach (var item in returnData.Data)
-                {
                     item.IsFavorite = favoriteData?.ProductList?.Any(x => x == item.Code) ?? false;
                 }
             }

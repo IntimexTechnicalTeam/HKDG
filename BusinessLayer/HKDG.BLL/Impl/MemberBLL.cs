@@ -203,6 +203,7 @@ namespace HKDG.BLL
 
             if (cacheData == null) cacheData = new Favorite();
 
+            cacheData.MchList.Remove(mch.Id);
             cacheData.MchList.Add(mch.Id);
             await RedisHelper.HSetAsync(key, field, cacheData);
 
@@ -266,6 +267,7 @@ namespace HKDG.BLL
 
             if (cacheData == null)  cacheData = new Favorite();
 
+            cacheData.ProductList.Remove(product.Code);
             cacheData.ProductList.Add(product.Code);
             await RedisHelper.HSetAsync(key, field, cacheData);
 
