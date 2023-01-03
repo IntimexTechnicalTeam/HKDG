@@ -122,7 +122,15 @@ namespace HKDG.WebSite
 
         public async Task InitMeta()
         {
-            var system = settingBLL.GetSystemInfo(CurrentUser.Lang);
+            string key = CacheKey.System.ToString();
+            string field = $"{CacheField.Info}_{CurrentUser.Lang}";
+
+            var system = await RedisHelper.HGetAsync<SystemInfoDto>(key, field);
+            if (system == null)
+            {
+                system = settingBLL.GetSystemInfo(CurrentUser.Lang);
+                await RedisHelper.HSetAsync(key, field, system);
+            }
             var mallConfig = system.mallConfig;
 
             SetTempData("Description", mallConfig.Description);
