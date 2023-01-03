@@ -1,4 +1,6 @@
-﻿namespace HKDG.WebSite
+﻿using Domain;
+
+namespace HKDG.WebSite
 {
     public class WebController : BaseController
     {
@@ -7,6 +9,7 @@
         IInteractMessageBLL interactMessageBLL;
         IProductCatalogBLL productCatalogBLL;
         ILoginBLL loginBLL;
+        ISettingBLL settingBLL;
 
         public WebController(IComponentContext service) : base(service)
         {
@@ -15,6 +18,7 @@
             interactMessageBLL = Services.Resolve<IInteractMessageBLL>();
             productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
             loginBLL= Services.Resolve<ILoginBLL>();
+            settingBLL = Services.Resolve<ISettingBLL>();
         }
 
         CurrentUser _currentUser;
@@ -54,6 +58,7 @@
             await InitMenusAsync(ViewBag.IspType);
             await InitLastNotice();
             await InitCategory();
+            await InitMeta();
         }
 
         public virtual void SetViewData<T>(string key, T t)
@@ -112,6 +117,20 @@
             var result = await productCatalogBLL.GetCatalogAsync();
             result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
             SetViewData("Category", result);
+
+        }
+
+        public async Task InitMeta()
+        {
+            var system = settingBLL.GetSystemInfo(CurrentUser.Lang);
+            var mallConfig = system.mallConfig;
+
+            SetTempData("Description", mallConfig.Description);
+            SetTempData("Keywords", mallConfig.Keywords);
+            SetTempData("FacebookImage", mallConfig.Image);
+            SetTempData("FacebookdDescription", mallConfig.Description);
+            SetTempData("Url", this.Configuration["BuyDongWeb"]);
+            SetTempData("Title", mallConfig.MallName);
 
         }
     }

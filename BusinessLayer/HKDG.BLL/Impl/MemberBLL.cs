@@ -223,6 +223,7 @@ namespace HKDG.BLL
             if (merchFavEntity != null)
             {
                 merchFavEntity.IsActive = false;
+                merchFavEntity.UpdateDate = DateTime.Now;
                 await baseRepository.UpdateAsync(merchFavEntity);
             }
 
@@ -288,6 +289,7 @@ namespace HKDG.BLL
             if (memberFavorite != null)
             {
                 memberFavorite.IsActive = false;
+                memberFavorite.UpdateDate= DateTime.Now;
                 await baseRepository.UpdateAsync(memberFavorite);
             }
 

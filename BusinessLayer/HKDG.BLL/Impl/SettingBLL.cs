@@ -316,5 +316,43 @@ namespace HKDG.BLL
         {
             return 0;
         }
+
+        public SystemInfoDto GetSystemInfo(Language lang)
+        {
+            var systemInfo = new SystemInfoDto();
+
+            var storeInfo = codeMasterBLL.GetStoreInfo(lang);
+            systemInfo.langs = GetSupportLanguages(lang);
+
+            systemInfo.mallConfig.Description = GetCurrentSiteDescription()?.Desc;
+            systemInfo.mallConfig.Keywords = GetCurrentSiteKeywords()?.Desc;
+            systemInfo.mallConfig.DefaultLanguage = GetDefaultLanguage();
+            systemInfo.mallConfig.MallName = storeInfo?.Name;
+            systemInfo.mallConfig.Image = storeInfo?.StoreLogo;
+
+            return systemInfo;
+        }
+
+        public Language GetDefaultLanguage()
+        {
+            var setting = _codeMasterRepo.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.Language.ToString(), "DefaultLanguage");
+            if (setting != null)
+            {
+                return LangUtil.GetLang(setting.Value);
+            }
+            return Language.E;
+        }
+
+        public MutiLanguage GetCurrentSiteKeywords()
+        {
+            var cm = _codeMasterRepo.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.Seo.ToString(), "SiteKeywords");
+            return cm.Descriptions.FirstOrDefault(d => d.Language == CurrentUser.Lang);
+        }
+
+        public MutiLanguage GetCurrentSiteDescription()
+        {
+            var cm = _codeMasterRepo.GetCodeMaster(CodeMasterModule.Setting.ToString(), CodeMasterFunction.Seo.ToString(), "SiteDescription");
+            return cm.Descriptions.FirstOrDefault(d => d.Language == CurrentUser.Lang);
+        }
     }
 }

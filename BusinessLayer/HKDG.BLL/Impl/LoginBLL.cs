@@ -27,6 +27,8 @@ namespace HKDG.BLL
                 throw new BLException("密码错误");
             }
 
+            user.CurrencyCode = user.CurrencyCode.IsEmpty() ? "HKD": user.CurrencyCode; 
+
             result.ReturnValue = AutoMapperExt.MapTo<MemberDto>(user);
             result.Succeeded = true;          
             return result;
