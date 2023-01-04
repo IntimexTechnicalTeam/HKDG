@@ -51,7 +51,7 @@
 	                    <option value="1">商家</option>
 	                </select>*@
 
-	                <input type="text" id="key" name="key" placeholder="搜尋" v-model="searchKey" @@keyup.enter="goSearch">
+	                <input type="text" id="key" name="key" placeholder='@Resources.ToMultiLang("Search")' v-model="searchKey" @@keyup.enter="goSearch">
 
 	                <span class="search-btn" v-on:click="goSearch"></span>
 	            </div>
@@ -96,7 +96,8 @@
         NewLaunch: '@Resources.ToMultiLang("NewLaunch")',
         Discounted: '@Resources.ToMultiLang("Discounted")',
         Confirm: '@Resources.ToMultiLang("Confirm")',
-        CurrencyTips: '@Resources.ToMultiLang("CurrencyTips")'
+        CurrencyTips: '@Resources.ToMultiLang("CurrencyTips")',
+        NoMore: '@Resources.ToMultiLang("NoMore")'
     };
     
     var LatesNotice = @Html.Raw(ViewData["LatesNotice"]); // 最新公告
