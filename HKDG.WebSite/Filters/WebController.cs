@@ -57,8 +57,7 @@ namespace HKDG.WebSite
             await InitIspType(IspType);
             await InitMenusAsync(ViewBag.IspType);
             await InitLastNotice();
-            await InitCategory();
-            //await InitMeta();
+            await InitCategory();         
         }
 
         public virtual void SetViewData<T>(string key, T t)
@@ -117,28 +116,6 @@ namespace HKDG.WebSite
             var result = await productCatalogBLL.GetCatalogAsync();
             result = result.Where(x => x.IspType == ViewBag.IspType).ToList();
             SetViewData("Category", result);
-
-        }
-
-        public async Task InitMeta()
-        {
-            string key = CacheKey.System.ToString();
-            string field = $"{CacheField.Info}_{CurrentUser.Lang}";
-
-            var system = await RedisHelper.HGetAsync<SystemInfoDto>(key, field);
-            if (system == null)
-            {
-                system = settingBLL.GetSystemInfo(CurrentUser.Lang);
-                await RedisHelper.HSetAsync(key, field, system);
-            }
-            var mallConfig = system.mallConfig;
-
-            SetTempData("Description", mallConfig.Description);
-            SetTempData("Keywords", mallConfig.Keywords);
-            SetTempData("FacebookImage", mallConfig.Image);
-            SetTempData("FacebookdDescription", mallConfig.Description);
-            SetTempData("Url", this.Configuration["BuyDongWeb"]);
-            SetTempData("Title", mallConfig.MallName);
 
         }
     }
