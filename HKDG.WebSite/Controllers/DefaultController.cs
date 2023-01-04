@@ -9,12 +9,14 @@ namespace HKDG.WebSite.Controllers
         IPromotionBLL promotionBLL;
         IProductCatalogBLL productCatalogBLL;
         ISettingBLL settingBLL;
+        IProductBLL productBLL;
         public DefaultController(IComponentContext service) : base(service)
         {
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
             promotionBLL = Services.Resolve<IPromotionBLL>();
             productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
             settingBLL = Services.Resolve<ISettingBLL>();
+             productBLL = Services.Resolve<IProductBLL>();
         }
 
         /// <summary>
@@ -65,23 +67,41 @@ namespace HKDG.WebSite.Controllers
 
         public async Task<PartialViewResult> Meta() {
 
-            string key = CacheKey.System.ToString();
-            string field = $"{CacheField.Info}_{CurrentUser.Lang}";
-
-            var system = await RedisHelper.HGetAsync<SystemInfoDto>(key, field);
-            if (system == null)
+            if (HttpContext.Request.Path.ToString().IndexOf("product/detail") > -1)
             {
-                system = settingBLL.GetSystemInfo(CurrentUser.Lang);
-                await RedisHelper.HSetAsync(key, field, system);
-            }
-            var mallConfig = system.mallConfig;
+                var Id = HttpContext.Request.RouteValues["Id"]?.ToString() ?? "";
 
-            SetTempData("Description", mallConfig.Description);
-            SetTempData("Keywords", mallConfig.Keywords);
-            SetTempData("FacebookImage", mallConfig.Image);
-            SetTempData("FacebookdDescription", mallConfig.Description);
-            SetTempData("Url", this.Configuration["BuyDongWeb"]);
-            SetTempData("Title", mallConfig.MallName);
+                if (Id.IsEmpty()) { throw new BLException("缺少参数"); }
+
+                var product = productBLL.GetProductSeo(Id);
+                SetTempData("ProdTitle", product[1]);
+                SetTempData("Description", product[2]);
+                SetTempData("Keywords", product[3]);
+                SetTempData("FacebookImage", this.Configuration["BuyDongWeb"] + product[4]);
+                SetTempData("FacebookdDescription", product[5]);
+                SetTempData("Url", this.Configuration["BuyDongWeb"] + "/product/detail?id=" + Id);
+                SetTempData("Title", product[1]);
+            }
+            else
+            {
+                string key = CacheKey.System.ToString();
+                string field = $"{CacheField.Info}_{CurrentUser.Lang}";
+
+                var system = await RedisHelper.HGetAsync<SystemInfoDto>(key, field);
+                if (system == null)
+                {
+                    system = settingBLL.GetSystemInfo(CurrentUser.Lang);
+                    await RedisHelper.HSetAsync(key, field, system);
+                }
+                var mallConfig = system.mallConfig;
+
+                SetTempData("Description", mallConfig.Description);
+                SetTempData("Keywords", mallConfig.Keywords);
+                SetTempData("FacebookImage", mallConfig.Image);
+                SetTempData("FacebookdDescription", mallConfig.Description);
+                SetTempData("Url", this.Configuration["BuyDongWeb"]);
+                SetTempData("Title", mallConfig.MallName);
+            }
 
             if (IsMobile)
             {

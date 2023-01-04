@@ -1,4 +1,7 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using HKDG.BLL;
+using System.Security.Cryptography;
+
+namespace HKDG.WebSite.Controllers
 {
    [Hidden]
     public class ProductController : WebController

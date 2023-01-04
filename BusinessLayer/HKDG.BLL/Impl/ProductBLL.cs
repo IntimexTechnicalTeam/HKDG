@@ -3522,5 +3522,72 @@ namespace HKDG.BLL
             }
         }
 
+        public List<string> GetProductSeo(string code)
+        {
+            //throw new NotImplementedException();
+            //todo GetProductSeo
+            List<string> seoData = new List<string>();
+            var product =baseRepository.GetModel<Product>(x=>x.Code == code && x.IsActive && !x.IsDeleted);
+
+            string seoTitle = "";
+            string seoDesc = "";
+            string seoKeywords = "";
+            string facebookImage = "";
+            string facebookDesc = "";
+            if (product != null)
+            {
+                seoTitle = translationRepository.GetTranslation(product.TitleTransId, CurrentUser.Lang)?.Value;
+                seoDesc = translationRepository.GetTranslation(product.SeoDescTransId, CurrentUser.Lang)?.Value;
+                seoKeywords = translationRepository.GetTranslation(product.KeyWordTransId, CurrentUser.Lang)?.Value;
+
+                if (string.IsNullOrEmpty(seoTitle))
+                {
+                    seoTitle = translationRepository.GetTranslation(product.NameTransId, CurrentUser.Lang)?.Value;
+                }
+                if (string.IsNullOrEmpty(seoDesc))
+                {
+                    seoDesc = seoTitle;
+                }
+                //if (string.IsNullOrEmpty(seoKeywords))
+                //{
+                //    seoKeywords = seoTitle;
+                //}
+
+               
+                var dbproductImage = baseRepository.GetModel<ProductImage>(x => x.Id == product.DefaultImage);
+                if (dbproductImage != null)
+                {                  
+                    var imageItems = baseRepository.GetList<ProductImageList>(x => x.ImageID == product.DefaultImage).OrderBy(o => o.Type).Select(d => d.Path).ToList();
+                    if (imageItems?.Count > 0)
+                    {
+                        if (imageItems.Count > 3)
+                        {
+                            facebookImage =  imageItems[3];
+                        }
+                        else
+                        {
+                            facebookImage = imageItems[0];
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(seoDesc))
+                {
+                    facebookDesc = settingBLL.GetCurrentSiteDescription()?.Desc;
+                }
+                else
+                {
+                    facebookDesc = seoDesc;
+                }
+            }
+
+            seoData.Add(product.Id.ToString());
+            seoData.Add(seoTitle);
+            seoData.Add(seoDesc);
+            seoData.Add(seoKeywords);
+            seoData.Add(facebookImage);
+            seoData.Add(facebookDesc);
+
+            return seoData;
+        }
     }
 }
