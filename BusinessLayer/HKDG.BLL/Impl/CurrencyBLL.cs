@@ -24,7 +24,7 @@
 
         public SimpleCurrency GetSimpleCurrency(string code)
         {
-            var sc = GetCurrencys().SingleOrDefault(d => d.Code == code);
+            var sc = GetCurrencys().FirstOrDefault(d => d.Code == code);
             if (sc == null)
             {
                 var model = _codeMasterRepository.GetCodeMaster(CodeMasterModule.System.ToString(), CodeMasterFunction.Currency.ToString(), code);
