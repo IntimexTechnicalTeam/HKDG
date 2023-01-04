@@ -87,7 +87,7 @@ namespace HKDG.WebSite
             WebCache.ServiceCollectionExtensions.AddCacheServices(builder.Services, builder.Configuration);                        //注入redis组件
             Repository.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                      //注入EFCore DataContext
             Web.MQ.ServiceCollectionExtensions.AddServices(builder.Services, builder.Configuration);                                    //注入RabbitMQ  
-
+            Web.Mvc.ServiceCollectionExtensions.AddIActionContextAccessor(builder.Services);
             Web.Mvc.ServiceCollectionExtensions.AddHttpContextAccessor(builder.Services);
             Web.Mvc.ServiceCollectionExtensions.AddServiceProvider(builder.Services);
             Web.MediatR.ServiceCollectionExtensions.AddServices(builder.Services, typeof(Program));

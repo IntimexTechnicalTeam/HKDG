@@ -1,0 +1,24 @@
+﻿
+<meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1">
+<meta name="description" content="@TempData["Description"]" />
+<meta name="keywords" content="@TempData["Keywords"]" />
+
+<meta property="og:url" content="@TempData["Url"]" />
+<meta property="og:type" content="website" />
+
+@if (TempData["FacebookImage"] != null && TempData["FacebookImage"].ToString() != "")
+{
+    <meta name="image" content="@TempData["FacebookImage"]">
+    <meta property="og:image" content="@TempData["FacebookImage"]" />
+    <meta property="og:title" content="@TempData["FaceBookTitle"]" />
+    <meta property="og:image:secure_url" content="@TempData["FacebookImage"]" />
+    <meta property="og:description" content="@TempData["FacebookdDescription"]" />
+}
+
+@*@if (BDMall.Runtime.Setting.BlockRobot)
+{
+    <meta name="robots" content="noindex,nofollow" />
+
+}*@
+
+

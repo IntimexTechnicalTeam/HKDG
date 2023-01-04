@@ -1,4 +1,6 @@
-﻿namespace HKDG.WebSite.Controllers
+﻿using HKDG.BLL;
+
+namespace HKDG.WebSite.Controllers
 {
     [Hidden]
     public class DefaultController : WebController
@@ -6,12 +8,13 @@
         IIspProviderBLL ispProviderBLL;
         IPromotionBLL promotionBLL;
         IProductCatalogBLL productCatalogBLL;
-
+        ISettingBLL settingBLL;
         public DefaultController(IComponentContext service) : base(service)
         {
             ispProviderBLL = Services.Resolve<IIspProviderBLL>();
             promotionBLL = Services.Resolve<IPromotionBLL>();
             productCatalogBLL = Services.Resolve<IProductCatalogBLL>();
+            settingBLL = Services.Resolve<ISettingBLL>();
         }
 
         /// <summary>
@@ -58,6 +61,36 @@
         public IActionResult Error()
         {
             return View();
+        }
+
+        public async Task<PartialViewResult> Meta() {
+
+            string key = CacheKey.System.ToString();
+            string field = $"{CacheField.Info}_{CurrentUser.Lang}";
+
+            var system = await RedisHelper.HGetAsync<SystemInfoDto>(key, field);
+            if (system == null)
+            {
+                system = settingBLL.GetSystemInfo(CurrentUser.Lang);
+                await RedisHelper.HSetAsync(key, field, system);
+            }
+            var mallConfig = system.mallConfig;
+
+            SetTempData("Description", mallConfig.Description);
+            SetTempData("Keywords", mallConfig.Keywords);
+            SetTempData("FacebookImage", mallConfig.Image);
+            SetTempData("FacebookdDescription", mallConfig.Description);
+            SetTempData("Url", this.Configuration["BuyDongWeb"]);
+            SetTempData("Title", mallConfig.MallName);
+
+            if (IsMobile)
+            {
+                return PartialView("~/Views/Shared/MobilePartialMeta.cshtml");
+            }
+            else
+            {
+                return PartialView("~/Views/Shared/PartialMeta.cshtml");
+            }
         }
     }
 }

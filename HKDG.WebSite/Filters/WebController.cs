@@ -58,7 +58,7 @@ namespace HKDG.WebSite
             await InitMenusAsync(ViewBag.IspType);
             await InitLastNotice();
             await InitCategory();
-            await InitMeta();
+            //await InitMeta();
         }
 
         public virtual void SetViewData<T>(string key, T t)

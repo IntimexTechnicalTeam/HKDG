@@ -20,11 +20,11 @@
 </head>
 <body>
     <header>
+        @Html.Action("Meta","Default");
         @{
             if (IsMobile) await Html.RenderPartialAsync("~/Views/Shared/MobileHeader.cshtml");
             else  await Html.RenderPartialAsync("~/Views/Shared/Header.cshtml");
         }
-
     </header>
 
     @RenderBody()
