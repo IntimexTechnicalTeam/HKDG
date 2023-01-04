@@ -103,7 +103,7 @@ namespace HKDG.Admin
             var staticFiles = new StaticFileOptions
             {
                 FileProvider = new CompositeFileProvider(
-                    new PhysicalFileProvider(Path.Combine(builder.Configuration["UploadPath"], "ClientResources"))
+                   new PhysicalFileProvider(Path.Combine(builder.Configuration["UploadPath"], "ClientResources"))
                  //new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot"))                    
                  ),
                 RequestPath = "/ClientResources"      //必须设置，否则上传完后相对路径下访问不了
