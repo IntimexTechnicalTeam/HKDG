@@ -14,7 +14,7 @@ createApp({
             logo: '/imgs/icons/ins.png',
             link: 'https://www.instagram.com/buydong.hk/'
         }],
-        CookiesTips: jsMessage.CookiesTips,
+        CookiesTips: msgFooter.CookiesTips,
         FooterMenus: menu.FooterMenus
 	  }
 	},
@@ -27,7 +27,7 @@ createApp({
 			let _this = this;
 
 		    if (!this.email.match(reg)) {
-		        addtocartS(jsMessage.EnterEmailForSubscribe, '/imgs/warn-icon.png');
+		        addtocartS(msgFooter.EnterEmailForSubscribe, '/imgs/warn-icon.png');
 		        return;
 		    } else {
 		        if (localStorage.getItem("logined") == 0) {
@@ -56,11 +56,11 @@ createApp({
             InstoreSdk.api.member.subscribe(this.email, true, function (data) {
                 if (data.Succeeded == true) {
                     if (data.ReturnValue == true) {
-                        addtocartS(jsMessage.ThanksForSubscribe, '/imgs/tick-icon.png');
+                        addtocartS(msgFooter.ThanksForSubscribe, '/imgs/tick-icon.png');
                         localStorage.setItem("subscribeEmail", '');
                     }
                     else {
-                        addtocartS(jsMessage.SubscribeFail, '/imgs/warn-icon.png');
+                        addtocartS(msgFooter.SubscribeFail, '/imgs/warn-icon.png');
                     }
 
                 }
@@ -73,39 +73,12 @@ createApp({
         },
         // 導航跳轉邏輯處理
         toUrl: function (n) {
-            if (n.Type < 0) return;
-
-            let link;
-            let flag;
-            switch (n.Type) {
-                case 0: // 鏈接 => 0
-                    if (!n.IsNewWin && n.Url) {
-                        window.location.href = n.Url;
-                    } else if (n.IsNewWin && n.Url) {
-                        window.open(n.Url);
-                    }
-                    break;
-                case 1: // cms目錄
-                    link = '/product/CatProduct?catId=' + n.Value.Id;
-                    break;
-                case 2: // cms內容
-                    // link = '/CMS/content/' + n.Value.Id;
-                    transitBD('/CMS/content/' + n.Value.Id);
-                    flag = true;
-                    break;
-                case 4: // 產品目錄
-                    link = '/product/Category?catId=' + n.Value.Id;
-                    break;
-            }
-
-            if (link && !flag) {
-                window.location.href = link;
-            }
+            toUrl(n);
         }
 	},
 	created() {
 	},
 	mounted() {
-		console.log(menu,'menu')
+        
 	}
 }).mount('#footer')

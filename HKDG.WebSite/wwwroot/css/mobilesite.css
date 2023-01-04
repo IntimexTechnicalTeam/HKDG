@@ -59,6 +59,10 @@ a {
 }
 
 /* ------ Public Css ------ */
+.modal{
+  display: none!important;
+}
+
 [v-cloak] {
   display: none;
 }
@@ -1800,6 +1804,7 @@ form#login-form {
   width: 100vw;
   margin-left: -3vw;
   background: #e9e8e8;
+  border: 0;
 }
 
 .about-merchant .util-title {
@@ -2745,7 +2750,7 @@ button.logout {
   font-size: 1.2rem;
   color: #575757;
   background: #f0f2f2;
-  padding: 0.3rem 0.8rem;
+  padding: 0.3rem 0.5rem;
   border-radius: 5px;
 }
 

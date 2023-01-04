@@ -111,7 +111,7 @@
   "HaveGoodsEmail": "When we have goods, we will email you",
   "NoSearch": "No relevant search results",
   "Close": "Close",
-  "PersonalInfo": "Personal Information",
+  "PersonalInfo": "Personal",
   "Message": "Message",
   "LatestNews": "Latest News",
   "SeeMore": "See More",
@@ -165,5 +165,7 @@
   "HKDesign": "Hong Kong Design Museum",
   "Points": " Points",
   "Consignee": "Consignee",
-  "SubOrderStatus": "Sub Order Status"
+  "SubOrderStatus": "Sub Order Status",
+  "NoMore": "No More",
+  "Search": "Search"
 }

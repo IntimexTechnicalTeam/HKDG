@@ -10,7 +10,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HKDG.WebSite</title>
+    <title>@ViewData["Title"]</title>
+    @Html.Action("Meta","Default")
     <!-- <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> -->
     <link rel="stylesheet" href="~/lib/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="~/lib/dropload/dropload.css" asp-append-version="true" />
@@ -20,11 +21,11 @@
 </head>
 <body>
     <header>
-        @Html.Action("Meta","Default");
         @{
             if (IsMobile) await Html.RenderPartialAsync("~/Views/Shared/MobileHeader.cshtml");
             else  await Html.RenderPartialAsync("~/Views/Shared/Header.cshtml");
         }
+
     </header>
 
     @RenderBody()

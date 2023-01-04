@@ -22,7 +22,7 @@ function loadPage (dom, totalpage, callback) {
             domClass   : 'dropload-down',
             domRefresh : '<div class="dropload-refresh"></div>',
             domLoad    : '<div class="dropload-load"><span class="loading"></span></div>',
-            domNoData  : '<div class="dropload-noData">暫無更多</div>'
+            domNoData  : '<div class="dropload-noData">' + comStr.NoMore + '</div>'
         },
         loadDownFn: function(me){
             page++;

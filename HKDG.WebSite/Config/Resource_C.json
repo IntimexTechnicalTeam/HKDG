@@ -165,5 +165,7 @@
   "HKDesign": "香港設計館",
   "Points": "分",
   "Consignee": "收貨人",
-  "SubOrderStatus": "子訂單狀態"
+  "SubOrderStatus": "子訂單狀態",
+  "NoMore": "暫無更多",
+  "Search": "搜尋"
 }
