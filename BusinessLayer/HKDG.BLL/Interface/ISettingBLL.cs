@@ -384,5 +384,7 @@
         //List<CodeMasterDto> GetEventFitAmount();
 
         SystemInfoDto GetSystemInfo(Language lang);
+
+        MutiLanguage GetCurrentSiteDescription();
     }
 }

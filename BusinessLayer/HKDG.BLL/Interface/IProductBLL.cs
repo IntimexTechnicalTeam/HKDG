@@ -85,5 +85,7 @@
         Task<PageData<ProductSummary>> SearchFrontProductSummaryAsync(ProdSearchCond cond);
 
         ProductSummary GenProductSummary(Product product);
+
+        List<string> GetProductSeo(string code);
     }
 }
