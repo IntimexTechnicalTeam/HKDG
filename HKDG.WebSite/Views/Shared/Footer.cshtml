@@ -1,4 +1,56 @@
-﻿<div>
-	这是Desktop-Footer
+﻿<div id="footer" v-cloak>
+	<div class="mid-box">
+		<div class="footer-main">
+			<ul class="footer-nav">
+				<li v-for="menu in FooterMenus">
+					<a href="javascript:;" @@click="toUrl(menu)">{{menu.Name}}</a>
 
+					<ul v-if="menu.Childs">
+						<li v-for="c in menu.Childs"><a href="javascript:;" @@click="toUrl(c)">{{c.Name}}</a></li>
+					</ul>
+				</li>
+			</ul>
+
+			<div class="msg-nav">
+				<div class="subscribe-box">
+					<p>@Resources.ToMultiLang("SubscribeNews")</p>
+
+					<div class="subscribe-input">
+						<input type="text" id="email" name="email" placeholder="your@email.address" v-model="email" @@keyup.enter="subVerify">
+						<button @@click="subVerify">@Resources.ToMultiLang("Subscribe")</button>
+					</div>
+				</div>
+
+				<div class="support-pay">
+					<img src="/imgs/payment2.png">
+				</div>
+
+				<!-- <p class="site-tips">@Html.Raw(Resources.ToMultiLang("CookiesTips"))</p> -->
+				<p class="site-tips" v-html="CookiesTips"></p>
+
+				<div class="trace">
+					<a v-bind:href="item.link" target="_blank" v-for="item in traceList">
+		                <img v-bind:src="item.logo">
+		            </a>
+				</div>
+			</div>
+		</div>
+
+		<div class="copyright">
+            <p>© {{nowYear}} 擺檔 BuyDong | Transin Holding Limited 版權所有</p>
+            <img src="/imgs/logo-grey.png" alt="Buydong" />
+        </div>
+	</div>
 </div>
+
+
+<script type="text/javascript">
+	var jsMessage = {
+      CookiesTips: '@Resources.ToMultiLang("CookiesTips")',
+      EnterEmailForSubscribe: '@Resources.ToMultiLang("EnterEmailForSubscribe")',
+      ThanksForSubscribe: '@Resources.ToMultiLang("ThanksForSubscribe")',
+      SubscribeFail: '@Resources.ToMultiLang("SubscribeFail")'
+    }
+
+    var menu = @Html.Raw(ViewData["MenubarDatas"]); // 菜單數據
+</script>

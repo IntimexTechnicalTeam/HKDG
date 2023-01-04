@@ -2,15 +2,17 @@
 	ViewData["Title"] = "Home Page";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="container" class="index-page">
-    <div class="banner">
+<div id="container" class="index-page" v-cloak>
+    <div class="banner" v-if="Object.keys(banner).length">
         <div class="cover">
             <img :src="banner.ImgPath">
         </div>
-        <div class="swiper bannerSwiper">
+        <div class="swiper bannerSwiper" v-if="banner.BannerList && banner.BannerList.length">
             <div class="swiper-wrapper">
                 <div class="swiper-slide" v-for="item in banner.BannerList">
-                    <img :src="item.Image">
+                	<a :href="item.Url || 'javascript:;'" :target="item.Url ? '_blank' : ''">
+                    	<img :src="item.Image">
+                	</a>
                 </div>
             </div>
             <div class="swiper-button-prev"></div>
@@ -21,7 +23,7 @@
 
     <div class="mid-box">
     	<template v-for="(pmt,index) in promotionList">
-    		<pmt-swiper :declass="'pmt' + index" :options="reOption" :promotion="pmt" v-if="pmt.Type === 3" :more="pmt.Seq !== 1"></pmt-swiper>
+    		<pmt-swiper :declass="'pmt' + index" :options="pmt.Seq === 1 ? reOption : ftOption" :promotion="pmt" v-if="pmt.Type === 3" :more="pmt.Seq !== 1"></pmt-swiper>
 
     		<div class="pmt-one category" v-if="pmt.Seq === 1">
 		    	<div class="util-title">

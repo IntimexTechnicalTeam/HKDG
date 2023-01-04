@@ -7,36 +7,39 @@
         <nav-tab></nav-tab>
 
         <div class="nav-tab-content">
+            <!-- 商戶優惠券 -->
+            <div class="nav-tab-title">
+                <p>@Resources.ToMultiLang("Coupon")</p>
+            </div>
+                
             <template v-if="coupons.length">
-                <!-- 商戶優惠券 -->
-                <div class="nav-tab-title">
-                    <p>@Resources.ToMultiLang("Coupon")</p>
-                </div>
-                <div class="coupon-list">
-                    <div class="coupon-one" v-for="item in coupons">
-                        <div class="coupon-inner">
-                            <div class="top">
-                                <p class="title">{{item.MerchantName}} {{item.Title}}</p>
-                                <p class="describe">{{item.Remark}}</p>
-                                <span @@click="useCoupon(item)">@Resources.ToMultiLang("Use")</span>
-                            </div>
-                            <div class="bottom">
-                                <p class="deadline">@Resources.ToMultiLang("Deadline")： {{item.EffectDateTo.split(' ')[0]}} @Resources.ToMultiLang("OrBefore")</p>
+                <div class="coupon-box">
+                    <div class="coupon-list">
+                        <div class="coupon-one" v-for="item in coupons">
+                            <div class="coupon-inner">
+                                <div class="top">
+                                    <p class="title">{{item.MerchantName}} {{item.Title}}</p>
+                                    <p class="describe">{{item.Remark}}</p>
+                                    <span @@click="useCoupon(item)">@Resources.ToMultiLang("Use")</span>
+                                </div>
+                                <div class="bottom">
+                                    <p class="deadline">@Resources.ToMultiLang("Deadline")： {{item.EffectDateTo.split(' ')[0]}} @Resources.ToMultiLang("OrBefore")</p>
+                                </div>
                             </div>
                         </div>
+                        <!-- <div class="coupon-one" disabled>
+                            <div class="coupon-inner">
+                                <div class="top">
+                                    <p class="title">【中秋限定】</p>
+                                    <p class="describe">所有貨品消費滿HKD$350，即減HKD$30</p>
+                                    <span>已過期</span>
+                                </div>
+                                <div class="bottom">
+                                    <p class="deadline">使用期限： 26/08/2022（五） 23:58或之前</p>
+                                </div>
+                            </div>
+                        </div> -->
                     </div>
-                    <!-- <div class="coupon-one" disabled>
-                        <div class="coupon-inner">
-                            <div class="top">
-                                <p class="title">【中秋限定】</p>
-                                <p class="describe">所有貨品消費滿HKD$350，即減HKD$30</p>
-                                <span>已過期</span>
-                            </div>
-                            <div class="bottom">
-                                <p class="deadline">使用期限： 26/08/2022（五） 23:58或之前</p>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
                 <!-- 擺檔優惠券 -->
                 <!-- <div class="nav-tab-title">

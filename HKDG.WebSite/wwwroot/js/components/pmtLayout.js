@@ -19,7 +19,7 @@ var PmtLayout = {
         declass: String, // Swiper自定义类名
         limit: {    // 顯示的產品數量
             type: Number,
-            default: 6
+            default: IsMobile ? 6 : 8
         },
         promotion: {    //推廣數據
             type: Object,

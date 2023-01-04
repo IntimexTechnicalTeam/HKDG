@@ -1,6 +1,46 @@
-﻿@{
-    
+﻿
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" v-cloak>
+	<div class="mid-box">
+		<nav-tab></nav-tab>
+		<div class="nav-tab-content">
+			<div class="nav-tab-title">
+                <p>@Resources.ToMultiLang("LatestNews")</p>
+            </div>
+            
+			<ul class="msg-list" v-if="message.length">
+				<li class="msg-item" tabindex="-1" v-for="item in message" @@click="viewDtls">
+					<div class="img-box">
+						<img src="https://img2.baidu.com/it/u=1536642037,1165863875&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500">
+					</div>
+
+					<div class="dtls">
+						<p class="subject">{{item.Subject}}</p>
+
+						<p class="describe"></p>
+
+						<div class="content" v-html="item.Content"></div>
+
+						<div class="classify-date">
+							<span class="classify">活動報名</span>
+							<span class="date">{{item.CreateDate}}</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+
+			<div class="none" v-else>
+				@Resources.ToMultiLang("NoInfo")
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script src="/js/components/NavTab.js" asp-append-version="true"></script>
+	<script src="/js/page/myMessage.js" asp-append-version="true"></script>
+}
 

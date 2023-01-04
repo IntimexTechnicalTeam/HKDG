@@ -1,8 +1,16 @@
+ajaxPage('SysSwitch', '/js/components/SysSwitch.js');
+
 createApp({
+    components: {
+        'sys-switch': SysSwitch
+    },
 	data() {
 	  return {
 	    show: true, // 控制公告是否顯示
 	    sysAnnounce: LatesNotice.SystemNotice,
+        menu: menu.HeaderMenus, // Header Menu
+        category: category,
+        isSubCat: false, // 子菜單是否為產品全目錄
 	    searchType: 0, // 搜索類型
 	    searchKey: getQueryString('key') || '',   // 搜索關鍵詞
 	    IspType: IspType,
@@ -15,7 +23,7 @@ createApp({
 		initAnnouncement: function () {
 		    var announcementSwiper = new Swiper('#announcement', {
 		        direction: 'vertical',
-				loop: true,
+				// loop: true,
 		        autoplay: {
 		            delay: 3000,
 		            disableOnInteraction: false,
@@ -61,6 +69,22 @@ createApp({
                 transitBD('/account/shoppingcart');
             } else {
                 location.href = '/Account/Login';
+            }
+        },
+        // 加盟
+        joinIn: function() {
+            showMessage('敬請期待');
+        },
+        // 導航跳轉邏輯處理
+        toUrl: function (item) {
+            toUrl(item);
+        },
+        // 獲取菜單子目錄數據
+        checkSub: function (item) {
+            if (item.Type === 4 && guidEmpty(item.Value.Id)) {
+                this.isSubCat = true;
+            } else {
+                this.isSubCat = false;
             }
         }
 	},

@@ -1,5 +1,117 @@
-﻿
-@{
-    // ViewBag.Title = "Detail";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+	// ViewBag.Title = "Detail";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="container" class="merchant-page" v-cloak>
+    <div class="merchant-banner" v-if="merchantData.Cover">
+        <img :src="merchantData.Cover">
+    </div>
+    <div class="mid-box">
+        <div class="merchant-main">
+            <div class="img-box">
+                <img :src="merchantData.Logo">
+            </div>
+            <div class="merchant-info">
+            	<div class="merchant-top">
+	            	<div class="left">
+		                <p class="merchant-name">{{merchantData.MerchantName}}</p>
+		                <div class="rating-box">
+		                    <star-rating v-model="merchantData.Score" disabled></star-rating>
+		                    <span>{{merchantData.Score.toFixed(1)}}</span>
+		                    <span>(20)</span>
+		                </div>
+		                <p>2019開館</p>
+	                </div>
+	                <div class="right">
+	                	<div class="other">
+	                        <div>
+	                            <span>@Resources.ToMultiLang("TrackedNum")</span>
+	                            <span>1288</span>
+	                        </div>
+	                        <div>
+	                            <span>@Resources.ToMultiLang("SoldNum")</span>
+	                            <span>540</span>
+	                        </div>
+	                    </div>
+	                </div>
+                </div>
+
+                <div class="merchant-bottom">
+                    <button>@Resources.ToMultiLang("ContactDsigner")</button>
+                    <button @@click="addFavMerchant">{{merchantData.IsFavorite ? '@Resources.ToMultiLang("CancelTrack")' : '@Resources.ToMultiLang("Track")'}}</button>
+                </div>
+            </div>
+        </div>
+        <div class="mer-msg-one introduce">
+            <p class="util-title">@Resources.ToMultiLang("BrandIntro")</p>
+            <div class="content" v-html="merchantData.Description"></div>
+            <div class="terms">
+                <a href="javascript:;" @@click="readTerms(1)">@Resources.ToMultiLang("RARPolicy")</a>
+                <a href="javascript:;" @@click="readTerms(2)">@Resources.ToMultiLang("ShipmentPolicy")</a>
+            </div>
+        </div>
+        <div class="mer-msg-one about">
+            <p class="util-title">關於設計館</p>
+            <div class="content">
+                <p>*Traveler’s Art Journal 手作工作室</p>
+                <p>週一休息、公眾假期不出貨。香港郵政、順豐速運：週二至週五出貨。</p>
+                <p>如有問題歡迎私訊查詢，謝謝。</p>
+            </div>
+        </div>
+        <div class="screen-box">
+            <div class="screen-list">
+                <select>
+                    <option selected disabled hidden>@Resources.ToMultiLang("AllPros")</option>
+                    <option>option1</option>
+                </select>
+                <select v-model="pager.OrderBy" @@change="changeQuery">
+                    <option value="" selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
+                    <option :value="item.value" v-for="item in sortType">{{item.name}}</option>
+                </select>
+                <select>
+                    <option selected disabled hidden>@Resources.ToMultiLang("Price")</option>
+                    <option>option1</option>
+                </select>
+                <select>
+                    <option selected disabled hidden>@Resources.ToMultiLang("FreeDelivery")</option>
+                    <option>option1</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button @@click="isGrid = !isGrid"><img v-bind:src="isGrid ? '/imgs/icons/layout1.png' : '/imgs/icons/layout2.png'"></button>
+                <button><img src="/imgs/icons/classify.png"></button>
+            </div>
+        </div>
+
+        <template v-if="totalRecord">
+            <p class="pros-num">{{totalRecord}}@Resources.ToMultiLang("ProsNum")</p>
+
+            <pro-list :data="merProData" :grid="isGrid" :totalpage="totalPage" @@load="getMerchantPro"></pro-list>
+        </template>
+
+        <div class="none" v-else>
+          @Resources.ToMultiLang("NoRePros")
+        </div>
+    </div>
+
+    <!-- 消息彈窗 -->
+    <bd-dialog ref="terms">
+        <div v-html="termsDtls"></div>
+    </bd-dialog>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var MerchantDetail = @Html.Raw(ViewData["MerchantDetail"]); // 商家數據
+        var MerchantProdData = @Html.Raw(ViewData["MerchantProdData"]); // 商家產品數據
+
+        var jsMessage = {
+          // CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess")'
+        }
+    </script>
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+    <script src="/js/components/ProList.js" asp-append-version="true"></script>
+    <script src="/js/components/BdDialog.js" asp-append-version="true"></script>
+	<script src="/js/page/merchantDetail.js" asp-append-version="true"></script>
 }

@@ -14,7 +14,7 @@
 			<p>@Resources.ToMultiLang("SubscribeNews")</p>
 
 			<div class="subscribe-input">
-				<input type="text" id="email" name="email" v-model="email" @@keyup.enter="subVerify">
+				<input type="text" id="email" name="email" placeholder="your@email.address" v-model="email" @@keyup.enter="subVerify">
 				<button @@click="subVerify">@Resources.ToMultiLang("Subscribe")</button>
 			</div>
 		</div>

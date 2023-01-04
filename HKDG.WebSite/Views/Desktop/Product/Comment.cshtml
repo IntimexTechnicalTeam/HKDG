@@ -1,9 +1,64 @@
 ﻿@{
-
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="container" class="pro-comment-page" v-cloak>
+    <div id="main-content">
+        <input type="hidden" value="@ViewBag.oId" id="orderId" />
+        <div class="write-comment-block" v-for="(item,index) in comments">
+            <table>
+                <tr>
+                    <td rowspan="3" width="200">
+                        <div class="product-message">
+                            <div style="text-align:center;">
+                                <img v-bind:src="item.ProductImg" />
+                            </div>
+                            <p>
+                                {{item.ProductName}}
+                            </p>  
+                        </div>
 
-<div class="text-center">
- fasfasd
+                    </td>
+                    <td class="padding-td"><p class="comment-title">@Resources.ToMultiLang("Comment")</p></td>
+                    <td class="padding-td">
+                        <textarea class="comment-area" rows="5" v-model="item.Content" v-on:input="calcNum(item)"></textarea>
+                        <div class="font-num"><b>{{item.fontNum}}</b>/1000</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="comment-title">@Resources.ToMultiLang("Image")</p></td>
+                    <td colspan="2" class="padding-td">
+                        <form id="Form1" enctype="multipart/form-data">
+                            <ul class="comment-img-box">
+                                <template v-for="(img,index2) in item.CommentImages">
+                                    <li style="display:inline-block;" v-if="!img.IsDeleted">
+                                        <img v-bind:id="'img'+index2+index" v-bind:src="img.ImageB" width="50" />
+                                        <b class="img-close" v-on:click="deleteImage(img,index,index2)">X</b>
+                                    </li>
+                                </template>
+                            </ul>
+                            <input type="file" multiple v-bind:id="'file'+index" v-bind:name="'file'+index" style="display:none;" v-on:change="upload(item,index)" />
+                            <input type="button" class="upload-btn" value='@Resources.ToMultiLang("Upload")' v-on:click="selectFile(item,index);" v-if="item.ImgSum < 1" />
+
+                        </form>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="comment-title">@Resources.ToMultiLang("Sorce")</p></td>
+                    <td colspan="2" class="padding-td">
+                        <star-rating v-model="item.Score"></star-rating>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="text-align:center;">
+            <input type="button" value='@Resources.ToMultiLang("SaveM")' v-on:click="saveComment" class="btn comment-save" />
+        </div>
+    </div>
 </div>
+
+@section scripts{
+	<script src="/js/components/StarRating.js" asp-append-version="true"></script>
+	<script src="/js/page/comment.js" asp-append-version="true"></script>
+}

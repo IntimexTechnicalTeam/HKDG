@@ -4,7 +4,7 @@
 }
 
 <div id="container" class="merchant-page" v-cloak>
-    <div class="merchant-banner">
+    <div class="merchant-banner" v-if="merchantData.Cover">
         <img :src="merchantData.Cover">
     </div>
     <div class="mid-box">
@@ -81,7 +81,11 @@
             </div>
         </div>
 
-        <pro-list :data="merProData" :grid="isGrid" :totalpage="totalPage" @@load="getMerchantPro" v-if="merProData.length"></pro-list>
+        <template v-if="totalRecord">
+            <p class="pros-num">{{totalRecord}}@Resources.ToMultiLang("ProsNum")</p>
+
+            <pro-list :data="merProData" :grid="isGrid" :totalpage="totalPage" @@load="getMerchantPro"></pro-list>
+        </template> 
 
         <div class="none" v-else>
           @Resources.ToMultiLang("NoRePros")

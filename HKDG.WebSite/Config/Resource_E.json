@@ -113,6 +113,7 @@
   "Close": "Close",
   "PersonalInfo": "Personal Information",
   "Message": "Message",
+  "LatestNews": "Latest News",
   "SeeMore": "See More",
   "HotSale": "Hot sale product",
   "NewLaunch": "New Product",
@@ -161,5 +162,8 @@
   "Upload": "Upload",
   "Sorce": "Score",
   "video": "Video",
-  "HKDesign": "Hong Kong Design Museum"
+  "HKDesign": "Hong Kong Design Museum",
+  "Points": " Points",
+  "Consignee": "Consignee",
+  "SubOrderStatus": "Sub Order Status"
 }

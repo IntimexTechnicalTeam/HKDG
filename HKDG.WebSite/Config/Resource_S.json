@@ -113,6 +113,7 @@
   "Close": "关闭",
   "PersonalInfo": "个人资讯",
   "Message": "讯息",
+  "LatestNews": "最新消息",
   "SeeMore": "看更多",
   "HotSale": "热销产品",
   "NewLaunch": "新品发售",
@@ -161,5 +162,8 @@
   "Upload": "上传",
   "Sorce": "评分",
   "video": "视频",
-  "HKDesign": "香港设计馆"
+  "HKDesign": "香港设计馆",
+  "Points": "分",
+  "Consignee": "收货人",
+  "SubOrderStatus": "子订单状态"
 }

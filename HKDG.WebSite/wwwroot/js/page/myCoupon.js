@@ -25,7 +25,7 @@ createApp({
 
                     if (_this.pager.page === 1 && _this.coupons.length) {
                         _this.$nextTick(() => {
-                          loadPage($('.coupon-list'), result.ReturnValue.TotalPage, (val,me) => _this.getMemberCoupon(val, me));
+                          loadPage($('.coupon-box'), result.ReturnValue.TotalPage, (val,me) => _this.getMemberCoupon(val, me));
                         });
                     }
 
@@ -44,7 +44,7 @@ createApp({
         // 去使用優惠券
         useCoupon: function (item) {
             if (item.MerchantId !== "00000000-0000-0000-0000-000000000000") {
-                location.href = "/Merchant/Detail?/" + item.MerchantId;
+                location.href = "/Merchant/Detail/" + item.MerchantId;
             } else {
                 location.href = "/Default/Index";
             }

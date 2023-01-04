@@ -20,7 +20,7 @@ var ProSwiper = {
             type: Object,
             default: {
                 autoHeight: true, //高度随内容变化
-                slidesPerView : 2.2,  
+                slidesPerView : IsMobile ? 2.2 : 4,  
                 spaceBetween: 10,
                 scrollbar: {
                     el: '.swiper-scrollbar',

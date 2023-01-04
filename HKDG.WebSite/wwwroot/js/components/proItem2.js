@@ -25,7 +25,7 @@ var tempStr = '<div class="pro-item layout2">\
             	<p class="old-price" v-if="data.HasDiscount">{{data.Currency.Code}} {{data.OriginalPrice}}</p>\
                 <p class="now-price">{{data.Currency.Code}} {{data.SalePrice}}</p>\
             </div>\
-            <span class="fav-btn"></span>\
+            <span class="fav-btn" :class="{\'fav\': data.IsFavorite}" @click.prevent="addToFavorite"></span>\
         </div>\
     </a>\
 </div>';
@@ -41,6 +41,29 @@ var ProItem2 = {
     },
     template: tempStr,
     methods: {
-
+        // 加入/取消收藏
+        addToFavorite: function () {
+            console.log('addToFavorite');
+            let _this = this;
+            if (this.data.IsFavorite) {
+                InstoreSdk.api.member.removeFavorite(this.data.ProductId, function(result) {
+                    _this.data.IsFavorite = false;
+                    addtocartS(result.Message, '/imgs/icons/heart.png');
+                });
+            } else {
+              InstoreSdk.api.member.addFavorite(this.data.ProductId, function(result) {
+                  _this.data.IsFavorite = true;
+                  addtocartS(result.Message, '/imgs/icons/heart2.png');
+                  if (typeof(fbpAddToWishlist) === "function") {
+                    _this.$nextTick(fbpAddToWishlist);
+                  }
+              },
+              function(data) {
+                  if (data.Code == 1000) {
+                    window.location.href = "/Account/Login?returnUrl=" + window.location.href;
+                  }
+              });
+            }
+        }
     }
 }

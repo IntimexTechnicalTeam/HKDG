@@ -12,7 +12,7 @@ createApp({
         pager: { // 分頁數據
           Key: getQueryString('key') || '',
           Page: 1,
-          PageSize: 2,
+          PageSize: 10,
           SortName:'UpdateDateString',
           SortOrder:'DESC'
         }
@@ -25,7 +25,7 @@ createApp({
 
       var _this = this;
       InstoreSdk.api.product.search(this.pager, function(result) {
-        _this.proData = result.Data;
+        _this.proData = _this.proData.concat(result.Data);
         _this.totalPage = result.TotalPage;
         _this.totalRecord = result.TotalRecord;
 
