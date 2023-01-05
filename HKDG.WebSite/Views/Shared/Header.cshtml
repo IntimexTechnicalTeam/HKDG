@@ -25,7 +25,7 @@
 	    				{{item.Name}}
 	    			</a>
 
-	    			<div class="sub-menu" v-if="isSubCat || item.Childs">
+	    			<div class="sub-menu" v-if="isSubCat || (item.Childs && item.Childs.length)">
 						<div class="join-in" @@click="joinIn" v-if="isSubCat">
 							<img src="/imgs/icons/join.png"> 
 							<span>@Resources.ToMultiLang("JoinDesign")</span>
