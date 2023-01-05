@@ -68,6 +68,11 @@ namespace HKDG.WebSite
             ViewData[key] = json;
         }
 
+        public virtual void SetViewData(string key, string t)
+        {
+            ViewData[key] = t;
+        }
+
         public virtual void SetTempData<T>(string key, T t) where T : class, new()
         {
             if (t == null) t = default(T);
