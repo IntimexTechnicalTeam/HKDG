@@ -81,7 +81,7 @@ namespace HKDG.WebSite.Controllers
                 SetTempData("FacebookdDescription", product[5]);
                 SetTempData("Url", this.Configuration["BuyDongWeb"] + "/product/detail?id=" + Id);
                 SetTempData("Title", product[1]);
-            }
+            }           
             else
             {
                 string key = CacheKey.System.ToString();

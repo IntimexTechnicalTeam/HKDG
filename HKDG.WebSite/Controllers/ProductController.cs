@@ -83,6 +83,8 @@ namespace HKDG.WebSite.Controllers
             var catProduct = await productBLL.GetCatProdPageData(pager);
             SetViewData("CatalogProducts", catProduct);
 
+            SetViewData("Title", catalog.Name);
+
             return GetActionResult("CatProduct");
 
         }
