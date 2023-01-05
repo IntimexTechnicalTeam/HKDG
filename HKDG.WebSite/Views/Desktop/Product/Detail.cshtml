@@ -66,7 +66,7 @@
           <div class="rating-box">
               <star-rating v-model="proData.Score" disabled></star-rating>
               <span>{{proData.Score.toFixed(1)}}</span>
-              <span>(20)</span>
+              <span v-if="comments.length">({{comments.length}})</span>
           </div>
           <div class="attr-group">
               <div class="attr-one" v-for="attr in proData.AttrList">

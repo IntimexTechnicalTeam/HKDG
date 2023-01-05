@@ -49,31 +49,30 @@
             </div>
         </div>
         <div class="mer-msg-one about">
-            <p class="util-title2">關於設計館</p>
+            <p class="util-title2">@Resources.ToMultiLang("AboutDesign")</p>
             <div class="content">
-                <p>*Traveler’s Art Journal 手作工作室</p>
-                <p>週一休息、公眾假期不出貨。香港郵政、順豐速運：週二至週五出貨。</p>
-                <p>如有問題歡迎私訊查詢，謝謝。</p>
+                <p>@Resources.ToMultiLang("DesignHallTip1")</p>
+                <p>@Resources.ToMultiLang("DesignHallTip2")</p>
+                <p>@Resources.ToMultiLang("DesignHallTip3")</p>
             </div>
         </div>
         <div class="screen-box">
             <div class="screen-list">
                 <select>
                     <option selected disabled hidden>@Resources.ToMultiLang("AllPros")</option>
-                    <option>option1</option>
                 </select>
                 <select v-model="pager.OrderBy" @@change="changeQuery">
                     <option value="" selected disabled hidden>@Resources.ToMultiLang("Sorting")</option>
                     <option :value="item.value" v-for="item in sortType">{{item.name}}</option>
                 </select>
-                <select>
+                <!-- <select>
                     <option selected disabled hidden>@Resources.ToMultiLang("Price")</option>
                     <option>option1</option>
                 </select>
                 <select>
                     <option selected disabled hidden>@Resources.ToMultiLang("FreeDelivery")</option>
                     <option>option1</option>
-                </select>
+                </select> -->
             </div>
             <div class="btn-group">
                 <button @@click="isGrid = !isGrid"><img v-bind:src="isGrid ? '/imgs/icons/layout1.png' : '/imgs/icons/layout2.png'"></button>
