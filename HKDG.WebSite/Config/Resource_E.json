@@ -167,5 +167,8 @@
   "Consignee": "Consignee",
   "SubOrderStatus": "Sub Order Status",
   "NoMore": "No More",
-  "Search": "Search"
+  "Search": "Search",
+  "Category": "Category",
+  "SearchProduct": "Product Search",
+  "ProductComment": "Product Comment"
 }
