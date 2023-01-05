@@ -167,5 +167,8 @@
   "Consignee": "收貨人",
   "SubOrderStatus": "子訂單狀態",
   "NoMore": "暫無更多",
-  "Search": "搜尋"
+  "Search": "搜尋",
+  "Category": "類別",
+  "SearchProduct": "產品搜尋",
+  "ProductComment": "產品評論"
 }

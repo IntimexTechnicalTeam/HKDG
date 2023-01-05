@@ -167,5 +167,8 @@
   "Consignee": "收货人",
   "SubOrderStatus": "子订单状态",
   "NoMore": "暂无更多",
-  "Search": "搜寻"
+  "Search": "搜寻",
+  "Category": "类别",
+  "SearchProduct": "产品搜寻",
+  "ProductComment": "产品评论"
 }
