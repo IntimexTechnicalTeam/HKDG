@@ -1,4 +1,5 @@
-﻿using HKDG.BLL;
+﻿using Domain;
+using HKDG.BLL;
 using System.Security.Cryptography;
 
 namespace HKDG.WebSite.Controllers
@@ -50,6 +51,8 @@ namespace HKDG.WebSite.Controllers
             var relateProdList = productBLL.GetRelatedProduct(details.Id);
             SetViewData("RelateProd", relateProdList);
 
+            SetViewData("Title", details.Name);
+
             return GetActionResult("Detail");
         }
 
@@ -82,6 +85,8 @@ namespace HKDG.WebSite.Controllers
             if (!IsMobile)pager.PageSize = 9;
             var catProduct = await productBLL.GetCatProdPageData(pager);
             SetViewData("CatalogProducts", catProduct);
+
+            SetViewData("Title", catalog.Name);
 
             return GetActionResult("CatProduct");
 

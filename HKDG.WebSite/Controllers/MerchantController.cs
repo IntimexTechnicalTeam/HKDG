@@ -38,6 +38,8 @@
             SetViewData("MerchantDetail", mchDetail);
             SetViewData("MerchantProdData", mchProductList);
 
+            SetViewData("Title", mchDetail.MerchantName);
+
             return GetActionResult("Detail");
         }
 
