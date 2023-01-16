@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="merchant-bottom">
-                    <button>@Resources.ToMultiLang("ContactDsigner")</button>
+                    <button @@click="contactMerchant">@Resources.ToMultiLang("ContactDsigner")</button>
                     <button @@click="addFavMerchant">{{merchantData.IsFavorite ? '@Resources.ToMultiLang("CancelTrack")' : '@Resources.ToMultiLang("Track")'}}</button>
                 </div>
             </div>

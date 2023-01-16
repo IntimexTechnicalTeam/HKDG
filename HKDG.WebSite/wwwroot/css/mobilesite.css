@@ -919,6 +919,23 @@ p.errorTip {
   margin: 1.5rem 0;
 }
 
+.sidebar {
+  position: fixed;
+  right: 5%;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  z-index: 20;
+  box-shadow: 1px 1px 3px #000;
+  background-color: #5f6060;
+  bottom: 8%;
+}
+
+.sidebar img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 /* ------ Menu Bar ------ */
 .menu-bar {
   margin: 1.5rem 0;
@@ -1083,6 +1100,7 @@ p.errorTip {
   height: 5.5rem;
   flex-shrink: 0;
   margin-right: 1rem;
+  background: #acb0ad;
 }
 
 .msg-item .dtls .subject {

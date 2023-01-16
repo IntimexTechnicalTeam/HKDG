@@ -113,6 +113,10 @@ createApp({
       this.totalRecord = 0;
 
       this.getMerchantPro();
+    },
+    // 聯繫商家
+    contactMerchant: function () {
+      location.href = 'mailto:'+ this.merchantData.ContactEmail;
     }
 	},
 	created() {
