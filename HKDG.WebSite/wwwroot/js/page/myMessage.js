@@ -24,7 +24,7 @@ createApp({
 
           if (_this.pager.page === 1 && _this.message.length) {
             _this.$nextTick(() => {
-              loadPage($('.msg-list'), result.TotalPage, (val,me) => _this.getMessage(val, me));
+              loadPage($('.msg-list'), result.ReturnValue.TotalPage, (val,me) => _this.getMessage(val, me));
             });
           }
 
