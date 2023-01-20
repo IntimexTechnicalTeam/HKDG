@@ -52,7 +52,7 @@
 		        <div class="swiper proSwiper">
 		            <div class="swiper-wrapper">
 		                <div class="swiper-slide" v-for="(item,index) in pmt.MerchantList">
-		                    <a href="javascript:;">
+		                    <a :href="'/Merchant/Detail/' + item.Id">
 		                    	<div class="img-box">
 		                    		<img :src="item.LogoB">
 		                    	</div>

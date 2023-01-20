@@ -15,7 +15,7 @@ createApp({
 	    },
         // 加盟
         joinIn: function() {
-        	showMessage('敬請期待')
+        	window.open('https://hkdg.buydong.hk/');
         },
 	    // 跳轉目錄產品頁
 	    pushPage: function(item) {

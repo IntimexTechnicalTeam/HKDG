@@ -6,13 +6,13 @@ var tempStr = '<div class="lang-switch" @click="openDialog">\
 </div>\
 <bd-dialog class="lang-currency" type="sumbit" :confirmtext="comStr.Confirm" :showcancelbtn="false" ref="SysSwitch" @confirm="changeSetting">\
     <div class="set-one">\
-        <p>語言 / Language</p>\
+        <p>{{comStr.LanguageS}}</p>\
         <ul>\
             <li v-for="(item,index) in langList" :class="{\'active\': item.value === lang}" @click="lang = item.value;">{{item.lang}}</li>\
         </ul>\
     </div>\
     <div class="set-one">\
-        <p>貨幣 / Currency</p>\
+        <p>{{comStr.CurrencyS}}</p>\
         <ul>\
             <li v-for="(item,index) in currencyList" :class="{\'active\': item.Code === currency}" @click="currency = item.Code;">{{item.Code}}</li>\
         </ul>\

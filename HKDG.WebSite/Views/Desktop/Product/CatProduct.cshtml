@@ -56,6 +56,13 @@
 		var catId = '@ViewBag.CatId'; // 當前目錄Id
 		var catalog = @Html.Raw(ViewData["CurrentCatalog"]); // 當前目錄數據
 		var catProducts = @Html.Raw(ViewData["CatalogProducts"]); // 當前目錄數據
+
+    var jsMessage = {
+      NewArrival: '@Resources.ToMultiLang("NewArrival")',
+      CLowPrice: '@Resources.ToMultiLang("CLowPrice")',
+      CHighPrice: '@Resources.ToMultiLang("CHighPrice")',
+      BestSeller: '@Resources.ToMultiLang("BestSeller")'
+    }
 	</script>
 	<script src="/js/components/ProList.js" asp-append-version="true"></script>
 	<script src="/js/page/catproduct.js" asp-append-version="true"></script>

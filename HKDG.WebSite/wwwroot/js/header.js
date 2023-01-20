@@ -57,7 +57,7 @@ createApp({
             let _this = this;
             InstoreSdk.api.shoppingCart.getShopCartAsync(function (result) {
                 if (result.Succeeded) {
-                    _this.totalNum = result.ReturnValue.TotalQty;
+                    _this.totalNum = result.ReturnValue ? result.ReturnValue.TotalQty : 0;
                 } else {
                     addtocartS(result.Message, '/imgs/warn-icon.png');
                 }
@@ -73,7 +73,7 @@ createApp({
         },
         // 加盟
         joinIn: function() {
-            showMessage('敬請期待');
+            window.open('https://hkdg.buydong.hk/');
         },
         // 導航跳轉邏輯處理
         toUrl: function (item) {

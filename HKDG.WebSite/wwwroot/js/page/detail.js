@@ -1,5 +1,3 @@
-var testImgs = ["https://img1.baidu.com/it/u=4076402559,3294297196&fm=253&fmt=auto&app=138&f=PNG?w=500&h=500","https://img1.baidu.com/it/u=3133082447,1921267555&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500","https://img2.baidu.com/it/u=2286725608,1362072907&fm=253&fmt=auto&app=138&f=JPEG?w=518&h=500","https://img2.baidu.com/it/u=3363028075,1655932363&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=800","https://img0.baidu.com/it/u=2323958649,17793350&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=485","https://img2.baidu.com/it/u=646701517,2138740410&fm=253&fmt=auto&app=120&f=JPEG?w=806&h=800"];
-
 const app = createApp({
     components: {
         'star-rating': StarRating,
@@ -14,13 +12,6 @@ const app = createApp({
             merchantData: MerchantDetail, // 商家數據
             pmtRelateProd: null, // 相關產品推廣數據
             relateProd: RelateProd, // 相關產品數據
-            banner: [{
-              src: 'https://img0.baidu.com/it/u=2564065540,1877968420&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313'
-            }, {
-              src: 'https://img1.baidu.com/it/u=1740954870,1509955191&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500'
-            }, {
-              src: 'https://img2.baidu.com/it/u=72117843,339688063&fm=253&fmt=auto&app=138&f=JPEG?w=751&h=500'
-            }],
             videoUrl: '', // 產品視頻地址
             buyQty: 1,
             proAttr: {}, // 選擇的產品屬性數據
@@ -55,7 +46,6 @@ const app = createApp({
           let _this = this;
           this.areaCode = localStorage.getItem('AreaCode') || '';
           this.videoUrl = this.areaCode === 'CN' ? this.proData.YoukuUrl : this.proData.YoutubeUrl;
-          // this.videoUrl = 'https://player.youku.com/embed/XNTg3NzczODQ5Mg==';
           this.buyQty = this.proData.MinPurQty;
           if (platform == 'M') {
             this.$nextTick(this.formvideo);
@@ -438,13 +428,13 @@ const app = createApp({
             if (this.merchantData.IsFavorite) {
                 InstoreSdk.api.member.removeFavMerchant(this.merchantData.Code, function (result) {
                     _this.merchantData.IsFavorite = false;
-                    addtocartS(result.Message, '/imgs/icons/heart.png')
+                    addtocartS(jsMessage.CancelSuccess, '/imgs/icons/heart.png')
                 });
             } else {
                 InstoreSdk.api.member.addFavMerchant(this.merchantData.Code,
                     function (result) {
                         _this.merchantData.IsFavorite = true;
-                        addtocartS(result.Message, '/imgs/icons/heart2.png')
+                        addtocartS(jsMessage.TrackSuccess, '/imgs/icons/heart2.png')
                     },
                     function () {
                        showLoginDialog(window.location.href);

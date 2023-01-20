@@ -16,16 +16,16 @@ createApp({
         sort: '', // 排序
         // -------
         sortType: [{  // 排序類型數據
-          name: '新上架優先',
+          name: jsMessage.NewArrival,
           value: 'New'
         }, {
-          name: '價錢由高至低',
+          name: jsMessage.CLowPrice,
           value: 'HighPrice'
         }, {
-          name: '價錢由低至高',
+          name: jsMessage.CHighPrice,
           value: 'LowPrice'
         }, {
-          name: '熱門產品優先',
+          name: jsMessage.BestSeller,
           value: 'HotSale'
         }],
         pager: { // 分頁數據

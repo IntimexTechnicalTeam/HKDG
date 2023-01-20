@@ -542,7 +542,19 @@ p.errorTip {
 }
 
 .pro-item .img-box {
-  min-height: 8rem;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+}
+
+.pro-item .img-box img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
 }
 
 
@@ -1961,6 +1973,12 @@ form#login-form {
 
 .screen-box .screen-list select:not(:first-child) {
   width: 4.5rem;
+}
+
+.screen-box .screen-list select:nth-child(2) {
+  max-width: 8.5rem;
+  min-width: 4.5rem;
+  width: auto;
 }
 
 .screen-box .btn-group {

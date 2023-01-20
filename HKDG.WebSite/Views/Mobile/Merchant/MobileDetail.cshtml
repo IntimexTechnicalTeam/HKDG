@@ -103,7 +103,10 @@
         var MerchantProdData = @Html.Raw(ViewData["MerchantProdData"]); // 商家產品數據
 
         var jsMessage = {
-          // CopiedSuccess: '@Resources.ToMultiLang("CopiedSuccess")'
+          NewArrival: '@Resources.ToMultiLang("NewArrival")',
+          CLowPrice: '@Resources.ToMultiLang("CLowPrice")',
+          CHighPrice: '@Resources.ToMultiLang("CHighPrice")',
+          BestSeller: '@Resources.ToMultiLang("BestSeller")'
         }
     </script>
 	<script src="/js/components/StarRating.js" asp-append-version="true"></script>

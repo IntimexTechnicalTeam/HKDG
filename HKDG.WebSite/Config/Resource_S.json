@@ -176,5 +176,13 @@
   "AboutDesign": "关于设计馆",
   "DesignHallTip1": "*Traveler’s Art Journal 手作工作室",
   "DesignHallTip2": "週一休息、公众假期不出货。香港邮政、顺丰速运：週二至週五出货。",
-  "DesignHallTip3": "如有问题欢迎私讯查询，谢谢。"
+  "DesignHallTip3": "如有问题欢迎私讯查询，谢谢。",
+  "NewArrival": "新上架优先",
+  "CLowPrice": "价钱由高至低",
+  "CHighPrice": "价钱由低至高",
+  "BestSeller": "热门产品优先",
+  "TrackSuccess": "追踪成功",
+  "CancelSuccess": "删除成功",
+  "LanguageS": "语言 / Language",
+  "CurrencyS": "货币 / Currency"
 }
